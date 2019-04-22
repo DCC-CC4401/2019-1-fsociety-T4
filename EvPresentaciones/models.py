@@ -5,7 +5,7 @@ from django.db import models
 class Usuario(models.Model):
 
     #Parametros de la tabla
-    correo = models.CharField(max_length=100,primary_key=True)
+    correo = models.EmailField(primary_key=True)
     nombre = models.CharField(max_length=50)
     apellido = models.CharField(max_length=50)
     esAdministrador = models.BooleanField()
@@ -21,38 +21,69 @@ class Usuario(models.Model):
 
 class Cursos(models.Model):
 
-    #Definir los parametros de las tablas
+    #id automatico sera la llave
+    nombre = models.CharField(max_length=100)
+    codigo = models.CharField(max_length=100)
+    semestre = models.CharField(max_length=50)
+    año = models.PositiveIntegerField()
+    seccion = models.PositiveIntegerField()
+
+    class Meta:
+        db_table = "Cursos"
 
     def __str__(self):
         #definir como ver las filas de la tabla
-        pass
+        return self.nombre + " " + self.codigo + " " + self.semestre + " " + self.año + " " + self.seccion
 
 class Alumnos(models.Model):
 
-    #Definir los parametros de las tablas
+    nombre = models.CharField(max_length=50)
+    apellido = models.CharField(max_length=50)
+    presento = models.BooleanField()
+    rut = models.PositiveIntegerField(primary_key=True)
+    codigoVerificador = models.CharField(max_length=1)
+
+    class Meta:
+        db_table = "Alumnos"
 
     def __str__(self):
-        #definir como ver las filas de la tabla
-        pass
+        return self.rut + " " + self.codigoVerificador
 
 class Rubrica(models.Model):
     
-    
+    #id es automatico
+    nombre = models.CharField(max_length=50,primary_key=True)
+    version = models.CharField(max_length=50)
+    tiempo = models.DurationField()
+    archivo = models.FilePathField()
+
+    class Meta:
+        db_table = "Rubrica"
 
     def __str__(self):
-        #definir como ver las filas de la tabla
-        pass
+        return self.nombre + " " + self.version
 
+class Evaluacion(models.Model):
+    
+    #id es automatico
+    fecha = models.DateTimeField()
+    estado = models.CharField(max_length=50)
+    duracion = models.DurationField()
+
+    class Meta:
+        db_table = "Evaluacion"
+
+    def __str__(self):
+        return "Evaluacion: " + self.fecha
+        
 
 ##############################################################
 #Tablas conectoras
 
 class Usuario_Evaluacion(models.Model):
-    
-    #Definir los parametros de las tablas
 
     def __str__(self):
-        #definir como ver las filas de la tabla
+        #return self.correo + " " + self.idEvaluacion
         pass
 
 class Evaluacion_Rubrica(models.Model):
