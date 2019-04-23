@@ -30,7 +30,7 @@ class Cursos(models.Model):
 
     class Meta:
         db_table = "Cursos"
-        unique_together = (("nombre", "codigo","semestre","año","seccion"),)
+        unique_together = (("codigo","semestre","año","seccion"),)
 
     def __str__(self):
         #definir como ver las filas de la tabla
