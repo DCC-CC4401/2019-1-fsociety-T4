@@ -30,10 +30,11 @@ class Cursos(models.Model):
 
     class Meta:
         db_table = "Cursos"
+        unique_together = (("nombre", "codigo","semestre","año","seccion"),)
 
     def __str__(self):
         #definir como ver las filas de la tabla
-        return self.nombre + " " + self.codigo + " " + self.semestre + " " + self.año + " " + self.seccion
+        return self.nombre + " " + self.codigo + " " + self.semestre + " " + str(self.año) + " " + str(self.seccion)
 
 class Alumnos(models.Model):
 
@@ -74,7 +75,7 @@ class Evaluacion(models.Model):
         db_table = "Evaluacion"
 
     def __str__(self):
-        return "Evaluacion: " + self.fecha
+        return "Evaluacion: " + str(self.id)
         
 
 ##############################################################
@@ -82,38 +83,58 @@ class Evaluacion(models.Model):
 
 class Usuario_Evaluacion(models.Model):
 
+    user = models.ForeignKey(Usuario,on_delete = models.CASCADE, null=True)
+    evaluacion = models.ForeignKey(Evaluacion, on_delete = models.CASCADE, null=True)
+
+    class Meta:
+        unique_together = (("user", "evaluacion"),)
+
     def __str__(self):
-        #return self.correo + " " + self.idEvaluacion
-        pass
+        return "User: " + str(self.user) + " Evaluation: " + str(self.evaluacion)
+        
 
 class Evaluacion_Rubrica(models.Model):
     
-    #Definir los parametros de las tablas
+    evaluacion = models.ForeignKey(Evaluacion,on_delete = models.CASCADE, null=True)
+    rubrica = models.ForeignKey(Rubrica,on_delete = models.CASCADE, null=True)
+
+    class Meta:
+        unique_together = (("evaluacion","rubrica"),)
 
     def __str__(self):
-        #definir como ver las filas de la tabla
-        pass
+        return "Evaluacion: " + str(self.evaluacion) + " Rubrica: " + str(self.rubrica)
 
 class Cursos_Evaluacion(models.Model):
     
-    #Definir los parametros de las tablas
+    curso = models.ForeignKey(Cursos,on_delete = models.CASCADE, null=True)
+    evaluacion = models.ForeignKey(Evaluacion,on_delete = models.CASCADE, null=True)
+
+    class Meta:
+        unique_together = (("curso", "evaluacion"),)
 
     def __str__(self):
-        #definir como ver las filas de la tabla
-        pass
+        return "Curso: " + str(self.curso) + " Evaluacion: " + str(self.evaluacion)
 
 class Cursos_Alumnos(models.Model):
     
-    #Definir los parametros de las tablas
+    nombre = models.CharField(max_length=50, null=True)
+    curso = models.ForeignKey(Cursos, on_delete = models.CASCADE, null=True)
+    alumnos = models.ForeignKey(Alumnos, on_delete = models.CASCADE, null=True)
+
+    class Meta:
+        unique_together = (("curso", "alumnos"),)
 
     def __str__(self):
-        #definir como ver las filas de la tabla
-        pass
+        return self.nombre
 
 class Alumnos_Evaluacion(models.Model):
     
-    #Definir los parametros de las tablas
+    nota = models.FloatField(null=True)
+    alumno = models.ForeignKey(Alumnos,on_delete=models.CASCADE, null=True)
+    evaluacion = models.ForeignKey(Evaluacion,on_delete=models.CASCADE, null=True)
+
+    class Meta:
+        unique_together = (("alumno","evaluacion"),)
 
     def __str__(self):
-        #definir como ver las filas de la tabla
-        pass
+        return "Alumno: " + str(self.alumno) + " Nota: " + str(self.nota) + " Evaluacion: " + str(self.evaluacion)
