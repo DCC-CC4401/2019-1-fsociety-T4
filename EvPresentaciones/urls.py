@@ -33,7 +33,11 @@ urlpatterns = [
          views.Auth_summary, name='auth_summary'),
     path('Summary_student/summary', views.Summary, name='summary'),
 
+    path('LandingPage', views.LandingPage, name='LandingPage'),
 
-    path('LandingPage', views.LandingPage, name='LandingPage')
+    path('HomeAdmin', views.HomeAdmin,name='HomeAdmin'),
+
+    path('Admin_interface/Evaluadores_admin_1',
+         views.agregarEvaluador, name='evaluadores_admin_agregar'),
 
 ]
