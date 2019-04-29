@@ -117,7 +117,7 @@ class Cursos_Evaluacion(models.Model):
 
 class Cursos_Alumnos(models.Model):
     
-    nombre = models.CharField(max_length=50, null=True)
+    nombreGrupo = models.CharField(max_length=50, null=True)
     curso = models.ForeignKey(Cursos, on_delete = models.CASCADE, null=True)
     alumnos = models.ForeignKey(Alumnos, on_delete = models.CASCADE, null=True)
 
