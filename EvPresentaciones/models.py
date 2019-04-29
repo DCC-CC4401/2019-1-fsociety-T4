@@ -19,6 +19,10 @@ class Usuario(models.Model):
         #definir como ver las filas de la tabla
         return self.correo
 
+    def isAdmin(self):
+        #retorna si es admin o no
+        return self.esAdministrador
+
 class Cursos(models.Model):
 
     #id automatico sera la llave

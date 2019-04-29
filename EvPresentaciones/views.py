@@ -1,9 +1,10 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from .models import Usuario
 
 # Create your views here.
-def index(request):
-    return HttpResponse("Hello, world. This is the index of the site.")
+def index(request,valor=False):
+    return render(request, 'EvPresentaciones/Index.html',{'value': valor })
 
 def testPage(request, value):
     """
@@ -60,3 +61,19 @@ def Auth_summary(request):
 
 def Summary(request):
     return render(request,'EvPresentaciones/Summary_student/summary.html')
+
+def LandingPage(request):
+
+    user = request.POST.get('username', None)
+    passw = request.POST.get('password', None)
+
+    try:
+        username = Usuario.objects.get(correo = user, contrasena = passw)
+    except Usuario.DoesNotExist:
+        return index(request,True)
+
+    if username.isAdmin():
+        return render(request,'EvPresentaciones\Admin_interface/Landing_page_admin.html')
+    else:
+        return render(request,'EvPresentaciones\Eval_interface/Landing_page_eval.html')
+    
