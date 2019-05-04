@@ -59,8 +59,9 @@ class Rubrica(models.Model):
     # id es automatico
     nombre = models.CharField(max_length=50, primary_key=True)
     version = models.CharField(max_length=50)
-    tiempo = models.DurationField()
-    archivo = models.FilePathField(path='./', default="./")
+    tiempo = models.DurationField() #tiempoMax
+    tiempoMin = models.DurationField(default=0)
+    archivo = models.FilePathField(path='./EvPresentaciones/ArchivosRubricas', default="./")
 
     class Meta:
         db_table = "Rubrica"

@@ -43,6 +43,8 @@ urlpatterns = [
     path('Admin_interface/Evaluadores_admin_2/<str:correo>',
          views.eliminarEvaluador, name='evaluadores_admin_eliminar'),
 
-    path('Admin_interface/Ver_rubrica/<int:id>', views.ver_rubrica_select, name='ver_select')
+    path('Admin_interface/Ver_rubrica/<int:id>', views.ver_rubrica_select, name='ver_select'),
+
+    path('Admin_interface/Ver_rubrica_detalle/<str:nombre>', views.ver_rubrica_detalle, name='ver_detalle')
 
 ]

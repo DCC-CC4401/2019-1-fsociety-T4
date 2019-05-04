@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from .models import *
-
+import csv
 
 # Create your views here.
 
@@ -137,3 +137,22 @@ def agregarEvaluador(request):
     usuario.save()
 
     return Evaluadores_admin(request)
+
+def ver_rubrica_detalle(request,nombre):
+
+    rubrica = Rubrica.objects.get(nombre=nombre)
+
+    lineas = []
+    #procesar archivo ingresado
+    with open(rubrica.archivo) as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=',')
+        for row in csv_reader:
+            lineas.append(row)
+
+    tmax = lineas[-1][2]
+    tmin = lineas[-1][1]
+
+    lineas[0][0] = ''
+    lineas = lineas[:-1]
+
+    return render(request, 'EvPresentaciones\Admin_interface/ver_rubrica_detalle.html',{'lineas':lineas,'tmax':tmax,'tmin':tmin})

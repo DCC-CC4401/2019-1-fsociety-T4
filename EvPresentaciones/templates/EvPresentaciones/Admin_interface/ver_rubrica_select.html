@@ -43,15 +43,16 @@
         </h3>
     </div>
     <div class="w3-bar-block">
-        <a href="#" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Home</a>
-      <a href="{% url 'cursos_admin' %}" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Cursos</a>
-      <a href="{% url 'evaluadores_admin' %}" onclick="w3_close()"
-        class="w3-bar-item w3-button w3-hover-white">Evaluadores</a>
-      <a href="{% url 'rubricas_admin' %}" onclick="w3_close()"
-        class="w3-bar-item w3-button w3-hover-white">Rúbricas</a>
-      <a href="{% url 'evaluaciones_admin' %}" onclick="w3_close()"
-        class="w3-bar-item w3-button w3-hover-white">Evaluaciones</a>
-      <a href="#contact" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Contact</a>
+        <a href={% url 'landing_page_admin' %} onclick="w3_close()"
+           class="w3-bar-item w3-button w3-hover-white">Home</a>
+        <a href="{% url 'cursos_admin' %}" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Cursos</a>
+        <a href="{% url 'evaluadores_admin' %}" onclick="w3_close()"
+           class="w3-bar-item w3-button w3-hover-white">Evaluadores</a>
+        <a href="{% url 'rubricas_admin' %}" onclick="w3_close()"
+           class="w3-bar-item w3-button w3-hover-white">Rúbricas</a>
+        <a href="{% url 'evaluaciones_admin' %}" onclick="w3_close()"
+           class="w3-bar-item w3-button w3-hover-white">Evaluaciones</a>
+        <a href="#contact" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Contact</a>
     </div>
 </nav>
 
@@ -86,8 +87,16 @@
         {% endfor %}
     </p>
     <div class="w3-container">
-        <button class="w3-button w3-large w3-margin-right w3-red w3-left w3-round">Ver</button>
-        <button class="w3-button w3-large w3-red w3-left w3-round">Modificar</button>
+
+        <form action={% url 'ver_detalle' rubrica %} class="inline">
+            <button class="w3-button w3-large w3-margin-right w3-red w3-left w3-round">Ver</button>
+        </form>
+
+        <form action={% url 'ficha_rubrica_admin' %} class="inline">
+            <button class="w3-button w3-large w3-red w3-left w3-round">Modificar</button>
+        </form>
+
+
         <button class="w3-button w3-large w3-red w3-right w3-round">Eliminar</button>
     </div>
 </div>
