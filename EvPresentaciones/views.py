@@ -26,7 +26,10 @@ def Cursos_admin(request):
 
 
 def Evaluaciones_admin(request):
-    return render(request, 'EvPresentaciones/Admin_interface/Evaluaciones_admin.html')
+
+    pareja = Cursos_Evaluacion.objects.all()
+
+    return render(request, 'EvPresentaciones/Admin_interface/Evaluaciones_admin.html',{'pareja':pareja})
 
 
 def Evaluadores_admin(request):
@@ -47,7 +50,7 @@ def Rubricas_admin(request):
 # funciones Evaluaciones
 
 
-def Evaluacion(request):
+def Evaluaciones(request):
     return render(request, 'EvPresentaciones/Eval_interface/evaluacion.html')
 
 
@@ -82,6 +85,9 @@ def Auth_summary(request):
 def Summary(request):
     return render(request, 'EvPresentaciones/Summary_student/summary.html')
 
+def ver_rubrica_select(request,id):
+
+    return render(request,'EvPresentaciones\Admin_interface/ver_rubrica_select.html')
 
 def LandingPage(request):
 

@@ -40,4 +40,6 @@ urlpatterns = [
     path('Admin_interface/Evaluadores_admin_1',
          views.agregarEvaluador, name='evaluadores_admin_agregar'),
 
+     path('Admin_interface/Ver_rubrica/<int:id>',views.ver_rubrica_select, name='ver_select')
+
 ]
