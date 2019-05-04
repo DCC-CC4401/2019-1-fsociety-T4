@@ -28,6 +28,7 @@ def Cursos_admin(request):
 
 
 def Evaluaciones_admin(request):
+    # obtenemos las evaluaciones y los cursos
     pareja = Cursos_Evaluacion.objects.all()
 
     return render(request, 'EvPresentaciones/Admin_interface/Evaluaciones_admin.html', {'pareja': pareja})
@@ -117,6 +118,12 @@ def LandingPage(request):
 def HomeAdmin(request):
     return render(request, 'EvPresentaciones\Admin_interface/Landing_page_admin.html')
 
+def eliminarEvaluador(request,correo):
+
+    #eliminamos usuario con el id que se nos entrego
+    Usuario.objects.get(correo = correo).delete()
+
+    return Evaluadores_admin(request)
 
 def agregarEvaluador(request):
     nombre = request.POST.get('usrname', None)

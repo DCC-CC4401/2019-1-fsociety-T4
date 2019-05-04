@@ -85,28 +85,27 @@
     <div class="w3-quarter w3-margin-top">
 
         {% for o in evaluadores %}
-            <button onclick="document.getElementById('gestionar').style.display='block'"
-                    class="w3-card w3-container w3-hover-shadow"
+            <button class="w3-card w3-container w3-hover-shadow"
                     style="max-height:380px;min-height: 317px; max-width: 300px">
                 <h3>{{ o.nombre }} {{ o.apellido }}</h3><br>
                 <i class="fas fa-user-alt" style="font-size:100px"></i>
                 <p>{{ o.correo }}</p>
             </button>
+            <div class="w3-margin">
+
+
+                <button class="w3-button w3-red w3-section w3-padding:10px" type="submit">Modificar</button>
+
+                <form action="{% url 'evaluadores_admin_eliminar' o.correo %}">
+                    <button class="w3-button w3-red w3-section w3-padding:10px" type="submit">Eliminar</button>
+                </form>
+            </div>
+
         {% endfor %}
 
     </div>
     <div id="gestionar" class="w3-modal">
-        <div class="w3-modal-content w3-card-4 w3-animate-zoom" style="width:300px">
-            <div class="w3-center"><br>
-                <span onclick="document.getElementById('gestionar').style.display='none'"
-                      class="w3-button w3-xlarge w3-transparent w3-display-topright" title="Close Modal">×</span>
-                <div class="w3-margin">
-                    <button class="w3-button w3-red w3-section w3-padding:10px" type="submit">Modificar</button>
-                    <br>
-                    <button class="w3-button w3-red w3-section w3-padding:10px" type="submit">Eliminar</button>
-                </div>
-            </div>
-        </div>
+
     </div>
     <!--Caja de agregar-->
     <div class="w3-quarter w3-margin-top">

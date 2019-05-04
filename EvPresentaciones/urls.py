@@ -35,11 +35,14 @@ urlpatterns = [
 
     path('LandingPage', views.LandingPage, name='LandingPage'),
 
-    path('HomeAdmin', views.HomeAdmin,name='HomeAdmin'),
+    path('HomeAdmin', views.HomeAdmin, name='HomeAdmin'),
 
     path('Admin_interface/Evaluadores_admin_1',
          views.agregarEvaluador, name='evaluadores_admin_agregar'),
 
-     path('Admin_interface/Ver_rubrica/<int:id>',views.ver_rubrica_select, name='ver_select')
+    path('Admin_interface/Evaluadores_admin_2/<str:correo>',
+         views.eliminarEvaluador, name='evaluadores_admin_eliminar'),
+
+    path('Admin_interface/Ver_rubrica/<int:id>', views.ver_rubrica_select, name='ver_select')
 
 ]

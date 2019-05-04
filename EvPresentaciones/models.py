@@ -1,31 +1,31 @@
 from django.db import models
 
+
 # Create your models here.
 # Tablas de la base de datos
 class Usuario(models.Model):
-
-    #Parametros de la tabla
+    # Parametros de la tabla
     correo = models.EmailField(primary_key=True)
     nombre = models.CharField(max_length=50)
     apellido = models.CharField(max_length=50)
     esAdministrador = models.BooleanField()
     contrasena = models.CharField(max_length=50)
 
-    #Para linkear las tablas
+    # Para linkear las tablas
     class Meta:
         db_table = "Usuario"
 
     def __str__(self):
-        #definir como ver las filas de la tabla
+        # definir como ver las filas de la tabla
         return self.correo
 
     def isAdmin(self):
-        #retorna si es admin o no
+        # retorna si es admin o no
         return self.esAdministrador
 
-class Cursos(models.Model):
 
-    #id automatico sera la llave
+class Cursos(models.Model):
+    # id automatico sera la llave
     nombre = models.CharField(max_length=100)
     codigo = models.CharField(max_length=100)
     semestre = models.CharField(max_length=50)
@@ -34,14 +34,14 @@ class Cursos(models.Model):
 
     class Meta:
         db_table = "Cursos"
-        unique_together = (("codigo","semestre","año","seccion"),)
+        unique_together = (("codigo", "semestre", "año", "seccion"),)
 
     def __str__(self):
-        #definir como ver las filas de la tabla
+        # definir como ver las filas de la tabla
         return self.nombre + " " + self.codigo + " " + self.semestre + " " + str(self.año) + " " + str(self.seccion)
 
-class Alumnos(models.Model):
 
+class Alumnos(models.Model):
     nombre = models.CharField(max_length=50)
     apellido = models.CharField(max_length=50)
     presento = models.BooleanField()
@@ -54,13 +54,13 @@ class Alumnos(models.Model):
     def __str__(self):
         return self.rut + " " + self.codigoVerificador
 
+
 class Rubrica(models.Model):
-    
-    #id es automatico
-    nombre = models.CharField(max_length=50,primary_key=True)
+    # id es automatico
+    nombre = models.CharField(max_length=50, primary_key=True)
     version = models.CharField(max_length=50)
     tiempo = models.DurationField()
-    archivo = models.FilePathField(path="./", default="./")
+    archivo = models.FilePathField(path='./', default="./")
 
     class Meta:
         db_table = "Rubrica"
@@ -68,9 +68,9 @@ class Rubrica(models.Model):
     def __str__(self):
         return self.nombre + " " + self.version
 
+
 class Evaluacion(models.Model):
-    
-    #id es automatico
+    # id es automatico
     fechaInicio = models.DateTimeField()
     fechaTermino = models.DateTimeField()
     estado = models.CharField(max_length=50)
@@ -81,38 +81,36 @@ class Evaluacion(models.Model):
 
     def __str__(self):
         return "Evaluacion: " + str(self.id)
-        
+
 
 ##############################################################
-#Tablas conectoras
+# Tablas conectoras
 
 class Usuario_Evaluacion(models.Model):
-
-    user = models.ForeignKey(Usuario,on_delete = models.CASCADE, null=True)
-    evaluacion = models.ForeignKey(Evaluacion, on_delete = models.CASCADE, null=True)
+    user = models.ForeignKey(Usuario, on_delete=models.CASCADE, null=True)
+    evaluacion = models.ForeignKey(Evaluacion, on_delete=models.CASCADE, null=True)
 
     class Meta:
         unique_together = (("user", "evaluacion"),)
 
     def __str__(self):
         return "User: " + str(self.user) + " Evaluation: " + str(self.evaluacion)
-        
+
 
 class Evaluacion_Rubrica(models.Model):
-    
-    evaluacion = models.ForeignKey(Evaluacion,on_delete = models.CASCADE, null=True)
-    rubrica = models.ForeignKey(Rubrica,on_delete = models.CASCADE, null=True)
+    evaluacion = models.ForeignKey(Evaluacion, on_delete=models.CASCADE, null=True)
+    rubrica = models.ForeignKey(Rubrica, on_delete=models.CASCADE, null=True)
 
     class Meta:
-        unique_together = (("evaluacion","rubrica"),)
+        unique_together = (("evaluacion", "rubrica"),)
 
     def __str__(self):
         return "Evaluacion: " + str(self.evaluacion) + " Rubrica: " + str(self.rubrica)
 
+
 class Cursos_Evaluacion(models.Model):
-    
-    curso = models.ForeignKey(Cursos,on_delete = models.CASCADE, null=True)
-    evaluacion = models.ForeignKey(Evaluacion,on_delete = models.CASCADE, null=True)
+    curso = models.ForeignKey(Cursos, on_delete=models.CASCADE, null=True)
+    evaluacion = models.ForeignKey(Evaluacion, on_delete=models.CASCADE, null=True)
 
     class Meta:
         unique_together = (("curso", "evaluacion"),)
@@ -120,11 +118,11 @@ class Cursos_Evaluacion(models.Model):
     def __str__(self):
         return "Curso: " + str(self.curso) + " Evaluacion: " + str(self.evaluacion)
 
+
 class Cursos_Alumnos(models.Model):
-    
-    nombreGrupo = models.CharField(max_length=50, null=True)
-    curso = models.ForeignKey(Cursos, on_delete = models.CASCADE, null=True)
-    alumnos = models.ForeignKey(Alumnos, on_delete = models.CASCADE, null=True)
+    nombreGrupo = models.CharField(max_length=50, null=True, default="No Group")
+    curso = models.ForeignKey(Cursos, on_delete=models.CASCADE, null=True)
+    alumnos = models.ForeignKey(Alumnos, on_delete=models.CASCADE, null=True)
 
     class Meta:
         unique_together = (("curso", "alumnos"),)
@@ -132,14 +130,14 @@ class Cursos_Alumnos(models.Model):
     def __str__(self):
         return self.nombre
 
+
 class Alumnos_Evaluacion(models.Model):
-    
     nota = models.FloatField(null=True)
-    alumno = models.ForeignKey(Alumnos,on_delete=models.CASCADE, null=True)
-    evaluacion = models.ForeignKey(Evaluacion,on_delete=models.CASCADE, null=True)
+    alumno = models.ForeignKey(Alumnos, on_delete=models.CASCADE, null=True)
+    evaluacion = models.ForeignKey(Evaluacion, on_delete=models.CASCADE, null=True)
 
     class Meta:
-        unique_together = (("alumno","evaluacion"),)
+        unique_together = (("alumno", "evaluacion"),)
 
     def __str__(self):
         return "Alumno: " + str(self.alumno) + " Nota: " + str(self.nota) + " Evaluacion: " + str(self.evaluacion)
