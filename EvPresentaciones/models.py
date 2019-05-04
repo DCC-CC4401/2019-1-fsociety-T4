@@ -60,7 +60,7 @@ class Rubrica(models.Model):
     nombre = models.CharField(max_length=50,primary_key=True)
     version = models.CharField(max_length=50)
     tiempo = models.DurationField()
-    archivo = models.FilePathField()
+    archivo = models.FilePathField(path="./", default="./")
 
     class Meta:
         db_table = "Rubrica"

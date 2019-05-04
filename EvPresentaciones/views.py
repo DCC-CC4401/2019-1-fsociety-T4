@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from .models import *
 
+
 # Create your views here.
 
 
@@ -18,6 +19,7 @@ def testPage(request, value):
     # Retornamos el el request, con el html asociado y un diccionario con los parametros que este necesita.
     return render(request, 'EvPresentaciones/testPage.html', {'value': value, 'list': range(1, value)})
 
+
 # funciones Admin interface
 
 
@@ -26,14 +28,12 @@ def Cursos_admin(request):
 
 
 def Evaluaciones_admin(request):
-
     pareja = Cursos_Evaluacion.objects.all()
 
-    return render(request, 'EvPresentaciones/Admin_interface/Evaluaciones_admin.html',{'pareja':pareja})
+    return render(request, 'EvPresentaciones/Admin_interface/Evaluaciones_admin.html', {'pareja': pareja})
 
 
 def Evaluadores_admin(request):
-
     # obtenemos numero de evaluadores
     evaluadores = Usuario.objects.all()
 
@@ -46,6 +46,7 @@ def Landing_page_admin(request):
 
 def Rubricas_admin(request):
     return render(request, 'EvPresentaciones/Admin_interface/Rubricas_admin.html')
+
 
 # funciones Evaluaciones
 
@@ -65,6 +66,7 @@ def Post_evaluacion(request):
 def Post_evaluaciones_admin(request):
     return render(request, 'EvPresentaciones/Eval_interface/postevaluacionadmin.html')
 
+
 # funciones Rubricas
 
 
@@ -74,6 +76,7 @@ def Ficha_Rubrica_admin(request):
 
 def Ficha_Rubrica_evaluador(request):
     return render(request, 'EvPresentaciones/FichasRubricas/FichaRubricaEvaluador.html')
+
 
 # funciones resumen evaluacion
 
@@ -85,12 +88,18 @@ def Auth_summary(request):
 def Summary(request):
     return render(request, 'EvPresentaciones/Summary_student/summary.html')
 
-def ver_rubrica_select(request,id):
 
-    return render(request,'EvPresentaciones\Admin_interface/ver_rubrica_select.html')
+def ver_rubrica_select(request, id):
+    rubrica = Evaluacion_Rubrica.objects.get(evaluacion=id)
+
+    # sacar los aspectos del archivo en xml
+    aspectos = ["calidad", "tiempo", "contenido"]
+
+    return render(request, 'EvPresentaciones/Admin_interface/ver_rubrica_select.html',
+                  {'rubrica': rubrica.rubrica.nombre, 'aspectos': aspectos})
+
 
 def LandingPage(request):
-
     user = request.POST.get('username', None)
     passw = request.POST.get('password', None)
 
@@ -108,8 +117,8 @@ def LandingPage(request):
 def HomeAdmin(request):
     return render(request, 'EvPresentaciones\Admin_interface/Landing_page_admin.html')
 
-def agregarEvaluador(request):
 
+def agregarEvaluador(request):
     nombre = request.POST.get('usrname', None)
     apellido = request.POST.get('apellido', None)
     correo = request.POST.get('correo', None)
