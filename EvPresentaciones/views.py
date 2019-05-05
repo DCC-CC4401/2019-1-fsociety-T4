@@ -46,7 +46,36 @@ def Landing_page_admin(request):
 
 
 def Rubricas_admin(request):
-    return render(request, 'EvPresentaciones/Admin_interface/Rubricas_admin.html')
+
+    rubricas = Rubrica.objects.all()
+    listaDeAspectos = []
+    listaNombres = []
+
+    for rubrica in rubricas:
+        listaNombres.append(str(rubrica.nombre))
+
+        # sacar los aspectos del archivo en csv
+        aspectos = []
+
+        lineas = []
+        # procesar archivo ingresado
+        with open(rubrica.archivo) as csv_file:
+            csv_reader = csv.reader(csv_file, delimiter=',')
+            for row in csv_reader:
+                lineas.append(row)
+
+        for r in lineas[1:-1]:
+            aspectos.append(r[0])
+
+        listaDeAspectos.append(aspectos)
+
+    listaEntregada = []
+    for i in range(len(listaNombres)):
+        #añadir el indice al final porque template es rarito y no acepta colocar id strings.
+        listaEntregada.append([listaNombres[i],listaDeAspectos[i],i])
+
+
+    return render(request, 'EvPresentaciones/Admin_interface/Rubricas_admin.html',{'lista':listaEntregada})
 
 
 # funciones Evaluaciones
@@ -91,10 +120,21 @@ def Summary(request):
 
 
 def ver_rubrica_select(request, id):
+
     rubrica = Evaluacion_Rubrica.objects.get(evaluacion=id)
 
-    # sacar los aspectos del archivo en xml
-    aspectos = ["calidad", "tiempo", "contenido"]
+    # sacar los aspectos del archivo en csv
+    aspectos = []
+
+    lineas = []
+    # procesar archivo ingresado
+    with open(rubrica.rubrica.archivo) as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=',')
+        for row in csv_reader:
+            lineas.append(row)
+
+    for r in lineas[1:-1]:
+        aspectos.append(r[0])
 
     return render(request, 'EvPresentaciones/Admin_interface/ver_rubrica_select.html',
                   {'rubrica': rubrica.rubrica.nombre, 'aspectos': aspectos})
