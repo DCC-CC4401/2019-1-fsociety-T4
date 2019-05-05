@@ -52,7 +52,7 @@ class Alumnos(models.Model):
         db_table = "Alumnos"
 
     def __str__(self):
-        return self.rut + " " + self.codigoVerificador
+        return str(self.rut) + "-" + str(self.codigoVerificador)
 
 
 class Rubrica(models.Model):
@@ -129,7 +129,7 @@ class Cursos_Alumnos(models.Model):
         unique_together = (("curso", "alumnos"),)
 
     def __str__(self):
-        return self.nombre
+        return self.nombreGrupo
 
 
 class Alumnos_Evaluacion(models.Model):
