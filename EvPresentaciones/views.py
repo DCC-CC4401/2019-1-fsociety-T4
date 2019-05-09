@@ -140,8 +140,9 @@ def ver_rubrica_select(request, id):
                   {'rubrica': rubrica.rubrica.nombre, 'aspectos': aspectos})
 
 
+# Si se hace request de la landingpage, se verifica el tipo de usuario y se retorna el render correspondiente
 def LandingPage(request):
-    user = request.POST.get('username', None)
+    user = request.POST.get('username', None) # Get data from POST
     passw = request.POST.get('password', None)
 
     try:
@@ -149,6 +150,7 @@ def LandingPage(request):
     except Usuario.DoesNotExist:
         return index(request, True)
 
+    # Si llegamos aquí el usuario ya se autenticó
     if username.isAdmin():
         return render(request, 'EvPresentaciones\Admin_interface/Landing_page_admin.html')
     else:
