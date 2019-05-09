@@ -16,3 +16,5 @@ Crear dump
 Cargar dump
 
     python manage.py loaddata db.json
+
+#TEST 
