@@ -36,7 +36,10 @@ def Evaluaciones_admin(request):
 
 def Evaluadores_admin(request):
     # obtenemos numero de evaluadores
-    evaluadores = Usuario.objects.all()
+    try:
+        evaluadores = Usuario.objects.all()
+    except Usuario.DoesNotExist:
+        evaluadores = []
 
     return render(request, 'EvPresentaciones/Admin_interface/Evaluadores_admin.html', {'evaluadores': evaluadores})
 
