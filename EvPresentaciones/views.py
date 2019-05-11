@@ -62,7 +62,6 @@ def agregar_evaluaciones(request):
     rubrica = request.POST.get('rubricas', None)
 
     # calculamos duracion a partir de la rubrica, Rubrica siempre va a existir en la base de datos
-    print(rubrica)
     rubricaObj = Rubrica.objects.get(nombre=rubrica)
     tMax = rubricaObj.tiempo
 
@@ -86,13 +85,15 @@ def agregar_evaluaciones(request):
     # hay que añadirle a cada alumno del curso la evaluacion
     try:
         alumnos = Cursos_Alumnos.objects.filter(curso_id=curso)
+
     except Cursos_Alumnos.DoesNotExist:
         alumnos = []
 
-    for alumno in alumnos:
-        alum_ev = Alumnos_Evaluacion(alumno_id=alumno.id,
+    for alum in alumnos:
+        alum_ev = Alumnos_Evaluacion(alumno=alum.alumnos,
                                      evaluacion=evaluacion)
         alum_ev.save()
+
 
     return Evaluaciones_admin(request)
 
