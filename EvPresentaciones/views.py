@@ -2,7 +2,8 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from .models import *
 import csv
-
+import random
+import string
 
 # Create your views here.
 
@@ -169,12 +170,17 @@ def eliminarEvaluador(request, correo):
     return Evaluadores_admin(request)
 
 
+def randomString(stringLength=10):
+    """Generate a random string of fixed length """
+    letters = string.ascii_lowercase
+    return ''.join(random.choice(letters) for i in range(stringLength))
+
 def agregarEvaluador(request):
     nombre = request.POST.get('usrname', None)
     apellido = request.POST.get('apellido', None)
     correo = request.POST.get('correo', None)
 
-    contraseña = "RandomString"
+    contraseña = randomString(25)
 
     usuario = Usuario(nombre=nombre, apellido=apellido, correo=correo,
                       contrasena=contraseña, esAdministrador=False)
