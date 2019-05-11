@@ -159,7 +159,6 @@ def LandingPage(request):
     else:
         return render(request, 'EvPresentaciones\Eval_interface/Landing_page_eval.html')
 
-
 def HomeAdmin(request):
     return render(request, 'EvPresentaciones\Admin_interface/Landing_page_admin.html')
 

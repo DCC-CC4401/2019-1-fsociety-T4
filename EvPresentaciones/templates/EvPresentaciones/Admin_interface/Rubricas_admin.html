@@ -81,7 +81,9 @@
         </div>
 
         <div class="w3-container">
-            <button class="w3-button w3-large w3-red w3-right w3-round">Agregar nueva rúbrica</button>
+            <form action={% url 'ficha_rubrica_admin' %}>
+                <button class="w3-button w3-large w3-red w3-right w3-round">Agregar nueva rúbrica</button>
+            </form>
             <br>
         </div>
         <!--Seccion rubricas-->
