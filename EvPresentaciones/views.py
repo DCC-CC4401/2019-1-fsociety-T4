@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from .models import *
 import csv
 
+
 # Create your views here.
 
 
@@ -49,7 +50,6 @@ def Landing_page_admin(request):
 
 
 def Rubricas_admin(request):
-
     rubricas = Rubrica.objects.all()
     listaDeAspectos = []
     listaNombres = []
@@ -74,11 +74,10 @@ def Rubricas_admin(request):
 
     listaEntregada = []
     for i in range(len(listaNombres)):
-        #añadir el indice al final porque template es rarito y no acepta colocar id strings.
-        listaEntregada.append([listaNombres[i],listaDeAspectos[i],i])
+        # añadir el indice al final porque template es rarito y no acepta colocar id strings.
+        listaEntregada.append([listaNombres[i], listaDeAspectos[i], i])
 
-
-    return render(request, 'EvPresentaciones/Admin_interface/Rubricas_admin.html',{'lista':listaEntregada})
+    return render(request, 'EvPresentaciones/Admin_interface/Rubricas_admin.html', {'lista': listaEntregada})
 
 
 # funciones Evaluaciones
@@ -102,7 +101,7 @@ def Post_evaluaciones_admin(request):
 
 # funciones Rubricas
 
-
+# ficha en donde los administradores crean nuevas rubricas
 def Ficha_Rubrica_admin(request):
     return render(request, 'EvPresentaciones/FichasRubricas/FichaRubricaAdministrador.html')
 
@@ -123,7 +122,6 @@ def Summary(request):
 
 
 def ver_rubrica_select(request, id):
-
     rubrica = Evaluacion_Rubrica.objects.get(evaluacion=id)
 
     # sacar los aspectos del archivo en csv
@@ -145,7 +143,7 @@ def ver_rubrica_select(request, id):
 
 # Si se hace request de la landingpage, se verifica el tipo de usuario y se retorna el render correspondiente
 def LandingPage(request):
-    user = request.POST.get('username', None) # Get data from POST
+    user = request.POST.get('username', None)  # Get data from POST
     passw = request.POST.get('password', None)
 
     try:
@@ -159,15 +157,17 @@ def LandingPage(request):
     else:
         return render(request, 'EvPresentaciones\Eval_interface/Landing_page_eval.html')
 
+
 def HomeAdmin(request):
     return render(request, 'EvPresentaciones\Admin_interface/Landing_page_admin.html')
 
-def eliminarEvaluador(request,correo):
 
-    #eliminamos usuario con el id que se nos entrego
-    Usuario.objects.get(correo = correo).delete()
+def eliminarEvaluador(request, correo):
+    # eliminamos usuario con el id que se nos entrego
+    Usuario.objects.get(correo=correo).delete()
 
     return Evaluadores_admin(request)
+
 
 def agregarEvaluador(request):
     nombre = request.POST.get('usrname', None)
@@ -182,12 +182,12 @@ def agregarEvaluador(request):
 
     return Evaluadores_admin(request)
 
-def ver_rubrica_detalle(request,nombre):
 
+def ver_rubrica_detalle(request, nombre):
     rubrica = Rubrica.objects.get(nombre=nombre)
 
     lineas = []
-    #procesar archivo ingresado
+    # procesar archivo ingresado
     with open(rubrica.archivo) as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
         for row in csv_reader:
@@ -199,4 +199,5 @@ def ver_rubrica_detalle(request,nombre):
     lineas[0][0] = ''
     lineas = lineas[:-1]
 
-    return render(request, 'EvPresentaciones\Admin_interface/ver_rubrica_detalle.html',{'lineas':lineas,'tmax':tmax,'tmin':tmin})
+    return render(request, 'EvPresentaciones\Admin_interface/ver_rubrica_detalle.html',
+                  {'lineas': lineas, 'tmax': tmax, 'tmin': tmin})
