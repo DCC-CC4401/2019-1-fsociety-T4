@@ -72,8 +72,8 @@ class Rubrica(models.Model):
 
 class Evaluacion(models.Model):
     # id es automatico
-    fechaInicio = models.DateTimeField()
-    fechaTermino = models.DateTimeField()
+    fechaInicio = models.DateField()
+    fechaTermino = models.DateField()
     estado = models.CharField(max_length=50)
     duracion = models.DurationField()
 

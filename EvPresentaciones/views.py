@@ -2,6 +2,9 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from .models import *
 import csv
+import random
+import string
+
 
 # Create your views here.
 
@@ -31,12 +34,76 @@ def Evaluaciones_admin(request):
     # obtenemos las evaluaciones y los cursos
     pareja = Cursos_Evaluacion.objects.all()
 
-    return render(request, 'EvPresentaciones/Admin_interface/Evaluaciones_admin.html', {'pareja': pareja})
+    # Datos para agregar nuevas evaluaciones
+    try:
+        rubricas = Rubrica.objects.all()
+    except Rubrica.DoesNotExist:
+        rubricas = []
+
+    try:
+        cursos = Cursos.objects.all()
+    except Cursos.DoesNotExist:
+        cursos = []
+
+    return render(request, 'EvPresentaciones/Admin_interface/Evaluaciones_admin.html',
+                  {'pareja': pareja, 'rubricas': rubricas, 'cursos': cursos})
+
+
+def agregar_evaluaciones(request):
+    """
+    Vista que se ejecuta al annadir evaluaciones a la plataforma.
+    """
+
+    # extraemos los datos del post
+    fecha_inicio = request.POST.get('inicio', None)
+    fecha_termino = request.POST.get('termino', None)
+    estado = request.POST.get('estado', None)
+    curso = request.POST.get('curso', None)
+    rubrica = request.POST.get('rubricas', None)
+
+    # calculamos duracion a partir de la rubrica, Rubrica siempre va a existir en la base de datos
+    rubricaObj = Rubrica.objects.get(nombre=rubrica)
+    tMax = rubricaObj.tiempo
+
+    # añadimos la evaluacion a las tablas correspondientes
+    evaluacion = Evaluacion(fechaInicio=fecha_inicio,
+                            fechaTermino=fecha_termino,
+                            estado=estado,
+                            duracion=tMax)
+    evaluacion.save()
+
+    # evaluacion-rubrica
+    ev_rub = Evaluacion_Rubrica(evaluacion=evaluacion,
+                                rubrica=rubricaObj)
+    ev_rub.save()
+
+    # curso-evaluacion
+    cur_ev = Cursos_Evaluacion(curso_id=curso,
+                               evaluacion=evaluacion)
+    cur_ev.save()
+
+    # hay que añadirle a cada alumno del curso la evaluacion
+    try:
+        alumnos = Cursos_Alumnos.objects.filter(curso_id=curso)
+
+    except Cursos_Alumnos.DoesNotExist:
+        alumnos = []
+
+    for alum in alumnos:
+        alum_ev = Alumnos_Evaluacion(alumno=alum.alumnos,
+                                     evaluacion=evaluacion)
+        alum_ev.save()
+
+
+    return Evaluaciones_admin(request)
 
 
 def Evaluadores_admin(request):
     # obtenemos numero de evaluadores
-    evaluadores = Usuario.objects.all()
+    try:
+        evaluadores = Usuario.objects.all()
+    except Usuario.DoesNotExist:
+        evaluadores = []
 
     return render(request, 'EvPresentaciones/Admin_interface/Evaluadores_admin.html', {'evaluadores': evaluadores})
 
@@ -46,7 +113,6 @@ def Landing_page_admin(request):
 
 
 def Rubricas_admin(request):
-
     rubricas = Rubrica.objects.all()
     listaDeAspectos = []
     listaNombres = []
@@ -71,11 +137,10 @@ def Rubricas_admin(request):
 
     listaEntregada = []
     for i in range(len(listaNombres)):
-        #añadir el indice al final porque template es rarito y no acepta colocar id strings.
-        listaEntregada.append([listaNombres[i],listaDeAspectos[i],i])
+        # añadir el indice al final porque template es rarito y no acepta colocar id strings.
+        listaEntregada.append([listaNombres[i], listaDeAspectos[i], i])
 
-
-    return render(request, 'EvPresentaciones/Admin_interface/Rubricas_admin.html',{'lista':listaEntregada})
+    return render(request, 'EvPresentaciones/Admin_interface/Rubricas_admin.html', {'lista': listaEntregada})
 
 
 # funciones Evaluaciones
@@ -99,7 +164,7 @@ def Post_evaluaciones_admin(request):
 
 # funciones Rubricas
 
-
+# ficha en donde los administradores crean nuevas rubricas
 def Ficha_Rubrica_admin(request):
     return render(request, 'EvPresentaciones/FichasRubricas/FichaRubricaAdministrador.html')
 
@@ -120,7 +185,6 @@ def Summary(request):
 
 
 def ver_rubrica_select(request, id):
-
     rubrica = Evaluacion_Rubrica.objects.get(evaluacion=id)
 
     # sacar los aspectos del archivo en csv
@@ -142,7 +206,7 @@ def ver_rubrica_select(request, id):
 
 # Si se hace request de la landingpage, se verifica el tipo de usuario y se retorna el render correspondiente
 def LandingPage(request):
-    user = request.POST.get('username', None) # Get data from POST
+    user = request.POST.get('username', None)  # Get data from POST
     passw = request.POST.get('password', None)
 
     try:
@@ -160,19 +224,26 @@ def LandingPage(request):
 def HomeAdmin(request):
     return render(request, 'EvPresentaciones\Admin_interface/Landing_page_admin.html')
 
-def eliminarEvaluador(request,correo):
 
-    #eliminamos usuario con el id que se nos entrego
-    Usuario.objects.get(correo = correo).delete()
+def eliminarEvaluador(request, correo):
+    # eliminamos usuario con el id que se nos entrego
+    Usuario.objects.get(correo=correo).delete()
 
     return Evaluadores_admin(request)
+
+
+def randomString(stringLength=10):
+    """Generate a random string of fixed length """
+    letters = string.ascii_lowercase
+    return ''.join(random.choice(letters) for i in range(stringLength))
+
 
 def agregarEvaluador(request):
     nombre = request.POST.get('usrname', None)
     apellido = request.POST.get('apellido', None)
     correo = request.POST.get('correo', None)
 
-    contraseña = "RandomString"
+    contraseña = randomString(25)
 
     usuario = Usuario(nombre=nombre, apellido=apellido, correo=correo,
                       contrasena=contraseña, esAdministrador=False)
@@ -180,12 +251,12 @@ def agregarEvaluador(request):
 
     return Evaluadores_admin(request)
 
-def ver_rubrica_detalle(request,nombre):
 
+def ver_rubrica_detalle(request, nombre):
     rubrica = Rubrica.objects.get(nombre=nombre)
 
     lineas = []
-    #procesar archivo ingresado
+    # procesar archivo ingresado
     with open(rubrica.archivo) as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
         for row in csv_reader:
@@ -197,4 +268,5 @@ def ver_rubrica_detalle(request,nombre):
     lineas[0][0] = ''
     lineas = lineas[:-1]
 
-    return render(request, 'EvPresentaciones\Admin_interface/ver_rubrica_detalle.html',{'lineas':lineas,'tmax':tmax,'tmin':tmin})
+    return render(request, 'EvPresentaciones\Admin_interface/ver_rubrica_detalle.html',
+                  {'lineas': lineas, 'tmax': tmax, 'tmin': tmin})
