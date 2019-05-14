@@ -1,6 +1,14 @@
 # 2019-1-fsociety-T4
 
-Para que el proyecto reconozca la base de datos hacer lo siguiente
+##Activar enviroment de python3
+
+source pyenv/bin/activate
+
+##Crear superusuario
+
+python3 manage.py createsuperuser 
+
+##Para que el proyecto reconozca la base de datos hacer lo siguiente
 
     python manage.py makemigrations EvPresentaciones
     python manage.py migrate EvPresentaciones
@@ -16,3 +24,4 @@ Crear dump
 Cargar dump
 
     python manage.py loaddata db.json
+
