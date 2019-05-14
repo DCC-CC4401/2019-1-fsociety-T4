@@ -216,13 +216,13 @@ def LandingPage(request):
 
     # Si llegamos aquí el usuario ya se autenticó
     if username.isAdmin():
-        return render(request, 'EvPresentaciones\Admin_interface/Landing_page_admin.html')
+        return render(request, 'EvPresentaciones/Admin_interface/Landing_page_admin.html')
     else:
-        return render(request, 'EvPresentaciones\Eval_interface/Landing_page_eval.html')
+        return render(request, 'EvPresentaciones/Eval_interface/Landing_page_eval.html')
 
 
 def HomeAdmin(request):
-    return render(request, 'EvPresentaciones\Admin_interface/Landing_page_admin.html')
+    return render(request, 'EvPresentaciones/Admin_interface/Landing_page_admin.html')
 
 
 def eliminarEvaluador(request, correo):
@@ -268,5 +268,5 @@ def ver_rubrica_detalle(request, nombre):
     lineas[0][0] = ''
     lineas = lineas[:-1]
 
-    return render(request, 'EvPresentaciones\Admin_interface/ver_rubrica_detalle.html',
+    return render(request, 'EvPresentaciones/Admin_interface/ver_rubrica_detalle.html',
                   {'lineas': lineas, 'tmax': tmax, 'tmin': tmin})
