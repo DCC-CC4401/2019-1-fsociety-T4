@@ -20,6 +20,7 @@ urlpatterns = [
 
 # Vistas de evaluador
 
+    path('Eval_interface/langing_page_eval',                views.Laging_page_eval,       name='landing_page_eval'),
     path('Eval_interface/evaluacion',                       views.Evaluacion,             name='evaluacion'),
     path('Eval_interface/evaluacionadmin',                  views.Evaluacion_admin,       name='evaluacion_admin'),
     path('Eval_interface/postevaluacion',                   views.Post_evaluacion,        name='post_evaluacion'),

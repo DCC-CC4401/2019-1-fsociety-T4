@@ -270,3 +270,6 @@ def ver_rubrica_detalle(request, nombre):
 
     return render(request, 'EvPresentaciones/Admin_interface/ver_rubrica_detalle.html',
                   {'lineas': lineas, 'tmax': tmax, 'tmin': tmin})
+
+def Laging_page_eval(request):
+    return render(request, 'EvPresentaciones/Eval_interface/Landing_page_eval.html')
