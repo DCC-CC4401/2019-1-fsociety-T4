@@ -49,6 +49,30 @@ def Evaluaciones_admin(request):
                   {'pareja': pareja, 'rubricas': rubricas, 'cursos': cursos})
 
 
+def eliminar_evaluaciones(request, id):
+    """
+    Vista que sirve para eliminar las evaluaciones cuando se presiona el boton eliminar en una rubrica.
+    Solo deberia ser utilizada por el administrador.
+    :param request:
+    :return:
+    """
+
+    # Eliminamos evaluacion por el id
+    Evaluacion.objects.get(id=id).delete()
+
+    # hay que borrar de todas las otras tablas en donde se guarde relacion.
+    Usuario_Evaluacion.objects.filter(evaluacion_id=id).delete()
+    Evaluacion_Rubrica.objects.filter(evaluacion_id=id).delete()
+    Cursos_Evaluacion.objects.filter(evaluacion_id=id).delete()
+    Alumnos_Evaluacion.objects.filter(evaluacion_id=id).delete()
+
+    # mensaje de debuggeo.
+    print("borrado:" + str(id))
+
+    # regresamos a la pagina normalmente
+    return Evaluaciones_admin(request)
+
+
 def agregar_evaluaciones(request):
     """
     Vista que se ejecuta al annadir evaluaciones a la plataforma.
@@ -93,7 +117,6 @@ def agregar_evaluaciones(request):
         alum_ev = Alumnos_Evaluacion(alumno=alum.alumnos,
                                      evaluacion=evaluacion)
         alum_ev.save()
-
 
     return Evaluaciones_admin(request)
 
@@ -208,15 +231,15 @@ def ver_rubrica_select(request, id):
 def LandingPage(request):
     user = request.POST.get('username', None)  # Get data from POST
     passw = request.POST.get('password', None)
-    
+
     try:
         username = Usuario.objects.get(correo=user, contrasena=passw)
 
     except Usuario.DoesNotExist:
         return index(request, True)
-    #Guardamos en la sesion los valores de usuario y mail para futuros usos.
-    request.session['user_name']=user
-    algo= request.session['user_name']
+    # Guardamos en la sesion los valores de usuario y mail para futuros usos.
+    request.session['user_name'] = user
+    algo = request.session['user_name']
 
     # Si llegamos aquí el usuario ya se autenticó
     if username.isAdmin():
@@ -275,24 +298,26 @@ def ver_rubrica_detalle(request, nombre):
     return render(request, 'EvPresentaciones/Admin_interface/ver_rubrica_detalle.html',
                   {'lineas': lineas, 'tmax': tmax, 'tmin': tmin})
 
+
 def Laging_page_eval(request):
     return render(request, 'EvPresentaciones/Eval_interface/Landing_page_eval.html')
 
-#Funcion para la vista para los evaluadores
+
+# Funcion para la vista para los evaluadores
 def Evaluaciones_eval(request):
-    #diccionario para guardar la informacion que devolveremos
-    context={}
-    #consigo informacion de la sesion
-    evaluador= request.session['user_name']
-    #saco objetos de la base de datos ordenados
-    par= Evaluacion.objects.filter(usuario_evaluacion__user=evaluador).order_by('fechaInicio')
-    todo= Usuario_Evaluacion.objects.all()
-    algo= Usuario_Evaluacion.objects.filter(user=evaluador)
+    # diccionario para guardar la informacion que devolveremos
+    context = {}
+    # consigo informacion de la sesion
+    evaluador = request.session['user_name']
+    # saco objetos de la base de datos ordenados
+    par = Evaluacion.objects.filter(usuario_evaluacion__user=evaluador).order_by('fechaInicio')
+    todo = Usuario_Evaluacion.objects.all()
+    algo = Usuario_Evaluacion.objects.filter(user=evaluador)
     print(par)
     print(todo)
     print(algo)
-    #guardo en diccionario
-    context['par']=par
-    context['todo']=todo
-    context['evaluador']=algo
-    return render(request, 'EvPresentaciones/Eval_interface/evaluacionesEvaluador.html',context)
+    # guardo en diccionario
+    context['par'] = par
+    context['todo'] = todo
+    context['evaluador'] = algo
+    return render(request, 'EvPresentaciones/Eval_interface/evaluacionesEvaluador.html', context)
