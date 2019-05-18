@@ -45,8 +45,15 @@ def Evaluaciones_admin(request):
     except Cursos.DoesNotExist:
         cursos = []
 
+    #extraemos evaluaciones y rubricas para mostrar y modificar las cosas ya existentes
+    try:
+        ev_rub = Evaluacion_Rubrica.objects.all()
+    except Evaluacion_Rubrica.DoesNotExist:
+        ev_rub = []
+
+
     return render(request, 'EvPresentaciones/Admin_interface/Evaluaciones_admin.html',
-                  {'pareja': pareja, 'rubricas': rubricas, 'cursos': cursos})
+                  {'pareja': pareja, 'rubricas': rubricas, 'cursos': cursos, 'ev_rub': ev_rub})
 
 
 def eliminar_evaluaciones(request, id):
