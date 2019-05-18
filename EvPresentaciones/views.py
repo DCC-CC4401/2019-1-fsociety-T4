@@ -208,11 +208,15 @@ def ver_rubrica_select(request, id):
 def LandingPage(request):
     user = request.POST.get('username', None)  # Get data from POST
     passw = request.POST.get('password', None)
-
+    
     try:
         username = Usuario.objects.get(correo=user, contrasena=passw)
+
     except Usuario.DoesNotExist:
         return index(request, True)
+    #Guardamos en la sesion los valores de usuario y mail para futuros usos.
+    request.session['user_name']=user
+    algo= request.session['user_name']
 
     # Si llegamos aquí el usuario ya se autenticó
     if username.isAdmin():
@@ -273,3 +277,22 @@ def ver_rubrica_detalle(request, nombre):
 
 def Laging_page_eval(request):
     return render(request, 'EvPresentaciones/Eval_interface/Landing_page_eval.html')
+
+#Funcion para la vista para los evaluadores
+def Evaluaciones_eval(request):
+    #diccionario para guardar la informacion que devolveremos
+    context={}
+    #consigo informacion de la sesion
+    evaluador= request.session['user_name']
+    #saco objetos de la base de datos ordenados
+    par= Evaluacion.objects.filter(usuario_evaluacion__user=evaluador).order_by('fechaInicio')
+    todo= Usuario_Evaluacion.objects.all()
+    algo= Usuario_Evaluacion.objects.filter(user=evaluador)
+    print(par)
+    print(todo)
+    print(algo)
+    #guardo en diccionario
+    context['par']=par
+    context['todo']=todo
+    context['evaluador']=algo
+    return render(request, 'EvPresentaciones/Eval_interface/evaluacionesEvaluador.html',context)
