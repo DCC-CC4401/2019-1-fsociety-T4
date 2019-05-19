@@ -285,21 +285,8 @@ def Evaluaciones_eval(request):
     evaluador= request.session['user_name']
     #saco objetos de la base de datos ordenados
     par= Evaluacion.objects.filter(usuario_evaluacion__user=evaluador).order_by('-fechaInicio')[:10]
-    curso= Cursos.objects.all()
-    nombre_curso={}
-    nombre_par={}
     curso_eval= Cursos_Evaluacion.objects.all()
-    for variable in par:
-        id_evaluacion=str(variable)
-        aux= Cursos_Evaluacion.objects.filter(evaluacion=variable)
-        nombre_curso[id_evaluacion]=str(aux)
-        print(aux)
-        print(type(aux))
-    for var in par:
-        id_par= str(variable)
-        nombre_par[id_par]=id_par
     #guardo en diccionario
     context['par']=par
-    context['nombre_curso']=nombre_curso
     context['cursos']= curso_eval
     return render(request, 'EvPresentaciones/Eval_interface/evaluacionesEvaluador.html',context)
