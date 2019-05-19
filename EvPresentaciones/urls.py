@@ -11,6 +11,7 @@ urlpatterns = [
     path('Admin_interface/Evaluaciones_admin',              views.Evaluaciones_admin,     name='evaluaciones_admin'),
     path('Admin_interface/Evaluaciones_admin1',             views.agregar_evaluaciones,   name='agregar_evaluaciones'),
     path('Admin_interface/Evaluaciones_admin2/<int:id>',    views.eliminar_evaluaciones,  name='eliminar_evaluaciones'),
+    path('Admin_interface/Evaluaciones_admin3/<int:id>',    views.modificar_evaluaciones, name='modificar_evaluaciones'),
     path('Admin_interface/Evaluadores_admin',               views.Evaluadores_admin,      name='evaluadores_admin'),
     path('Admin_interface/Landing_page_admin',              views.Landing_page_admin,     name='landing_page_admin'),
     path('Admin_interface/Rubricas_admin',                  views.Rubricas_admin,         name='rubricas_admin'),

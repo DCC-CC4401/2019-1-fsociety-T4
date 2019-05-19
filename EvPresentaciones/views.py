@@ -45,15 +45,28 @@ def Evaluaciones_admin(request):
     except Cursos.DoesNotExist:
         cursos = []
 
-    #extraemos evaluaciones y rubricas para mostrar y modificar las cosas ya existentes
+    # extraemos evaluaciones y rubricas para mostrar y modificar las cosas ya existentes
     try:
         ev_rub = Evaluacion_Rubrica.objects.all()
     except Evaluacion_Rubrica.DoesNotExist:
         ev_rub = []
 
+    # extraemos rubricas que no se encuentran en ev_rub para el html
+
+    #extraemos las rubricas que tienen evaluacion
+    listaDeRubricasConEvaluaciones = []
+    for er in ev_rub:
+        listaDeRubricasConEvaluaciones.append(er.rubrica)
+
+    #annadimos a la lista solo las rubricas que no tienen evaluaciones
+    restantes = []
+    for r in rubricas:
+        #solo si no se encuentra en las que tienen evaluacion asociada, la annadimos a la lista
+        if r not in listaDeRubricasConEvaluaciones:
+            restantes.append(r)
 
     return render(request, 'EvPresentaciones/Admin_interface/Evaluaciones_admin.html',
-                  {'pareja': pareja, 'rubricas': rubricas, 'cursos': cursos, 'ev_rub': ev_rub})
+                  {'pareja': pareja, 'rubricas': rubricas, 'cursos': cursos, 'ev_rub': ev_rub, 'rub_restantes':restantes})
 
 
 def eliminar_evaluaciones(request, id):
@@ -77,6 +90,55 @@ def eliminar_evaluaciones(request, id):
     print("borrado:" + str(id))
 
     # regresamos a la pagina normalmente
+    return Evaluaciones_admin(request)
+
+
+def modificar_evaluaciones(request, id):
+    """
+    Vista que se ejecuta al modifcar una evaluacion
+    """
+
+    # buscamos la evlaucion por su id
+    evaluacion = Evaluacion.objects.get(id=id)
+
+    # extraemos los datos del post
+    fecha_inicio = request.POST.get('inicio', None)
+    fecha_termino = request.POST.get('termino', None)
+    estado = request.POST.get('estado', None)
+    curso = request.POST.get('curso', None)
+    rubrica = request.POST.get('rubricas', None)
+
+    # calculamos duracion a partir de la rubrica, Rubrica siempre va a existir en la base de datos
+    rubricaObj = Rubrica.objects.get(nombre=rubrica)
+    tMax = rubricaObj.tiempo
+
+    # cambiamos los datos de la evaluacion
+    evaluacion.fechaInicio = fecha_inicio
+    evaluacion.fechaTermino = fecha_termino
+    evaluacion.estado = estado
+    evaluacion.duracion = tMax
+
+    evaluacion.save()
+
+    # hay que cambiar la rubrica  y los cursos asociados tambien
+
+    # rubrica-evaluacion
+    # extraemos de la tabla los datos que tengan la evaluacion asociada
+    eb_rubs = Evaluacion_Rubrica.objects.filter(evaluacion=evaluacion)
+    # por cada dato de la evaluacion asociada cambiamos su rubrica a la pedida
+    for er in eb_rubs:
+        er.rubrica = rubricaObj
+        er.save()
+
+    # curso-evaluacion
+    # extraemos de la tabla los cursos que tengan la evaluacion asociada
+    cursos_evs = Cursos_Evaluacion.objects.filter(evaluacion=evaluacion)
+    #por cada dato cambiamos el curso asociado
+    for ce in cursos_evs:
+        ce.curso = Cursos.objects.get(id=curso)
+        ce.save()
+
+    #retornamos a la pagina principal
     return Evaluaciones_admin(request)
 
 

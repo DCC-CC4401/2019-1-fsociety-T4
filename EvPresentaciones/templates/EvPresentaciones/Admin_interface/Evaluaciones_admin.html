@@ -115,7 +115,7 @@
                     <span onclick="document.getElementById('modificar_{{ o.evaluacion.id }}').style.display='none'"
                           class="w3-button w3-xlarge w3-transparent w3-display-topright" title="Close Modal">×</span>
                     <form id="form" method="POST" class="w3-container"
-                          action="{% url 'agregar_evaluaciones' %}">
+                          action="{% url 'modificar_evaluaciones' o.evaluacion.id %}">
                         {% csrf_token %}
 
                         <div class="w3-section">
@@ -125,6 +125,8 @@
 
                             <!-- contiene If porque la fecha se necesita en un formato en especifico-->
                             <!-- codigo es muy feo debido a el formato que piden las fechas-->
+                            <!-- simplemente agrega ceros cuando la fecha no tiene los digitos necesarios y la deja en
+                                formato YYYY-MM-DD-->
 
                             <input class="w3-input w3-border w3-margin-bottom" type="date" value="{% if o.evaluacion.fechaInicio.year < 10 %}000{{ o.evaluacion.fechaInicio.year }}{% elif  o.evaluacion.fechaInicio.year < 100 %}00{{ o.evaluacion.fechaInicio.year }}{% elif  o.evaluacion.fechaInicio.year < 1000 %}0{{ o.evaluacion.fechaInicio.year }}{% else %}{{ o.evaluacion.fechaInicio.year }}{% endif %}-{% if o.evaluacion.fechaInicio.month < 10 %}0{{ o.evaluacion.fechaInicio.month }}{% else %}{{ o.evaluacion.fechaInicio.month }}{% endif %}-{% if o.evaluacion.fechaInicio.day < 10 %}0{{ o.evaluacion.fechaInicio.day }}{% else %}{{ o.evaluacion.fechaInicio.day }}{% endif %}" placeholder="Fecha de inicio" name="inicio" required>
 
@@ -132,6 +134,10 @@
                             <input class="w3-input w3-border" type="date" placeholder="Fecha Termino"
                                    value="{% if o.evaluacion.fechaTermino.year < 10 %}000{{ o.evaluacion.fechaTermino.year }}{% elif  o.evaluacion.fechaTermino.year < 100 %}00{{ o.evaluacion.fechaTermino.year }}{% elif  o.evaluacion.fechaTermino.year < 1000 %}0{{ o.evaluacion.fechaTermino.year }}{% else %}{{ o.evaluacion.fechaTermino.year }}{% endif %}-{% if o.evaluacion.fechaTermino.month < 10 %}0{{ o.evaluacion.fechaTermino.month }}{% else %}{{ o.evaluacion.fechaTermino.month }}{% endif %}-{% if o.evaluacion.fechaTermino.day < 10 %}0{{ o.evaluacion.fechaTermino.day }}{% else %}{{ o.evaluacion.fechaTermino.day }}{% endif %}"
                                    name="termino" required>
+
+
+                            <!-- Para los demas parametros buscamos en la base de datos para que se muestre por defecto
+                                los datos de la evaluacion seleccionada -->
 
                             <label><b>Estado</b></label>
                             <select class="w3-input w3-border" name="estado" required>
@@ -165,7 +171,15 @@
                                         <option value='{{ r.rubrica.nombre }}' >{{ r.rubrica.nombre }}</option>
                                     {% endif %}
                                 {% endfor %}
+
+                                <!-- imprimimos las rubricas restantes  -->
+                                {% for r in rub_restantes %}
+                                    <option value={{ r.nombre }}>{{ r.nombre }}</option>
+                                {% endfor %}
+
                             </select>
+
+
                             <button class="w3-button w3-block w3-red w3-section w3-padding"
                                     type="submit">Modificar
                             </button>
