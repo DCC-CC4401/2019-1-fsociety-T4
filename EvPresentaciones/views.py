@@ -214,9 +214,8 @@ def LandingPage(request):
 
     except Usuario.DoesNotExist:
         return index(request, True)
-    #Guardamos en la sesion los valores de usuario y mail para futuros usos.
+    #Guardamos en la sesion los valores de usuario para futuros usos.
     request.session['user_name']=user
-    algo= request.session['user_name']
 
     # Si llegamos aquí el usuario ya se autenticó
     if username.isAdmin():
@@ -285,14 +284,22 @@ def Evaluaciones_eval(request):
     #consigo informacion de la sesion
     evaluador= request.session['user_name']
     #saco objetos de la base de datos ordenados
-    par= Evaluacion.objects.filter(usuario_evaluacion__user=evaluador).order_by('fechaInicio')
-    todo= Usuario_Evaluacion.objects.all()
-    algo= Usuario_Evaluacion.objects.filter(user=evaluador)
-    print(par)
-    print(todo)
-    print(algo)
+    par= Evaluacion.objects.filter(usuario_evaluacion__user=evaluador).order_by('-fechaInicio')[:10]
+    curso= Cursos.objects.all()
+    nombre_curso={}
+    nombre_par={}
+    curso_eval= Cursos_Evaluacion.objects.all()
+    for variable in par:
+        id_evaluacion=str(variable)
+        aux= Cursos_Evaluacion.objects.filter(evaluacion=variable)
+        nombre_curso[id_evaluacion]=str(aux)
+        print(aux)
+        print(type(aux))
+    for var in par:
+        id_par= str(variable)
+        nombre_par[id_par]=id_par
     #guardo en diccionario
     context['par']=par
-    context['todo']=todo
-    context['evaluador']=algo
+    context['nombre_curso']=nombre_curso
+    context['cursos']= curso_eval
     return render(request, 'EvPresentaciones/Eval_interface/evaluacionesEvaluador.html',context)
