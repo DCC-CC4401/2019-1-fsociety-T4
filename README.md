@@ -2,11 +2,7 @@
 
 ## Activar enviroment de python3
 
-source pyenv/bin/activate
-
-## Crear superusuario
-
-python3 manage.py createsuperuser 
+    source pyenv/bin/activate
 
 ## Para que el proyecto reconozca la base de datos hacer lo siguiente
 
@@ -14,14 +10,16 @@ python3 manage.py createsuperuser
     python manage.py migrate EvPresentaciones
     python manage.py migrate
     
-    
 ## Existe un dump con datos minimos para mostrar en consultas, se llama db.json
 
 ## Crear dump
 
-    python mananage.py dumpdata > db.json
+    python manage.py dumpdata > db.json
     
 ## Cargar dump
 
     python manage.py loaddata db.json
 
+## Crear superusuario
+
+    python3 manage.py createsuperuser 
