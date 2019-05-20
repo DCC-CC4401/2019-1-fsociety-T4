@@ -321,10 +321,18 @@ def HomeAdmin(request):
 
 
 def eliminarEvaluador(request, correo):
+    if not
+
     # eliminamos usuario con el id que se nos entrego
     Usuario.objects.get(correo=correo).delete()
 
     return Evaluadores_admin(request)
+
+def modificarEvaluador(request, correo):
+    # eliminamos usuario con el id que se nos entrego
+    eliminarEvaluador(request, correo)
+
+    return agregarEvaluador(request)
 
 
 def randomString(stringLength=10):
