@@ -5,7 +5,7 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('testPage/<int:value>', views.testPage, name='testPage'),
 
-# Vistas de administrador
+    # Vistas de administrador
 
     path('Admin_interface/Cursos_admin',                    views.Cursos_admin,           name='cursos_admin'),
     path('Admin_interface/Evaluaciones_admin',              views.Evaluaciones_admin,     name='evaluaciones_admin'),
@@ -21,7 +21,7 @@ urlpatterns = [
     path('Admin_interface/Ver_rubrica/<int:id>',            views.ver_rubrica_select,     name='ver_select'),
     path('Admin_interface/Ver_rubrica_detalle/<str:nombre>',views.ver_rubrica_detalle,    name='ver_detalle'),
 
-# Vistas de evaluador
+    # Vistas de evaluador
 
     path('Eval_interface/langing_page_eval',                views.Laging_page_eval,       name='landing_page_eval'),
     path('Eval_interface/evaluacion',                       views.Evaluacion,             name='evaluacion'),

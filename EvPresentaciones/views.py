@@ -1,5 +1,7 @@
+from django.contrib import messages
+from django.contrib.auth import authenticate
+from django.db import IntegrityError
 from django.shortcuts import render
-from django.http import HttpResponse
 from .models import *
 import csv
 import random
@@ -191,6 +193,10 @@ def agregar_evaluaciones(request):
 
 
 def Evaluadores_admin(request):
+
+    if not request.user.is_authenticated:
+        return index(request)
+
     # obtenemos numero de evaluadores
     try:
         evaluadores = Usuario.objects.all()
@@ -302,22 +308,18 @@ def ver_rubrica_select(request, id):
 
 # Si se hace request de la landingpage, se verifica el tipo de usuario y se retorna el render correspondiente
 def LandingPage(request):
-    user = request.POST.get('username', None)  # Get data from POST
+    email = request.POST.get('username', None)  # Get data from POST
     passw = request.POST.get('password', None)
 
-    try:
-        username = Usuario.objects.get(correo=user, contrasena=passw)
+    user = authenticate(email=email, password=passw)
 
-    except Usuario.DoesNotExist:
-        return index(request, True)
-    #Guardamos en la sesion los valores de usuario para futuros usos.
-    request.session['user_name']=user
+    if user is not None:
+        if(request.user.is_staff):
+            return render(request, 'EvPresentaciones/Admin_interface/Landing_page_admin.html')
+        else:
+            return render(request, 'EvPresentaciones/Eval_interface/Landing_page_eval.html')
 
-    # Si llegamos aquí el usuario ya se autenticó
-    if username.isAdmin():
-        return render(request, 'EvPresentaciones/Admin_interface/Landing_page_admin.html')
-    else:
-        return render(request, 'EvPresentaciones/Eval_interface/Landing_page_eval.html')
+    return index(request, True)
 
 
 def HomeAdmin(request):
@@ -325,18 +327,46 @@ def HomeAdmin(request):
 
 
 def eliminarEvaluador(request, correo):
-    #if not
+
+    """Elimina el evaluador asociado a un correo"""
+
+    if request.user.email == correo:
+        messages.error(request, 'Error: No es posible eliminarse a sí mismo de la lista de evaluadores', extra_tags='w3-panel w3-red')
+        return Evaluadores_admin(request)
 
     # eliminamos usuario con el id que se nos entrego
-    #Usuario.objects.get(correo=correo).delete()
+    Usuario.objects.get(email=correo).delete()
+
+    messages.success(request, 'Operación realizada: se ha eliminado al usuario ' + correo + ' de la lista de evalauadores',
+                  extra_tags='w3-panel w3-green')
 
     return Evaluadores_admin(request)
 
-def modificarEvaluador(request, correo):
-    # eliminamos usuario con el id que se nos entrego
-    eliminarEvaluador(request, correo)
 
-    return agregarEvaluador(request)
+def modificarEvaluador(request, correo):
+
+    """Modifica el evaludor asociado un correo"""
+
+    nuevo_nombre = request.POST.get('usrname', None)
+    nuevo_apellido = request.POST.get('apellido', None)
+    nuevo_correo = request.POST.get('correo', None)
+
+    try:
+        evaluador = Usuario.objects.get(email=correo)
+        evaluador.first_name = nuevo_nombre
+        evaluador.last_name = nuevo_apellido
+        evaluador.email = nuevo_correo
+        evaluador.save()
+        messages.success(request, "Evaluación modificada con éxito. Nombre: "+ nuevo_nombre + ', Apellido: '
+                         + nuevo_apellido + ', email: ' + nuevo_correo, extra_tags='w3-panel w3-green')
+
+    except Usuario.DoesNotExist:
+        messages.error(request, 'Error: El evaluador que intenta modificar no existe', extra_tags='w3-panel w3-red')
+
+    except IntegrityError:
+        messages.error(request, 'Error: Existe otro evaluador asociado al correo ' + nuevo_correo, extra_tags='w3-panel w3-red')
+
+    return Evaluadores_admin(request)
 
 
 def randomString(stringLength=10):
@@ -346,15 +376,20 @@ def randomString(stringLength=10):
 
 
 def agregarEvaluador(request):
+
+    """Agrega un evaluador con el nombre, apellido y correo entregados"""
+
     nombre = request.POST.get('usrname', None)
     apellido = request.POST.get('apellido', None)
     correo = request.POST.get('correo', None)
-
     contraseña = randomString(25)
 
-    usuario = Usuario(nombre=nombre, apellido=apellido, correo=correo,
-                      contrasena=contraseña, esAdministrador=False)
-    usuario.save()
+    try:
+        Usuario.objects.create_user(email=correo, first_name=nombre, last_name=apellido, password=contraseña)
+        messages.success(request, "Evaluador creado con éxito: Nombre: "+ nombre + ', Apellido: ' + apellido + ', email: ' + correo, extra_tags='w3-panel w3-green')
+
+    except IntegrityError:
+        messages.error(request, 'Error: Ya existe un usuario asociado al correo ' + correo, extra_tags='w3-panel w3-red')
 
     return Evaluadores_admin(request)
 

@@ -1,5 +1,20 @@
 # 2019-1-fsociety-T4
 
+## IMPORTANTE
+
+    Ahora los usuarios de EvPresentaciones y del sitio Admin están unificados.
+    Por favor:
+     
+      1. Volver a hacer las migraciones
+      2. Crear un superusuario.
+      3. Mirar  models.UsuarioManager y models.Usuario
+      
+    Las credenciales del superusuario deben servir para ingresar a la aplicación.
+      
+    Preguntas a Ariel
+         
+    
+
 ## Activar enviroment de python3
 
     source pyenv/bin/activate
