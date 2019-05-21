@@ -209,28 +209,32 @@ def Rubricas_admin(request):
     listaDeAspectos = []
     listaNombres = []
 
-    for rubrica in rubricas:
+    for rubrica in rubricas: # Para todas las rúbricas
         listaNombres.append(str(rubrica.nombre))
 
         # sacar los aspectos del archivo en csv
         aspectos = []
 
-        lineas = []
+        lineas = [] # tiene todas las filas
         # procesar archivo ingresado
         with open(rubrica.archivo) as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
             for row in csv_reader:
                 lineas.append(row)
+                print(row)
 
         for r in lineas[1:-1]:
-            aspectos.append(r[0])
+            aspectos.append(r[0]) # Saca la primera columna de la rubrica
+            print(r[0])
 
-        listaDeAspectos.append(aspectos)
+        listaDeAspectos.append(aspectos) # Es una fila con todos los aspectos
+        print(listaDeAspectos)
 
     listaEntregada = []
     for i in range(len(listaNombres)):
         # añadir el indice al final porque template es rarito y no acepta colocar id strings.
         listaEntregada.append([listaNombres[i], listaDeAspectos[i], i])
+    print(listaEntregada)
 
     return render(request, 'EvPresentaciones/Admin_interface/Rubricas_admin.html', {'lista': listaEntregada})
 
@@ -258,7 +262,7 @@ def Post_evaluaciones_admin(request):
 
 # ficha en donde los administradores crean nuevas rubricas
 def Ficha_Rubrica_admin(request):
-    return render(request, 'EvPresentaciones/FichasRubricas/FichaRubricaAdministrador.html')
+    return render(request, 'EvPresentaciones/FichasRubricas/FichaRubricaAdministrador-1.html')
 
 
 def Ficha_Rubrica_evaluador(request):
@@ -357,11 +361,12 @@ def ver_rubrica_detalle(request, nombre):
         for row in csv_reader:
             lineas.append(row)
 
-    tmax = lineas[-1][2]
-    tmin = lineas[-1][1]
+    #print(lineas)
+    tmax = lineas[-1][2]    # Extraer tiempo maximo en ultima fila
+    tmin = lineas[-1][1]    # Extraer tiempo minimo en ultima fila
 
-    lineas[0][0] = ''
-    lineas = lineas[:-1]
+    lineas[0][0] = ''       # Poner en blanco la primera columna de la primera fila
+    lineas = lineas[:-1]    # Quitar la ultima fila que contiene el tiempo
 
     return render(request, 'EvPresentaciones/Admin_interface/ver_rubrica_detalle.html',
                   {'lineas': lineas, 'tmax': tmax, 'tmin': tmin})
