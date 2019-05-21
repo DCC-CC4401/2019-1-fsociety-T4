@@ -325,10 +325,10 @@ def HomeAdmin(request):
 
 
 def eliminarEvaluador(request, correo):
-    if not
+    #if not
 
     # eliminamos usuario con el id que se nos entrego
-    Usuario.objects.get(correo=correo).delete()
+    #Usuario.objects.get(correo=correo).delete()
 
     return Evaluadores_admin(request)
 
