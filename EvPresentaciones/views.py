@@ -6,6 +6,7 @@ from .models import *
 import csv
 import random
 import string
+from datetime import timedelta
 
 
 # Create your views here.
@@ -442,5 +443,40 @@ def Evaluaciones_eval(request):
 
 def Evaluaciones_Curso(request):
     context={}
-    return render(request,
-                  'EvPresentaciones/Eval_interface/templates/EvPresentaciones/Admin_interface/evaluacion_admin.html', context)
+    return render(request,'EvPresentaciones/Eval_interface/evaluacionesCurso.html',context)
+
+
+######### RÚBRICAS #######
+
+def guardarRubrica(request):
+    nombre = request.POST.get('nombre-rubrica', None)
+    tmin = request.POST.get('t-min', None)
+    tmax = request.POST.get('t-max', None)
+    version = request.POST.get('version', None)
+    rubrica = request.POST.get('csv-text', None) # Aquí viene la rúbrica completa
+    rows = rubrica.split("|")
+
+    # Nombre de archivo
+    nombreArchivo = nombre+'-'+version+'.csv'
+
+    # Tener el formato solicitado para guardar
+    csvData = []
+    for row in rows:
+        csvData.append(row.split(','))
+
+    # Aquí revalidar el requisito 51 !! (Antes de guardar en el servidor)
+
+    # Guardar el archivo como csv, se sobreescribe si tiene el mismo nombre
+    with open('./EvPresentaciones/ArchivosRubricas/' + nombreArchivo, 'w') as csvFile:
+        writer = csv.writer(csvFile)
+        writer.writerows(csvData)
+    csvFile.close
+
+    # Guardar en la base de datos
+    #try:
+    tminn = tmin.split(':') # Extraer los minutos y segundos
+    tmaxx = tmax.split(':')
+    Rubrica.create_rubrica(nombre=nombre, tiempoMin= timedelta(minutes=int(tminn[0]),seconds=int(tminn[1])), tiempoMax= timedelta(minutes=int(tmaxx[0]),seconds=int(tmaxx[1])), version=version, archivo=nombreArchivo)
+    #except IntegrityError:
+    #    messages.error(request, 'Error: Ya existe la rúbrica ' + nombre+'-'+version, extra_tags='w3-panel w3-red')
+    return render(request, 'EvPresentaciones/FichasRubricas/Rubrica_guardada.html')

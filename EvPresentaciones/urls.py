@@ -21,6 +21,7 @@ urlpatterns = [
     path('Admin_interface/Evaluadores_admin_3/<str:correo>',views.modificarEvaluador,     name='evaluadores_admin_modificar'),
     path('Admin_interface/Ver_rubrica/<int:id>',            views.ver_rubrica_select,     name='ver_select'),
     path('Admin_interface/Ver_rubrica_detalle/<str:nombre>',views.ver_rubrica_detalle,    name='ver_detalle'),
+    path('FichasRubricas/Rubrica_guardada',                 views.guardarRubrica,         name='guardar_rubrica'),
 
     # Vistas de evaluador
 

@@ -5,35 +5,35 @@
         <h1 class="w3-xxxlarge w3-text-red"><b>Ficha de rúbrica</b></h1>
         <hr style="width:50px;border:5px solid red" class="w3-round">
     </div>
-    <form>
-    {% comment %} <form method="POST" action="{% url 'modificar_rubrica' %}"> {% endcomment %}
-        {% comment %} {% csrf_token %} {% endcomment %}
+    <form id="rubricaForm" method="POST" action="{% url 'guardar_rubrica' %}"> 
+        {% csrf_token %}
+
         <div class="w3-container">
             <div class="w3-quarter">
                 <div class="form-inline">
                     <label>Nombre</label>
-                    <input placeholder="Rúbrica Entrega 4" name="nombre-rubrica">
+                    <input type="text" placeholder="Rúbrica Entrega 4" name="nombre-rubrica">
                     
                 </div>
             </div>
             <div class="w3-quarter">
                 <div class="form-inline">
                     <label>Tiempo mínimo</label>
-                    <input placeholder="5:00" name="t-min" style="width: 30%">
+                    <input type="text" placeholder="5:00" name="t-min" style="width: 30%">
                     
                 </div>
             </div>
             <div class="w3-quarter">
                 <div class="form-inline">
                     <label>Tiempo máximo</label>
-                    <input placeholder="10:00" name="t-max" style="width: 30%">
+                    <input type="text" placeholder="10:00" name="t-max" style="width: 30%">
                     
                 </div>
             </div>
             <div class="w3-quarter">
                 <div class="form-inline">
                     <label>Versión</label>
-                    <input placeholder="1.2" name="version" style="width: 30%">
+                    <input type="text" placeholder="1.2" name="version" style="width: 30%">
                     
                 </div>
             </div>
@@ -80,7 +80,15 @@
     function saveRubrica(){
         if(validarRubrica()){
             table2JSList();
+            alert("Se va a enviar la rúbrica");
+            document.getElementById("rubricaForm").submit();
+            alert('sda');
         };
+    }
+
+    // Aquí implementar requisito 51!!
+    function validarPuntajes(){
+
     }
 
     function validarRubrica(){
@@ -120,8 +128,7 @@
             }
 		    csv.push(row.join(","));		
 	    }
-        var csvText = csv.join("\n");
-        document.getElementsByName("csv-text")[0].value = csvText;
+        document.getElementsByName("csv-text")[0].value = csv.join("|");
 
         //alert(csvText);
         // Download CSV
