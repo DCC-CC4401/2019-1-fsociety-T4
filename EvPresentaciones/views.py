@@ -270,7 +270,19 @@ def ver_evaluacion_admin(request, id):
     evaluacion = par_curso_evaluacion.evaluacion
     curso = par_curso_evaluacion.curso
 
-    return render(request, 'EvPresentaciones/Admin_interface/evaluacion_admin.html', {'evaluacion': evaluacion, 'curso': curso})
+    # Obtener los evaluadores: se puede hacer con una query, pero creo que es mas complicado de arreglar si hay cambios
+    # en el modelo
+    evaluadores = list()
+    try:
+        usuarios_evaluacion = Usuario_Evaluacion.objects.filter(evaluacion=id)
+        for par in usuarios_evaluacion:
+            #se agrega el objeto usuario
+            evaluadores.append(Usuario.objects.get(email=par.user))
+
+    except Usuario_Evaluacion.DoesNotExist:
+        pass
+
+    return render(request, 'EvPresentaciones/Admin_interface/evaluacion_admin.html', {'evaluacion': evaluacion, 'curso': curso, 'evaluadores': evaluadores})
 
 
 # funciones Rubricas
