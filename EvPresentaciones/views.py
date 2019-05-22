@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login
 from django.db import IntegrityError
 from django.shortcuts import render
 from .models import *
@@ -194,7 +194,7 @@ def agregar_evaluaciones(request):
 
 
 def Evaluadores_admin(request):
-
+    print(request.user)
     if not request.user.is_authenticated:
         return index(request)
 
@@ -311,10 +311,11 @@ def ver_rubrica_select(request, id):
 def LandingPage(request):
     email = request.POST.get('username', None)  # Get data from POST
     passw = request.POST.get('password', None)
-    user = authenticate(email=email, password=passw)
-    request.user = user
+    user = authenticate(request, email=email, password=passw)
     if user is not None:
+        login(request, user)
         if(request.user.is_staff):
+            print(request.user)
             return render(request, 'EvPresentaciones/Admin_interface/Landing_page_admin.html')
         else:
             return render(request, 'EvPresentaciones/Eval_interface/Landing_page_eval.html')
