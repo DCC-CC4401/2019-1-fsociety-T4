@@ -137,7 +137,18 @@ class Rubrica(models.Model):
         db_table = "Rubrica"
 
     def __str__(self):
-        return self.nombre + " " + self.version
+        return self.nombre + "-" + self.version
+    
+    def create_rubrica(nombre, tiempoMin, tiempoMax, version, archivo):
+        r = Rubrica(
+            nombre=nombre,
+            tiempoMin=tiempoMin,
+            tiempo=tiempoMax,
+            version=version,
+            archivo = archivo
+        )
+        r.save()
+        return r
 
 
 class Evaluacion(models.Model):
