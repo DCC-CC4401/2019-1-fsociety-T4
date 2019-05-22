@@ -211,41 +211,6 @@ def Landing_page_admin(request):
     return render(request, 'EvPresentaciones/Admin_interface/Landing_page_admin.html')
 
 
-def Rubricas_admin(request):
-    rubricas = Rubrica.objects.all()
-    listaDeAspectos = []
-    listaNombres = []
-
-    for rubrica in rubricas: # Para todas las rúbricas
-        listaNombres.append(str(rubrica.nombre))
-
-        # sacar los aspectos del archivo en csv
-        aspectos = []
-
-        lineas = [] # tiene todas las filas
-        # procesar archivo ingresado
-        with open(rubrica.archivo) as csv_file:
-            csv_reader = csv.reader(csv_file, delimiter=',')
-            for row in csv_reader:
-                lineas.append(row)
-                print(row)
-
-        for r in lineas[1:-1]:
-            aspectos.append(r[0]) # Saca la primera columna de la rubrica
-            print(r[0])
-
-        listaDeAspectos.append(aspectos) # Es una fila con todos los aspectos
-        print(listaDeAspectos)
-
-    listaEntregada = []
-    for i in range(len(listaNombres)):
-        # añadir el indice al final porque template es rarito y no acepta colocar id strings.
-        listaEntregada.append([listaNombres[i], listaDeAspectos[i], i])
-    print(listaEntregada)
-
-    return render(request, 'EvPresentaciones/Admin_interface/Rubricas_admin.html', {'lista': listaEntregada})
-
-
 # funciones Evaluaciones
 
 
@@ -271,17 +236,6 @@ def ver_evaluacion_admin(request, id):
     curso = par_curso_evaluacion.curso
 
     return render(request, 'EvPresentaciones/Admin_interface/evaluacion_admin.html', {'evaluacion': evaluacion, 'curso': curso})
-
-
-# funciones Rubricas
-
-# ficha en donde los administradores crean nuevas rubricas
-def Ficha_Rubrica_admin(request):
-    return render(request, 'EvPresentaciones/FichasRubricas/FichaRubricaAdministrador-1.html')
-
-
-def Ficha_Rubrica_evaluador(request):
-    return render(request, 'EvPresentaciones/FichasRubricas/FichaRubricaEvaluador.html')
 
 
 # funciones resumen evaluacion
@@ -402,27 +356,6 @@ def agregarEvaluador(request):
     return Evaluadores_admin(request)
 
 
-def ver_rubrica_detalle(request, nombre):
-    rubrica = Rubrica.objects.get(nombre=nombre)
-
-    lineas = []
-    # procesar archivo ingresado
-    with open(rubrica.archivo) as csv_file:
-        csv_reader = csv.reader(csv_file, delimiter=',')
-        for row in csv_reader:
-            lineas.append(row)
-
-    #print(lineas)
-    tmax = lineas[-1][2]    # Extraer tiempo maximo en ultima fila
-    tmin = lineas[-1][1]    # Extraer tiempo minimo en ultima fila
-
-    lineas[0][0] = ''       # Poner en blanco la primera columna de la primera fila
-    lineas = lineas[:-1]    # Quitar la ultima fila que contiene el tiempo
-
-    return render(request, 'EvPresentaciones/Admin_interface/ver_rubrica_detalle.html',
-                  {'lineas': lineas, 'tmax': tmax, 'tmin': tmin})
-
-
 def Laging_page_eval(request):
     return render(request, 'EvPresentaciones/Eval_interface/Landing_page_eval.html')
 
@@ -448,6 +381,70 @@ def Evaluaciones_Curso(request):
 
 ######### RÚBRICAS #######
 
+# Landing page de rúbricas del administrador
+def Rubricas_admin(request):
+    rubricas = Rubrica.objects.all()
+    listaDeAspectos = []
+    listaNombres = []
+
+    for rubrica in rubricas: # Para todas las rúbricas
+        listaNombres.append(str(rubrica.nombre))
+
+        # sacar los aspectos del archivo en csv
+        aspectos = []
+
+        lineas = [] # tiene todas las filas
+        # procesar archivo ingresado
+        with open(rubrica.archivo) as csv_file:
+            csv_reader = csv.reader(csv_file, delimiter=',')
+            for row in csv_reader:
+                lineas.append(row)
+                print(row)
+
+        for r in lineas[1:-1]:
+            aspectos.append(r[0]) # Saca la primera columna de la rubrica
+            print(r[0])
+
+        listaDeAspectos.append(aspectos) # Es una fila con todos los aspectos
+        print(listaDeAspectos)
+
+    listaEntregada = []
+    for i in range(len(listaNombres)):
+        # añadir el indice al final porque template es rarito y no acepta colocar id strings.
+        listaEntregada.append([listaNombres[i], listaDeAspectos[i], i])
+    print(listaEntregada)
+
+    return render(request, 'EvPresentaciones/Admin_interface/Rubricas_admin.html', {'lista': listaEntregada})
+
+
+def Ficha_Rubrica_evaluador(request):
+    return render(request, 'EvPresentaciones/FichasRubricas/FichaRubricaEvaluador.html')
+
+def ver_rubrica_detalle(request, nombre):
+    rubrica = Rubrica.objects.get(nombre=nombre)
+
+    lineas = []
+    # procesar archivo ingresado
+    with open(rubrica.archivo) as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=',')
+        for row in csv_reader:
+            lineas.append(row)
+
+    #print(lineas)
+    tmax = lineas[-1][2]    # Extraer tiempo maximo en ultima fila
+    tmin = lineas[-1][1]    # Extraer tiempo minimo en ultima fila
+
+    lineas[0][0] = ''       # Poner en blanco la primera columna de la primera fila
+    lineas = lineas[:-1]    # Quitar la ultima fila que contiene el tiempo
+
+    return render(request, 'EvPresentaciones/Admin_interface/ver_rubrica_detalle.html',
+                  {'lineas': lineas, 'tmax': tmax, 'tmin': tmin})
+
+# Sólo para admin, permite crear rúbricas desde 0
+def Ficha_Rubrica_crear(request):
+    return render(request, 'EvPresentaciones/FichasRubricas/FichaRubrica_crear.html')
+
+# Request genérico que guarda o sobreescribe una rúbrica
 def guardarRubrica(request):
     nombre = request.POST.get('nombre-rubrica', None)
     tmin = request.POST.get('t-min', None)
@@ -458,6 +455,7 @@ def guardarRubrica(request):
 
     # Nombre de archivo
     nombreArchivo = nombre+'-'+version+'.csv'
+    rutaNombre = './EvPresentaciones/ArchivosRubricas/' + nombreArchivo
 
     # Tener el formato solicitado para guardar
     csvData = []
@@ -467,7 +465,7 @@ def guardarRubrica(request):
     # Aquí revalidar el requisito 51 !! (Antes de guardar en el servidor)
 
     # Guardar el archivo como csv, se sobreescribe si tiene el mismo nombre
-    with open('./EvPresentaciones/ArchivosRubricas/' + nombreArchivo, 'w') as csvFile:
+    with open(rutaNombre, 'w') as csvFile:
         writer = csv.writer(csvFile)
         writer.writerows(csvData)
     csvFile.close
@@ -476,7 +474,7 @@ def guardarRubrica(request):
     #try:
     tminn = tmin.split(':') # Extraer los minutos y segundos
     tmaxx = tmax.split(':')
-    Rubrica.create_rubrica(nombre=nombre, tiempoMin= timedelta(minutes=int(tminn[0]),seconds=int(tminn[1])), tiempoMax= timedelta(minutes=int(tmaxx[0]),seconds=int(tmaxx[1])), version=version, archivo=nombreArchivo)
+    Rubrica.create_rubrica(nombre=nombre, tiempoMin= timedelta(minutes=int(tminn[0]),seconds=int(tminn[1])), tiempoMax= timedelta(minutes=int(tmaxx[0]),seconds=int(tmaxx[1])), version=version, archivo=rutaNombre)
     #except IntegrityError:
     #    messages.error(request, 'Error: Ya existe la rúbrica ' + nombre+'-'+version, extra_tags='w3-panel w3-red')
     return render(request, 'EvPresentaciones/FichasRubricas/Rubrica_guardada.html')
