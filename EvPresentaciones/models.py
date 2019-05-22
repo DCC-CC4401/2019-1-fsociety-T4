@@ -172,11 +172,18 @@ class Usuario_Evaluacion(models.Model):
     user = models.ForeignKey(Usuario, on_delete=models.CASCADE, null=True)
     evaluacion = models.ForeignKey(Evaluacion, on_delete=models.CASCADE, null=True)
 
-    class Meta:
-        unique_together = (("user", "evaluacion"),)
+    #class Meta:
+        #unique_together = (("user", "evaluacion"),)
 
     def __str__(self):
         return "User: " + str(self.user) + " Evaluation: " + str(self.evaluacion)
+
+    def getUser(self):
+        return self.user
+
+    def getEvaluacion(self):
+        return self.evaluacion
+
 
 
 class Evaluacion_Rubrica(models.Model):

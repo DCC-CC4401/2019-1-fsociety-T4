@@ -40,15 +40,20 @@
         <p><b>Lambda-Ideas</b> Presentación Tarea 2 <i>{{curso}}</i></p>
         <br>
 
+          <!-- Despliegue de evaluadores -->
         <div class="w3-panel  w3-margin-bottom">
           <ul class="w3-ul w3-light-grey w3-center w3-card-4">
             <li class="w3-dark-grey w3-xlarge w3-padding-32">Evaluadores <i class="fas fa-user-tie"></i> </li>
-            <li class="w3-padding-16"> Evaluador 1 <i style="margin-left: 10px" class="w3-large fas fa-times"></i>
-            </li>
+
+              {% for evaluador in evaluadores %}
+                <li class="w3-padding-16">  {{evaluador.first_name}} {{evaluador.last_name}} </i>
+                </li>
+                            <!-- Despliegue de evaluadores
             <li class=" w3-padding-16 presentado"> Evaluador 2 <i style="margin-left: 10px"
                 class="far fa-check-circle"><i class="w3-small"> ya evaluó</i></i>
             </li>
-            <li class="w3-padding-16"> Evaluador 3 <i style="margin-left: 10px" class="w3-large fas fa-times"></i></li>
+            <li class="w3-padding-16"> Evaluador 3 <i style="margin-left: 10px" class="w3-large fas fa-times"></i></li>-->
+              {% endfor %}
             <li class="opcion w3-padding-16"> Agregar otro <i style="margin-left: 10px" class="fas fa-user-plus"></i>
             </li>
           </ul>
