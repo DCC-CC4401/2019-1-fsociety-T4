@@ -253,7 +253,7 @@ def Evaluaciones(request):
 
 
 def Evaluacion_admin(request):
-    return render(request, 'EvPresentaciones/Eval_interface/evaluacionadmin.html')
+    return render(request, 'EvPresentaciones/Admin_interface/evaluacion_admin.html')
 
 
 def Post_evaluacion(request):
@@ -262,6 +262,14 @@ def Post_evaluacion(request):
 
 def Post_evaluaciones_admin(request):
     return render(request, 'EvPresentaciones/Eval_interface/postevaluacionadmin.html')
+
+def ver_evaluacion_admin(request, id):
+
+    par_curso_evaluacion = Cursos_Evaluacion.objects.get(evaluacion=id)
+    evaluacion = par_curso_evaluacion.evaluacion
+    curso = par_curso_evaluacion.curso
+
+    return render(request, 'EvPresentaciones/Admin_interface/evaluacion_admin.html', {'evaluacion': evaluacion, 'curso': curso})
 
 
 # funciones Rubricas
@@ -313,8 +321,7 @@ def LandingPage(request):
     user = authenticate(request, email=email, password=passw)
     if user is not None:
         login(request, user)
-        if(request.user.is_staff):
-            print(request.user)
+        if request.user.is_staff:
             return render(request, 'EvPresentaciones/Admin_interface/Landing_page_admin.html')
         else:
             return render(request, 'EvPresentaciones/Eval_interface/Landing_page_eval.html')
@@ -435,4 +442,5 @@ def Evaluaciones_eval(request):
 
 def Evaluaciones_Curso(request):
     context={}
-    return render(request,'EvPresentaciones/Eval_interface/evaluacionesCurso.html',context)
+    return render(request,
+                  'EvPresentaciones/Eval_interface/templates/EvPresentaciones/Admin_interface/evaluacion_admin.html', context)

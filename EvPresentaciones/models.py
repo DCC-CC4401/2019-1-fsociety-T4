@@ -107,8 +107,8 @@ class Cursos(models.Model):
         unique_together = (("codigo", "semestre", "año", "seccion"),)
 
     def __str__(self):
-        # definir como ver las filas de la tabla
-        return self.nombre + " " + self.codigo + " " + self.semestre + " " + str(self.año) + " " + str(self.seccion)
+        # asi se despliega en la ficha de evaluacion
+        return self.codigo + "-" + str(self.seccion) + "/" + self.semestre + "/" + str(self.año)
 
 
 class Alumnos(models.Model):
