@@ -26,7 +26,6 @@ class UsuarioManager(BaseUserManager):
         user.set_password(password)
         user.username = email
         user.save(using=self._db)
-
         return user
 
 

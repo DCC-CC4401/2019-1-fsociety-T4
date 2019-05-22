@@ -310,9 +310,8 @@ def ver_rubrica_select(request, id):
 def LandingPage(request):
     email = request.POST.get('username', None)  # Get data from POST
     passw = request.POST.get('password', None)
-
     user = authenticate(email=email, password=passw)
-
+    request.user = user
     if user is not None:
         if(request.user.is_staff):
             return render(request, 'EvPresentaciones/Admin_interface/Landing_page_admin.html')
