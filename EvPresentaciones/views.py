@@ -457,6 +457,8 @@ def guardarRubrica(request):
     for row in rows:
         csvData.append(row.split(','))
 
+    # Aquí revalidar el requisito 51 !! (Antes de guardar en el servidor)
+
     # Guardar el archivo como csv, se sobreescribe si tiene el mismo nombre
     with open('./EvPresentaciones/ArchivosRubricas/' + nombreArchivo, 'w') as csvFile:
         writer = csv.writer(csvFile)
