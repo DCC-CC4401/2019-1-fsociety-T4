@@ -377,7 +377,7 @@ def Evaluaciones_eval(request):
     #diccionario para guardar la informacion que devolveremos
     context={}
     #consigo informacion de la sesion
-    evaluador= request.session['user_name']
+    evaluador= request.user.id
     #saco objetos de la base de datos ordenados
     par= Evaluacion.objects.filter(usuario_evaluacion__user=evaluador).order_by('-fechaInicio')[:10]
     curso_eval= Cursos_Evaluacion.objects.all()
