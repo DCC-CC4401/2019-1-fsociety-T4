@@ -226,8 +226,6 @@ class Alumnos_Evaluacion(models.Model):
     alumno = models.ForeignKey(Alumnos, on_delete=models.CASCADE, null=True)
     evaluacion = models.ForeignKey(Evaluacion, on_delete=models.CASCADE, null=True)
 
-    class Meta:
-        unique_together = (("alumno", "evaluacion"),)
 
     def __str__(self):
         return "Alumno: " + str(self.alumno) + " Nota: " + str(self.nota) + " Evaluacion: " + str(self.evaluacion)
