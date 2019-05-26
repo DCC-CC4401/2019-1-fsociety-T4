@@ -6,21 +6,21 @@
         <hr style="width:50px;border:5px solid red" class="w3-round">
     </div>
 
-        <div class="w3-row w3-container">
-            <div class="w3-col" align="left">
-                    <label>Intervalo de presentación: {{ tmin }} - {{ tmax }}</label>
-            </div>
+    <div class="w3-row w3-container">
+        <div class="w3-col" align="left">
+                <label>Intervalo de presentación: {{ tmin }} - {{ tmax }}</label>
         </div>
-        <div class="w3-container">
-            <table class="orange">
-                {% for r in lineas %}
-                <tr>
-                    {% for a in r %}
-                    <th> {{ a }}</th>
-                    {% endfor %}
-                </tr>
+    </div>
+    <div class="w3-container">
+        <table class="orange">
+            {% for r in lineas %}
+            <tr>
+                {% for a in r %}
+                <th> {{ a }}</th>
                 {% endfor %}
-            </table>
-        </div>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
 
 {% endblock %}
