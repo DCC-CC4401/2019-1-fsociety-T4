@@ -13,10 +13,10 @@
     </div>
     <div class="w3-container">
         <table class="orange">
-            {% for r in lineas %}
+            {% for row in lineas %}
             <tr>
-                {% for a in r %}
-                <th> {{ a }}</th>
+                {% for col in row %}
+                <th> {{ col }}</th>
                 {% endfor %}
             </tr>
             {% endfor %}
