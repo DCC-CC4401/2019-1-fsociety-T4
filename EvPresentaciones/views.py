@@ -396,34 +396,38 @@ def Evaluaciones_Curso(request):
 # Landing page de rúbricas del administrador
 def Rubricas_admin(request):
     rubricas = Rubrica.objects.all()
-    listaDeAspectos = []
+    #listaDeAspectos = []
     listaNombres = []
+    listaVersiones = []
+    listaArchivos = []
 
     for rubrica in rubricas: # Para todas las rúbricas
         listaNombres.append(str(rubrica.nombre))
+        listaVersiones.append(str(rubrica.version))
+        listaArchivos.append(str(rubrica.archivo))
 
         # sacar los aspectos del archivo en csv
-        aspectos = []
+        #aspectos = []
 
-        lineas = [] # tiene todas las filas
+        #lineas = [] # tiene todas las filas
         # procesar archivo ingresado
-        with open(rubrica.archivo) as csv_file:
-            csv_reader = csv.reader(csv_file, delimiter=',')
-            for row in csv_reader:
-                lineas.append(row)
-                print(row)
-
-        for r in lineas[1:-1]:
-            aspectos.append(r[0]) # Saca la primera columna de la rubrica
-            print(r[0])
-
-        listaDeAspectos.append(aspectos) # Es una fila con todos los aspectos
-        print(listaDeAspectos)
+        #with open(rubrica.archivo) as csv_file:
+        #    csv_reader = csv.reader(csv_file, delimiter=',')
+        #    for row in csv_reader:
+        #        lineas.append(row)
+        #        print(row)
+        #
+        #for r in lineas[1:-1]:
+        #    aspectos.append(r[0]) # Saca la primera columna de la rubrica
+        #    print(r[0])
+        #
+        #listaDeAspectos.append(aspectos) # Es una fila con todos los aspectos
+        #print(listaDeAspectos)
 
     listaEntregada = []
     for i in range(len(listaNombres)):
         # añadir el indice al final porque template es rarito y no acepta colocar id strings.
-        listaEntregada.append([listaNombres[i], listaDeAspectos[i], i])
+        listaEntregada.append([i, listaNombres[i], listaVersiones[i], listaArchivos[i]]) # Le paso el indice para poder usarlo de id en elementos html
     print(listaEntregada)
 
     return render(request, 'EvPresentaciones/Admin_interface/Rubricas_admin.html', {'lista': listaEntregada})
@@ -432,9 +436,10 @@ def Rubricas_admin(request):
 def Ficha_Rubrica_evaluador(request):
     return render(request, 'EvPresentaciones/FichasRubricas/FichaRubricaEvaluador.html')
 
-def ver_rubrica_detalle(request, nombre):
-    rubrica = Rubrica.objects.get(nombre=nombre)
-
+def ver_rubrica_detalle(request, nombre, version):
+    rubrica = Rubrica.objects.get(nombre=nombre, version=version)
+    tmax = rubrica.tiempo
+    tmin = rubrica.tiempoMin
     lineas = []
     # procesar archivo ingresado
     with open(rubrica.archivo) as csv_file:
@@ -443,14 +448,19 @@ def ver_rubrica_detalle(request, nombre):
             lineas.append(row)
 
     #print(lineas)
-    tmax = lineas[-1][2]    # Extraer tiempo maximo en ultima fila
-    tmin = lineas[-1][1]    # Extraer tiempo minimo en ultima fila
+    #tmax = lineas[-1][2]    # Extraer tiempo maximo en ultima fila
+    #tmin = lineas[-1][1]    # Extraer tiempo minimo en ultima fila
 
-    lineas[0][0] = ''       # Poner en blanco la primera columna de la primera fila
-    lineas = lineas[:-1]    # Quitar la ultima fila que contiene el tiempo
+    #lineas[0][0] = ''       # Poner en blanco la primera columna de la primera fila
+    #lineas = lineas[:-1]    # Quitar la ultima fila que contiene el tiempo
 
     return render(request, 'EvPresentaciones/Admin_interface/ver_rubrica_detalle.html',
                   {'lineas': lineas, 'tmax': tmax, 'tmin': tmin})
+
+def Ficha_Rubrica_modificar(request, nombre, version):
+    rubrica = Rubrica.objects.get(nombre=nombre, version=version)
+    print(rubrica.nombre)
+    return render(request, 'EvPresentaciones/FichasRubricas/FichaRubrica_modificar.html')
 
 # Sólo para admin, permite crear rúbricas desde 0
 def Ficha_Rubrica_crear(request):

@@ -16,26 +16,26 @@
         <!--Seccion rubricas-->
 
 
-        {% for a in lista %}
+        {% for a in lista %} <!-- Lista contiene (index, nombre, version, archivo)-->
 
 
-        <button onclick="myFunction({{ a.2 }})" class="w3-btn w3-red w3-block w3-margin" style="width: 75%">
+
+        <button onclick="myFunction({{ a.0 }})" class="w3-btn w3-red w3-block w3-margin" style="width: 75%">
             <h3>
-                {{ a.0 }}</h3>
+                {{ a.1 }}</h3> <!-- Nombre -->
         </button>
 
-        <div id={{ a.2 }} class="w3-hide w3-container w3-pale-red w3-center w3-padding-large w3-margin"
-            style="width: 75%">
-            <p>
-                {% for b in a.1 %}
-                <li>{{ b }}</li>
-                {% endfor %}
-            </p>
+        <div id={{ a.0 }} class="w3-hide w3-container w3-pale-red w3-center w3-padding-large w3-margin" style="width: 75%">
+            <p>Versión: {{ a.2 }}</p>
+
             <div class="w3-container">
-                <form action={% url 'ver_detalle' a.0 %} class="inline">
+                <form action={% url 'ver_detalle' nombre=a.1 version=a.2 %} class="inline">
+                    {% csrf_token %}
                     <button class="w3-button w3-large w3-margin-right w3-red w3-left w3-round">Ver</button>
                 </form>
-                <button class="w3-button w3-large w3-red w3-left w3-round">Modificar</button>
+                <form action={% url 'modificar_rubrica'  nombre=a.1 version=a.2 %} class="inline">
+                    <button class="w3-button w3-large w3-margin-right w3-red w3-left w3-round">Modificar</button>
+                </form>
                 <button class="w3-button w3-large w3-red w3-right w3-round">Eliminar</button>
             </div>
         </div>

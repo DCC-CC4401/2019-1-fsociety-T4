@@ -20,7 +20,9 @@ urlpatterns = [
     path('Admin_interface/Evaluadores_admin_2/<str:correo>',views.eliminarEvaluador,      name='evaluadores_admin_eliminar'),
     path('Admin_interface/Evaluadores_admin_3/<str:correo>',views.modificarEvaluador,     name='evaluadores_admin_modificar'),
     path('Admin_interface/Ver_rubrica/<int:id>',            views.ver_rubrica_select,     name='ver_select'),
-    path('Admin_interface/Ver_rubrica_detalle/<str:nombre>',views.ver_rubrica_detalle,    name='ver_detalle'),
+    path('Admin_interface/Ver_rubrica_detalle/<str:nombre>/<str:version>',  views.ver_rubrica_detalle,    name='ver_detalle'),
+    path('FichasRubricas/FichaRubrica_crear',               views.Ficha_Rubrica_crear,    name='ficha_rubrica_crear'),
+    path('FichasRubricas/FichaRubrica_modificar/<str:nombre>/<str:version>',views.Ficha_Rubrica_modificar,name='modificar_rubrica'),
     path('FichasRubricas/Rubrica_guardada',                 views.guardarRubrica,         name='guardar_rubrica'),
 
     # Vistas de evaluador
@@ -30,7 +32,6 @@ urlpatterns = [
     path('Eval_interface/evaluacionesEvaluador',            views.Evaluaciones_eval,      name='evaluaciones_eval'),
     path('Eval_interface/postevaluacion',                   views.Post_evaluacion,        name='post_evaluacion'),
     path('Eval_interface/postevalucionadmin',               views.Post_evaluaciones_admin,name='post_evaluacion_admin'),
-    path('FichasRubricas/FichaRubrica_crear',               views.Ficha_Rubrica_crear,    name='ficha_rubrica_crear'),
     path('FichasRubricas/FichaRubricaEvaluador',            views.Ficha_Rubrica_evaluador,name='ficha_rubrica_eval'),
     path('Summary_student/auth_summary',                    views.Auth_summary,           name='auth_summary'),
     path('Summary_student/summary',                         views.Summary,                name='summary'),
