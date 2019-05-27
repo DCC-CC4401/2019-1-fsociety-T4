@@ -56,20 +56,21 @@ def Evaluaciones_admin(request):
 
     # extraemos rubricas que no se encuentran en ev_rub para el html
 
-    #extraemos las rubricas que tienen evaluacion
+    # extraemos las rubricas que tienen evaluacion
     listaDeRubricasConEvaluaciones = []
     for er in ev_rub:
         listaDeRubricasConEvaluaciones.append(er.rubrica)
 
-    #annadimos a la lista solo las rubricas que no tienen evaluaciones
+    # annadimos a la lista solo las rubricas que no tienen evaluaciones
     restantes = []
     for r in rubricas:
-        #solo si no se encuentra en las que tienen evaluacion asociada, la annadimos a la lista
+        # solo si no se encuentra en las que tienen evaluacion asociada, la annadimos a la lista
         if r not in listaDeRubricasConEvaluaciones:
             restantes.append(r)
 
     return render(request, 'EvPresentaciones/Admin_interface/Evaluaciones_admin.html',
-                  {'pareja': pareja, 'rubricas': rubricas, 'cursos': cursos, 'ev_rub': ev_rub, 'rub_restantes':restantes})
+                  {'pareja': pareja, 'rubricas': rubricas, 'cursos': cursos, 'ev_rub': ev_rub,
+                   'rub_restantes': restantes})
 
 
 def eliminar_evaluaciones(request, id):
@@ -136,12 +137,12 @@ def modificar_evaluaciones(request, id):
     # curso-evaluacion
     # extraemos de la tabla los cursos que tengan la evaluacion asociada
     cursos_evs = Cursos_Evaluacion.objects.filter(evaluacion=evaluacion)
-    #por cada dato cambiamos el curso asociado
+    # por cada dato cambiamos el curso asociado
     for ce in cursos_evs:
         ce.curso = Cursos.objects.get(id=curso)
         ce.save()
 
-    #retornamos a la pagina principal
+    # retornamos a la pagina principal
     return Evaluaciones_admin(request)
 
 
@@ -218,7 +219,7 @@ def Evaluaciones(request):
     return render(request, 'EvPresentaciones/Eval_interface/evaluacion.html')
 
 
-def Evaluacion_admin(request):
+def Evaluacion_admin(request, ):
     return render(request, 'EvPresentaciones/Admin_interface/evaluacion_admin.html')
 
 
@@ -229,25 +230,55 @@ def Post_evaluacion(request):
 def Post_evaluaciones_admin(request):
     return render(request, 'EvPresentaciones/Eval_interface/postevaluacionadmin.html')
 
-def ver_evaluacion_admin(request, id):
 
+def ver_evaluacion_admin(request, id):
+    context = {}
     par_curso_evaluacion = Cursos_Evaluacion.objects.get(evaluacion=id)
     evaluacion = par_curso_evaluacion.evaluacion
     curso = par_curso_evaluacion.curso
+    #hardcodeado mientras para probar
+    rubrica = Rubrica.objects.get(nombre='Rubrica Dummy 1')
+    print(rubrica.nombre)
+    lineas = []
 
+    # procesar archivo ingresado
+    with open(rubrica.archivo) as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=',')
+        for row in csv_reader:
+            if row!=[]:
+                lineas.append(row)
+
+    criterios=lineas.copy()
+    criterios.pop(0)
+    aspecto=[]
+    algo=0
+    while algo<len(criterios):
+        lik=criterios[algo]
+        aspecto.append(lik[0])
+        criterios[algo].pop(0)
+        algo=algo+1
     # Obtener los evaluadores: se puede hacer con una query, pero creo que es mas complicado de arreglar si hay cambios
     # en el modelo
     evaluadores = list()
     try:
         usuarios_evaluacion = Usuario_Evaluacion.objects.filter(evaluacion=id)
         for par in usuarios_evaluacion:
-            #se agrega el objeto usuario
+            # se agrega el objeto usuario
             evaluadores.append(Usuario.objects.get(email=par.user))
 
     except Usuario_Evaluacion.DoesNotExist:
         pass
 
-    return render(request, 'EvPresentaciones/Admin_interface/evaluacion_admin.html', {'evaluacion': evaluacion, 'curso': curso, 'evaluadores': evaluadores})
+
+    context['evaluacion']=evaluacion
+    context['curso']=curso
+    context['evaluadores']=evaluadores
+    context['rubrica']=lineas
+    context['aspecto']=aspecto
+    context['criterios']=criterios
+
+    return render(request, 'EvPresentaciones/Admin_interface/evaluacion_admin.html',
+                  context)
 
 
 # funciones resumen evaluacion
@@ -301,24 +332,24 @@ def HomeAdmin(request):
 
 
 def eliminarEvaluador(request, correo):
-
     """Elimina el evaluador asociado a un correo"""
 
     if request.user.email == correo:
-        messages.error(request, 'Error: No es posible eliminarse a sí mismo de la lista de evaluadores', extra_tags='w3-panel w3-red')
+        messages.error(request, 'Error: No es posible eliminarse a sí mismo de la lista de evaluadores',
+                       extra_tags='w3-panel w3-red')
         return Evaluadores_admin(request)
 
     # eliminamos usuario con el id que se nos entrego
     Usuario.objects.get(email=correo).delete()
 
-    messages.success(request, 'Operación realizada: se ha eliminado al usuario ' + correo + ' de la lista de evalauadores',
-                  extra_tags='w3-panel w3-green')
+    messages.success(request,
+                     'Operación realizada: se ha eliminado al usuario ' + correo + ' de la lista de evalauadores',
+                     extra_tags='w3-panel w3-green')
 
     return Evaluadores_admin(request)
 
 
 def modificarEvaluador(request, correo):
-
     """Modifica el evaludor asociado un correo"""
 
     nuevo_nombre = request.POST.get('usrname', None)
@@ -331,14 +362,15 @@ def modificarEvaluador(request, correo):
         evaluador.last_name = nuevo_apellido
         evaluador.email = nuevo_correo
         evaluador.save()
-        messages.success(request, "Evaluación modificada con éxito. Nombre: "+ nuevo_nombre + ', Apellido: '
+        messages.success(request, "Evaluación modificada con éxito. Nombre: " + nuevo_nombre + ', Apellido: '
                          + nuevo_apellido + ', email: ' + nuevo_correo, extra_tags='w3-panel w3-green')
 
     except Usuario.DoesNotExist:
         messages.error(request, 'Error: El evaluador que intenta modificar no existe', extra_tags='w3-panel w3-red')
 
     except IntegrityError:
-        messages.error(request, 'Error: Existe otro evaluador asociado al correo ' + nuevo_correo, extra_tags='w3-panel w3-red')
+        messages.error(request, 'Error: Existe otro evaluador asociado al correo ' + nuevo_correo,
+                       extra_tags='w3-panel w3-red')
 
     return Evaluadores_admin(request)
 
@@ -350,7 +382,6 @@ def randomString(stringLength=10):
 
 
 def agregarEvaluador(request):
-
     """Agrega un evaluador con el nombre, apellido y correo entregados"""
 
     nombre = request.POST.get('usrname', None)
@@ -360,10 +391,13 @@ def agregarEvaluador(request):
 
     try:
         Usuario.objects.create_user(email=correo, first_name=nombre, last_name=apellido, password=contraseña)
-        messages.success(request, "Evaluador creado con éxito: Nombre: "+ nombre + ', Apellido: ' + apellido + ', email: ' + correo, extra_tags='w3-panel w3-green')
+        messages.success(request,
+                         "Evaluador creado con éxito: Nombre: " + nombre + ', Apellido: ' + apellido + ', email: ' + correo,
+                         extra_tags='w3-panel w3-green')
 
     except IntegrityError:
-        messages.error(request, 'Error: Ya existe un usuario asociado al correo ' + correo, extra_tags='w3-panel w3-red')
+        messages.error(request, 'Error: Ya existe un usuario asociado al correo ' + correo,
+                       extra_tags='w3-panel w3-red')
 
     return Evaluadores_admin(request)
 
@@ -374,21 +408,22 @@ def Laging_page_eval(request):
 
 # Funcion para la vista para los evaluadores
 def Evaluaciones_eval(request):
-    #diccionario para guardar la informacion que devolveremos
-    context={}
-    #consigo informacion de la sesion
-    evaluador= request.user.id
-    #saco objetos de la base de datos ordenados
-    par= Evaluacion.objects.filter(usuario_evaluacion__user=evaluador).order_by('-fechaInicio')[:10]
-    curso_eval= Cursos_Evaluacion.objects.all()
-    #guardo en diccionario
-    context['par']=par
-    context['cursos']= curso_eval
-    return render(request, 'EvPresentaciones/Eval_interface/evaluacionesEvaluador.html',context)
+    # diccionario para guardar la informacion que devolveremos
+    context = {}
+    # consigo informacion de la sesion
+    evaluador = request.user.id
+    # saco objetos de la base de datos ordenados
+    par = Evaluacion.objects.filter(usuario_evaluacion__user=evaluador).order_by('-fechaInicio')[:10]
+    curso_eval = Cursos_Evaluacion.objects.all()
+    # guardo en diccionario
+    context['par'] = par
+    context['cursos'] = curso_eval
+    return render(request, 'EvPresentaciones/Eval_interface/evaluacionesEvaluador.html', context)
+
 
 def Evaluaciones_Curso(request):
-    context={}
-    return render(request,'EvPresentaciones/Eval_interface/evaluacionesCurso.html',context)
+    context = {}
+    return render(request, 'EvPresentaciones/Eval_interface/evaluacionesCurso.html', context)
 
 
 ######### RÚBRICAS #######
@@ -396,38 +431,39 @@ def Evaluaciones_Curso(request):
 # Landing page de rúbricas del administrador
 def Rubricas_admin(request):
     rubricas = Rubrica.objects.all()
-    #listaDeAspectos = []
+    # listaDeAspectos = []
     listaNombres = []
     listaVersiones = []
     listaArchivos = []
 
-    for rubrica in rubricas: # Para todas las rúbricas
+    for rubrica in rubricas:  # Para todas las rúbricas
         listaNombres.append(str(rubrica.nombre))
         listaVersiones.append(str(rubrica.version))
         listaArchivos.append(str(rubrica.archivo))
 
         # sacar los aspectos del archivo en csv
-        #aspectos = []
+        # aspectos = []
 
-        #lineas = [] # tiene todas las filas
+        # lineas = [] # tiene todas las filas
         # procesar archivo ingresado
-        #with open(rubrica.archivo) as csv_file:
+        # with open(rubrica.archivo) as csv_file:
         #    csv_reader = csv.reader(csv_file, delimiter=',')
         #    for row in csv_reader:
         #        lineas.append(row)
         #        print(row)
         #
-        #for r in lineas[1:-1]:
+        # for r in lineas[1:-1]:
         #    aspectos.append(r[0]) # Saca la primera columna de la rubrica
         #    print(r[0])
         #
-        #listaDeAspectos.append(aspectos) # Es una fila con todos los aspectos
-        #print(listaDeAspectos)
+        # listaDeAspectos.append(aspectos) # Es una fila con todos los aspectos
+        # print(listaDeAspectos)
 
     listaEntregada = []
     for i in range(len(listaNombres)):
         # añadir el indice al final porque template es rarito y no acepta colocar id strings.
-        listaEntregada.append([i, listaNombres[i], listaVersiones[i], listaArchivos[i]]) # Le paso el indice para poder usarlo de id en elementos html
+        listaEntregada.append([i, listaNombres[i], listaVersiones[i],
+                               listaArchivos[i]])  # Le paso el indice para poder usarlo de id en elementos html
     print(listaEntregada)
 
     return render(request, 'EvPresentaciones/Admin_interface/Rubricas_admin.html', {'lista': listaEntregada})
@@ -435,6 +471,7 @@ def Rubricas_admin(request):
 
 def Ficha_Rubrica_evaluador(request):
     return render(request, 'EvPresentaciones/FichasRubricas/FichaRubricaEvaluador.html')
+
 
 def ver_rubrica_detalle(request, nombre, version):
     rubrica = Rubrica.objects.get(nombre=nombre, version=version)
@@ -447,24 +484,27 @@ def ver_rubrica_detalle(request, nombre, version):
         for row in csv_reader:
             lineas.append(row)
 
-    #print(lineas)
-    #tmax = lineas[-1][2]    # Extraer tiempo maximo en ultima fila
-    #tmin = lineas[-1][1]    # Extraer tiempo minimo en ultima fila
+    # print(lineas)
+    # tmax = lineas[-1][2]    # Extraer tiempo maximo en ultima fila
+    # tmin = lineas[-1][1]    # Extraer tiempo minimo en ultima fila
 
-    #lineas[0][0] = ''       # Poner en blanco la primera columna de la primera fila
-    #lineas = lineas[:-1]    # Quitar la ultima fila que contiene el tiempo
+    # lineas[0][0] = ''       # Poner en blanco la primera columna de la primera fila
+    # lineas = lineas[:-1]    # Quitar la ultima fila que contiene el tiempo
 
     return render(request, 'EvPresentaciones/Admin_interface/ver_rubrica_detalle.html',
                   {'lineas': lineas, 'tmax': tmax, 'tmin': tmin})
+
 
 def Ficha_Rubrica_modificar(request, nombre, version):
     rubrica = Rubrica.objects.get(nombre=nombre, version=version)
     print(rubrica.nombre)
     return render(request, 'EvPresentaciones/FichasRubricas/FichaRubrica_modificar.html')
 
+
 # Sólo para admin, permite crear rúbricas desde 0
 def Ficha_Rubrica_crear(request):
     return render(request, 'EvPresentaciones/FichasRubricas/FichaRubrica_crear.html')
+
 
 # Request genérico que guarda o sobreescribe una rúbrica
 def guardarRubrica(request):
@@ -472,11 +512,11 @@ def guardarRubrica(request):
     tmin = request.POST.get('t-min', None)
     tmax = request.POST.get('t-max', None)
     version = request.POST.get('version', None)
-    rubrica = request.POST.get('csv-text', None) # Aquí viene la rúbrica completa
+    rubrica = request.POST.get('csv-text', None)  # Aquí viene la rúbrica completa
     rows = rubrica.split("|")
 
     # Nombre de archivo
-    nombreArchivo = nombre+'-'+version+'.csv'
+    nombreArchivo = nombre + '-' + version + '.csv'
     rutaNombre = './EvPresentaciones/ArchivosRubricas/' + nombreArchivo
 
     # Tener el formato solicitado para guardar
@@ -493,10 +533,12 @@ def guardarRubrica(request):
     csvFile.close
 
     # Guardar en la base de datos
-    #try:
-    tminn = tmin.split(':') # Extraer los minutos y segundos
+    # try:
+    tminn = tmin.split(':')  # Extraer los minutos y segundos
     tmaxx = tmax.split(':')
-    Rubrica.create_rubrica(nombre=nombre, tiempoMin= timedelta(minutes=int(tminn[0]),seconds=int(tminn[1])), tiempoMax= timedelta(minutes=int(tmaxx[0]),seconds=int(tmaxx[1])), version=version, archivo=rutaNombre)
-    #except IntegrityError:
+    Rubrica.create_rubrica(nombre=nombre, tiempoMin=timedelta(minutes=int(tminn[0]), seconds=int(tminn[1])),
+                           tiempoMax=timedelta(minutes=int(tmaxx[0]), seconds=int(tmaxx[1])), version=version,
+                           archivo=rutaNombre)
+    # except IntegrityError:
     #    messages.error(request, 'Error: Ya existe la rúbrica ' + nombre+'-'+version, extra_tags='w3-panel w3-red')
     return render(request, 'EvPresentaciones/FichasRubricas/Rubrica_guardada.html')
