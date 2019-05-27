@@ -514,6 +514,14 @@ def Ficha_Rubrica_modificar(request, nombre, version):
 def Ficha_Rubrica_crear(request):
     return render(request, 'EvPresentaciones/FichasRubricas/FichaRubrica_crear.html')
 
+def Ficha_Rubrica_eliminar(request, nombre, version):
+    rubrica = Rubrica.objects.get(nombre=nombre, version=version)
+    rubricaID = rubrica.id
+    print(rubricaID)
+    evaluacionesAsociadas = Evaluacion_Rubrica.get(rubrica=rubricaID)
+    print(evaluacionesAsociadas)
+    return render(request, 'EvPresentaciones/FichasRubricas/FichaRubrica_eliminar.html')
+
 
 # Request genérico que guarda o sobreescribe una rúbrica
 def guardarRubrica(request):

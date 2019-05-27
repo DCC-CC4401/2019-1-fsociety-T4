@@ -22,6 +22,7 @@ urlpatterns = [
     path('Admin_interface/Ver_rubrica/<int:id>',            views.ver_rubrica_select,     name='ver_select'),
     path('Admin_interface/Ver_rubrica_detalle/<str:nombre>/<str:version>',  views.ver_rubrica_detalle,    name='ver_detalle'),
     path('FichasRubricas/FichaRubrica_crear',               views.Ficha_Rubrica_crear,    name='ficha_rubrica_crear'),
+    path('FichasRubricas/FichaRubrica_eliminar/<str:nombre>/<str:version>',views.Ficha_Rubrica_eliminar, name='ficha_rubrica_eliminar'),
     path('FichasRubricas/FichaRubrica_modificar/<str:nombre>/<str:version>',views.Ficha_Rubrica_modificar,name='modificar_rubrica'),
     path('FichasRubricas/Rubrica_guardada',                 views.guardarRubrica,         name='guardar_rubrica'),
 

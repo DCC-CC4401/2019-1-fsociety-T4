@@ -127,7 +127,7 @@ class Alumnos(models.Model):
 
 class Rubrica(models.Model):
     # id es automatico
-    nombre = models.CharField(max_length=50, primary_key=True)
+    nombre = models.CharField(max_length=50)
     version = models.CharField(max_length=50)
     tiempo = models.DurationField() # tiempoMax
     tiempoMin = models.DurationField(default=0)

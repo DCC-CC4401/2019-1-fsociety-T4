@@ -36,7 +36,9 @@
                 <form action={% url 'modificar_rubrica'  nombre=a.1 version=a.2 %} class="inline">
                     <button class="w3-button w3-large w3-margin-right w3-red w3-left w3-round">Modificar</button>
                 </form>
-                <button class="w3-button w3-large w3-red w3-right w3-round">Eliminar</button>
+                <form action={% url 'ficha_rubrica_eliminar' nombre=a.1 version=a.2 %} class="inline">
+                    <button class="w3-button w3-large w3-margin-right w3-red w3-left w3-round">Eliminar</button>
+                </form>
             </div>
         </div>
 
