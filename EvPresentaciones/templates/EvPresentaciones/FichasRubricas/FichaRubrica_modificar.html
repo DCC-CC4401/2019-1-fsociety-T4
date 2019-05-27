@@ -12,28 +12,28 @@
             <div class="w3-quarter">
                 <div class="form-inline">
                     <label>Nombre</label>
-                    <input type="text" placeholder="Rúbrica Entrega 4" name="nombre-rubrica">
+                    <input type="text" placeholder="Rúbrica Entrega 4" name="nombre-rubrica" value="{{ nombre }}">
                     
                 </div>
             </div>
             <div class="w3-quarter">
                 <div class="form-inline">
                     <label>Tiempo mínimo</label>
-                    <input type="text" placeholder="5:00" name="t-min" style="width: 30%">
+                    <input type="text" placeholder="5:00" name="t-min" style="width: 30%" value="{{ tiempoMin }}">
                     
                 </div>
             </div>
             <div class="w3-quarter">
                 <div class="form-inline">
                     <label>Tiempo máximo</label>
-                    <input type="text" placeholder="10:00" name="t-max" style="width: 30%">
+                    <input type="text" placeholder="10:00" name="t-max" style="width: 30%" value="{{ tiempo }}">
                     
                 </div>
             </div>
             <div class="w3-quarter">
                 <div class="form-inline">
                     <label>Versión</label>
-                    <input type="text" placeholder="1.2" name="version" style="width: 30%">
+                    <input type="text" placeholder="1.2" name="version" style="width: 30%" value="{{ version }}">
                     
                 </div>
             </div>
@@ -41,14 +41,22 @@
 
         <div class="w3-container">
             <table id="tabla-rubrica" class="orange">
+                {% with primeraFila=contenido.0 %}
                 <tr>
                     <th></th>
-                    <th contenteditable='true'>0.0</th>
-                    <th contenteditable='true'>0.3</th>
-                    <th contenteditable='true'>0.7</th>
-                    <th contenteditable='true'>1.0</th>
+                    {% for i in range(1, len(primeraFila) - 2)%}
+                        <th contenteditable='true'>{{ primeraFila[i] }}</th>
+                    {% endfor %}
                     <th></th>
                 </tr>
+                {% endwith %}
+                {% comment %} {% for row in contenido %}
+                <tr>
+                    {% for col in row %}
+                        <th contenteditable='true'> {{ col }}</th>
+                    {% endfor %}
+                </tr>
+                {% endfor %} {% endcomment %}
                 <tr>
                     <th contenteditable='true'>Aspecto #1</th>
                     <td contenteditable='true'>No cumple</td>

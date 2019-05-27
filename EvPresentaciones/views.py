@@ -459,8 +459,14 @@ def ver_rubrica_detalle(request, nombre, version):
 
 def Ficha_Rubrica_modificar(request, nombre, version):
     rubrica = Rubrica.objects.get(nombre=nombre, version=version)
-    print(rubrica.nombre)
-    return render(request, 'EvPresentaciones/FichasRubricas/FichaRubrica_modificar.html')
+    # Extraer contenido
+    rows = []
+    with open(rubrica.archivo) as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=',')
+        for row in csv_reader:
+            rows.append(row)
+    return render(request, 'EvPresentaciones/FichasRubricas/FichaRubrica_modificar.html',
+                    {'nombre' : rubrica.nombre, 'version' : rubrica.version, 'tiempo' : rubrica.tiempo, 'tiempoMin' : rubrica.tiempoMin, 'contenido' : rows})
 
 # Sólo para admin, permite crear rúbricas desde 0
 def Ficha_Rubrica_crear(request):
