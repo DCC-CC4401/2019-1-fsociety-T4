@@ -21,7 +21,7 @@
             <div class="w3-center"><br>
                 <span onclick="document.getElementById('agregar').style.display='none'"
                       class="w3-button w3-xlarge w3-transparent w3-display-topright" title="Close Modal">×</span>
-                <form id="form" method="POST" class="w3-container"
+                <form id="agregar" method="POST" class="w3-container"
                       action="{% url 'agregar_evaluaciones' %}">
                     {% csrf_token %}
 
@@ -45,7 +45,7 @@
                         <label><b>Curso</b></label>
                         <select class="w3-input w3-border" name="curso" required>
                             {% for c in cursos %}
-                                <option value={{ c.id }}>{{ c.nombre }}</option>
+                                <option value={{ c.id }}>{{ c.codigo }} / Semestre: {{ c.semestre }} / Seccion: {{ c.seccion }}</option>
                             {% endfor %}
                         </select>
 
