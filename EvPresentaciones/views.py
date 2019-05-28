@@ -34,6 +34,9 @@ def Cursos_admin(request):
 
 
 def Evaluaciones_admin(request):
+    if not request.user.is_authenticated:
+        return index(request)
+
     # obtenemos las evaluaciones y los cursos
     pareja = Cursos_Evaluacion.objects.all()
 
@@ -83,6 +86,9 @@ def eliminar_evaluaciones(request, id):
     :return:
     """
 
+    if not request.user.is_authenticated:
+        return index(request)
+
     # Eliminamos evaluacion por el id
     Evaluacion.objects.get(id=id).delete()
 
@@ -103,6 +109,9 @@ def modificar_evaluaciones(request, id):
     """
     Vista que se ejecuta al modifcar una evaluacion
     """
+
+    if not request.user.is_authenticated:
+        return index(request)
 
     # buscamos la evlaucion por su id
     evaluacion = Evaluacion.objects.get(id=id)
@@ -152,6 +161,9 @@ def agregar_evaluaciones(request):
     """
     Vista que se ejecuta al annadir evaluaciones a la plataforma.
     """
+
+    if not request.user.is_authenticated:
+        return index(request)
 
     # extraemos los datos del post
     fecha_inicio = request.POST.get('inicio', None)
@@ -241,7 +253,7 @@ def ver_evaluacion_admin(request, id):
     #hardcodeado mientras para probar
     rubrica = Rubrica.objects.get(nombre='Rubrica Dummy 1')
     print(rubrica.nombre)
-    lineas = []
+    # lineas = []
 
     # procesar archivo ingresado
     with open(rubrica.archivo) as csv_file:
