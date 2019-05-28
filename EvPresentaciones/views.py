@@ -56,10 +56,12 @@ def Evaluaciones_admin(request):
 
     # extraemos rubricas que no se encuentran en ev_rub para el html
 
-    # extraemos las rubricas que tienen evaluacion
+    # extraemos las rubricas que tienen evaluacion y las evaluaciones que tienen rubrica
     listaDeRubricasConEvaluaciones = []
+    listaDeEvaluacionesConRubricas = []
     for er in ev_rub:
         listaDeRubricasConEvaluaciones.append(er.rubrica)
+        listaDeEvaluacionesConRubricas.append(er.evaluacion)
 
     # annadimos a la lista solo las rubricas que no tienen evaluaciones
     restantes = []
@@ -70,7 +72,7 @@ def Evaluaciones_admin(request):
 
     return render(request, 'EvPresentaciones/Admin_interface/Evaluaciones_admin.html',
                   {'pareja': pareja, 'rubricas': rubricas, 'cursos': cursos, 'ev_rub': ev_rub,
-                   'rub_restantes': restantes})
+                   'rub_restantes': restantes, 'EvsConRubrica':listaDeEvaluacionesConRubricas})
 
 
 def eliminar_evaluaciones(request, id):
@@ -305,6 +307,7 @@ def ver_rubrica_select(request, id):
         for row in csv_reader:
             lineas.append(row)
 
+    #extraemos todas las lineas excepto la primera y la ultima
     for r in lineas[1:-1]:
         aspectos.append(r[0])
 

@@ -89,11 +89,16 @@
         <li>Fecha término: {{ o.evaluacion.fechaTermino }}</li>
         <li>Estado: {{ o.evaluacion.estado }}</li>
         <li>Tiempo esperado presentación: {{ o.evaluacion.duracion }}</li>
-        <form action="{% url 'ver_select' o.evaluacion.id %}">
-            <button class="w3-button w3-white w3-border w3-border-red w3-round-large">Rúbrica
-                asociada
-            </button>
-        </form>
+
+        <!-- Mostramos boton solo si la evaluacion tiene una rubrica asociada-->
+        {% if o.evaluacion in EvsConRubrica %}
+            <form action="{% url 'ver_select' o.evaluacion.id %}">
+                <button class="w3-button w3-white w3-border w3-border-red w3-round-large">Rúbrica
+                    asociada
+                </button>
+            </form>
+        {% endif %}
+
         <button class="w3-button w3-white w3-border w3-border-red w3-round-large">Exportar
             puntajes
         </button><br>
