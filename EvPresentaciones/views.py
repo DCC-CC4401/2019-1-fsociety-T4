@@ -34,6 +34,9 @@ def Cursos_admin(request):
 
 
 def Evaluaciones_admin(request):
+    if not request.user.is_authenticated:
+        return index(request)
+
     # obtenemos las evaluaciones y los cursos
     pareja = Cursos_Evaluacion.objects.all()
 
@@ -56,10 +59,12 @@ def Evaluaciones_admin(request):
 
     # extraemos rubricas que no se encuentran en ev_rub para el html
 
-    # extraemos las rubricas que tienen evaluacion
+    # extraemos las rubricas que tienen evaluacion y las evaluaciones que tienen rubrica
     listaDeRubricasConEvaluaciones = []
+    listaDeEvaluacionesConRubricas = []
     for er in ev_rub:
         listaDeRubricasConEvaluaciones.append(er.rubrica)
+        listaDeEvaluacionesConRubricas.append(er.evaluacion)
 
     # annadimos a la lista solo las rubricas que no tienen evaluaciones
     restantes = []
@@ -70,7 +75,7 @@ def Evaluaciones_admin(request):
 
     return render(request, 'EvPresentaciones/Admin_interface/Evaluaciones_admin.html',
                   {'pareja': pareja, 'rubricas': rubricas, 'cursos': cursos, 'ev_rub': ev_rub,
-                   'rub_restantes': restantes})
+                   'rub_restantes': restantes, 'EvsConRubrica':listaDeEvaluacionesConRubricas})
 
 
 def eliminar_evaluaciones(request, id):
@@ -80,6 +85,9 @@ def eliminar_evaluaciones(request, id):
     :param request:
     :return:
     """
+
+    if not request.user.is_authenticated:
+        return index(request)
 
     # Eliminamos evaluacion por el id
     Evaluacion.objects.get(id=id).delete()
@@ -101,6 +109,9 @@ def modificar_evaluaciones(request, id):
     """
     Vista que se ejecuta al modifcar una evaluacion
     """
+
+    if not request.user.is_authenticated:
+        return index(request)
 
     # buscamos la evlaucion por su id
     evaluacion = Evaluacion.objects.get(id=id)
@@ -150,6 +161,9 @@ def agregar_evaluaciones(request):
     """
     Vista que se ejecuta al annadir evaluaciones a la plataforma.
     """
+
+    if not request.user.is_authenticated:
+        return index(request)
 
     # extraemos los datos del post
     fecha_inicio = request.POST.get('inicio', None)
@@ -239,7 +253,7 @@ def ver_evaluacion_admin(request, id):
     #hardcodeado mientras para probar
     rubrica = Rubrica.objects.get(nombre='Rubrica Dummy 1')
     print(rubrica.nombre)
-    lineas = []
+    # lineas = []
 
     # procesar archivo ingresado
     with open(rubrica.archivo) as csv_file:
@@ -305,6 +319,7 @@ def ver_rubrica_select(request, id):
         for row in csv_reader:
             lineas.append(row)
 
+    #extraemos todas las lineas excepto la primera y la ultima
     for r in lineas[1:-1]:
         aspectos.append(r[0])
 
@@ -497,13 +512,30 @@ def ver_rubrica_detalle(request, nombre, version):
 
 def Ficha_Rubrica_modificar(request, nombre, version):
     rubrica = Rubrica.objects.get(nombre=nombre, version=version)
-    print(rubrica.nombre)
-    return render(request, 'EvPresentaciones/FichasRubricas/FichaRubrica_modificar.html')
+    # Extraer contenido
+    rows = []
+    with open(rubrica.archivo) as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=',')
+        for row in csv_reader:
+            rows.append(row)
+    print(rows)
+    primeraFila = rows[0][1:len(row[0])-1] # Quito el primer y ultimo elemento que son elementos vacios no editables
+    contenido = rows[1:]
+    return render(request, 'EvPresentaciones/FichasRubricas/FichaRubrica_modificar.html',
+                    {'nombre' : rubrica.nombre, 'version' : rubrica.version, 'tiempo' : rubrica.tiempo, 'tiempoMin' : rubrica.tiempoMin, 'primeraFila' : primeraFila, 'contenido' : contenido})
 
 
 # Sólo para admin, permite crear rúbricas desde 0
 def Ficha_Rubrica_crear(request):
     return render(request, 'EvPresentaciones/FichasRubricas/FichaRubrica_crear.html')
+
+def Ficha_Rubrica_eliminar(request, nombre, version):
+    rubrica = Rubrica.objects.get(nombre=nombre, version=version)
+    rubricaID = rubrica.id
+    print(rubricaID)
+    evaluacionesAsociadas = Evaluacion_Rubrica.get(rubrica=rubricaID)
+    print(evaluacionesAsociadas)
+    return render(request, 'EvPresentaciones/FichasRubricas/FichaRubrica_eliminar.html')
 
 
 # Request genérico que guarda o sobreescribe una rúbrica

@@ -12,28 +12,28 @@
             <div class="w3-quarter">
                 <div class="form-inline">
                     <label>Nombre</label>
-                    <input type="text" placeholder="Rúbrica Entrega 4" name="nombre-rubrica">
+                    <input type="text" placeholder="Rúbrica Entrega 4" name="nombre-rubrica" value="{{ nombre }}">
                     
                 </div>
             </div>
             <div class="w3-quarter">
                 <div class="form-inline">
                     <label>Tiempo mínimo</label>
-                    <input type="text" placeholder="5:00" name="t-min" style="width: 30%">
+                    <input type="text" placeholder="5:00" name="t-min" style="width: 30%" value="{{ tiempoMin }}">
                     
                 </div>
             </div>
             <div class="w3-quarter">
                 <div class="form-inline">
                     <label>Tiempo máximo</label>
-                    <input type="text" placeholder="10:00" name="t-max" style="width: 30%">
+                    <input type="text" placeholder="10:00" name="t-max" style="width: 30%" value="{{ tiempo }}">
                     
                 </div>
             </div>
             <div class="w3-quarter">
                 <div class="form-inline">
                     <label>Versión</label>
-                    <input type="text" placeholder="1.2" name="version" style="width: 30%">
+                    <input type="text" placeholder="1.2" name="version" style="width: 30%" value="{{ version }}">
                     
                 </div>
             </div>
@@ -41,34 +41,49 @@
 
         <div class="w3-container">
             <table id="tabla-rubrica" class="orange">
+                <!-- Header de la rúbrica -->
                 <tr>
-                    <th></th>
-                    <th contenteditable='true'>0.0</th>
-                    <th contenteditable='true'>0.3</th>
-                    <th contenteditable='true'>0.7</th>
-                    <th contenteditable='true'>1.0</th>
-                    <th></th>
+                    <th></th> <!-- Primera columna vacía no editable -->
+                    {% for col in primeraFila %}
+                        <th contenteditable='true'>{{ col }}</th> <!-- Sólo los elementos que pasan son editables -->
+                    {% endfor %}
+                    <th></th> <!-- Última columna vacía no editable -->
                 </tr>
+                <!-- Contenido de la rúbrica -->
+                {% for row in contenido %}
                 <tr>
-                    <th contenteditable='true'>Aspecto #1</th>
-                    <td contenteditable='true'>No cumple</td>
-                    <td contenteditable='true'>Cumple a penas</td>
-                    <td contenteditable='true'>Cumple decentemente</td>
-                    <td contenteditable='true'>Cumple en totalidad</td>
-                    <td><input type='button' class='button-add' value='Añadir fila' onclick="addRow()"></td>
+                    {% for col in row %}
+                        {% if col == row.0%}
+                            <th contenteditable='true'> {{ col }}</th>
+                        {% else %}
+                            <td contenteditable='true'> {{ col }}</td>
+                        {% endif %}  
+                    {% endfor %}
+                    
+                    {% if row == contenido.0 %}
+                        <td><input type='button' class='button-add' value='Añadir fila' onclick="addRow()"></td>
+                    {% else %}
+                        <td><input type='button' class='button-delete' value='Borrar fila' onclick="removeRow(this)"></td>
+                    {% endif %}
                 </tr>
+                {% endfor %}
+                <!-- Fila de botones -->
                 <tr>
-                    <th></th>
-                    <td><input type='button' class='button-add' value='Añadir columna' onclick="addCol()"></td>
-                    <td><input type='button' class='button-delete DeleteCol' value='Borrar columna' onclick="removeCol(this)"></td>
-                    <td><input type='button' class='button-delete DeleteCol' value='Borrar columna' onclick="removeCol(this)"></td>
-                    <td><input type='button' class='button-delete DeleteCol' value='Borrar columna' onclick="removeCol(this)"></td>
-                    <td></td>
+                    {% for col in contenido.0 %} <!-- Se toma primera fila (de contenido) como referencia de numero de columnas -->
+                        {% if col == contenido.0.0 %}
+                            <th></th>
+                        {% elif col == contenido.0.1 %}
+                            <td><input type='button' class='button-add' value='Añadir columna' onclick="addCol()"></td>
+                        {% else %}
+                            <td><input type='button' class='button-delete DeleteCol' value='Borrar columna' onclick="removeCol(this)"></td>
+                        {% endif %}
+                    {% endfor %}
+                    <td></td> <!-- Última columna no viene en la lista, y se pone como columna vacía no editable -->
                 </tr>
             </table>
         </div>
 
-        <input id"csv-text-id" type="text" style="display: block;" name="csv-text" value="">
+        <input id"csv-text-id" type="text" style="display: none;" name="csv-text" value="">
         
         <div class="w3-row">
             <button type="button" class="button1" onclick="saveRubrica();">Guardar rúbrica <i class="far fa-save"></i></button>
