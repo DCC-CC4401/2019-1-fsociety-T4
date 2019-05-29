@@ -137,7 +137,7 @@ class Rubrica(models.Model):
         db_table = "Rubrica"
 
     def __str__(self):
-        return self.nombre + "-" + self.version
+        return self.nombre + " v" + self.version
     
     def create_rubrica(nombre, tiempoMin, tiempoMax, version, archivo):
         r = Rubrica(
@@ -162,7 +162,7 @@ class Evaluacion(models.Model):
         db_table = "Evaluacion"
 
     def __str__(self):
-        return "Evaluacion: " + str(self.id)
+        return "ID: " + str(self.id) + " | Inicio: " + str(self.fechaInicio) + " | Término: " + str(self.fechaTermino) + " | Estado: " + str(self.estado)
 
 
 ##############################################################
@@ -195,7 +195,7 @@ class Evaluacion_Rubrica(models.Model):
         unique_together = (("evaluacion", "rubrica"),)
 
     def __str__(self):
-        return "Evaluacion: " + str(self.evaluacion) + " Rubrica: " + str(self.rubrica)
+        return "Evaluacion: (" + str(self.evaluacion) + ")     Rúbrica: (" + str(self.rubrica) + ")"
 
 
 class Cursos_Evaluacion(models.Model):
