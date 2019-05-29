@@ -223,6 +223,7 @@ class Cursos_Alumnos(models.Model):
 
 class Alumnos_Evaluacion(models.Model):
     nota = models.FloatField(null=True)
+    tiempo = models.DurationField(default=0)  # tiempo de la evaluacion
     alumno = models.ForeignKey(Alumnos, on_delete=models.CASCADE, null=True)
     evaluacion = models.ForeignKey(Evaluacion, on_delete=models.CASCADE, null=True)
 
