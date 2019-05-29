@@ -306,25 +306,11 @@ def Summary(request):
     return render(request, 'EvPresentaciones/Summary_student/summary.html')
 
 
+# Se hace así porque hay que sacar la rúbrica del modelo Evaluacion_Rubrica, no es directo
 def ver_rubrica_select(request, id):
-    rubrica = Evaluacion_Rubrica.objects.get(evaluacion=id)
+    rubrica = Evaluacion_Rubrica.objects.get(evaluacion=id).rubrica
 
-    # sacar los aspectos del archivo en csv
-    aspectos = []
-
-    lineas = []
-    # procesar archivo ingresado
-    with open(rubrica.rubrica.archivo) as csv_file:
-        csv_reader = csv.reader(csv_file, delimiter=',')
-        for row in csv_reader:
-            lineas.append(row)
-
-    #extraemos todas las lineas excepto la primera y la ultima
-    for r in lineas[1:-1]:
-        aspectos.append(r[0])
-
-    return render(request, 'EvPresentaciones/Admin_interface/ver_rubrica_select.html',
-                  {'rubrica': rubrica.rubrica.nombre, 'aspectos': aspectos})
+    return ver_rubrica_detalle(request,rubrica.nombre,rubrica.version)
 
 
 # Si se hace request de la landingpage, se verifica el tipo de usuario y se retorna el render correspondiente
@@ -550,7 +536,11 @@ def Ficha_Rubrica_eliminar(request, nombre, version):
 
 def Ficha_Rubrica_eliminar_definitivo(request, rubricaID):
     rubrica = Rubrica.objects.get(id=rubricaID)
+    # Aquí eliminar archivo
 
+    # Aquí eliminar fila de Evaluacion_Rubrica
+
+    # Aquí eliminar rúbrica en su modelo
     rubrica.delete()
 
     
