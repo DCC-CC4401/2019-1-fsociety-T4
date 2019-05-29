@@ -447,11 +447,13 @@ def Evaluaciones_Curso(request):
 def Rubricas_admin(request):
     rubricas = Rubrica.objects.all()
     # listaDeAspectos = []
+    listaIDs = []
     listaNombres = []
     listaVersiones = []
     listaArchivos = []
 
     for rubrica in rubricas:  # Para todas las rúbricas
+        listaIDs.append(int(rubrica.id))
         listaNombres.append(str(rubrica.nombre))
         listaVersiones.append(str(rubrica.version))
         listaArchivos.append(str(rubrica.archivo))
@@ -477,7 +479,7 @@ def Rubricas_admin(request):
     listaEntregada = []
     for i in range(len(listaNombres)):
         # añadir el indice al final porque template es rarito y no acepta colocar id strings.
-        listaEntregada.append([i, listaNombres[i], listaVersiones[i],
+        listaEntregada.append([listaIDs[i], listaNombres[i], listaVersiones[i],
                                listaArchivos[i]])  # Le paso el indice para poder usarlo de id en elementos html
     print(listaEntregada)
 
@@ -532,11 +534,26 @@ def Ficha_Rubrica_crear(request):
 def Ficha_Rubrica_eliminar(request, nombre, version):
     rubrica = Rubrica.objects.get(nombre=nombre, version=version)
     rubricaID = rubrica.id
-    print(rubricaID)
-    evaluacionesAsociadas = Evaluacion_Rubrica.get(rubrica=rubricaID)
-    print(evaluacionesAsociadas)
-    return render(request, 'EvPresentaciones/FichasRubricas/FichaRubrica_eliminar.html')
+    #evaluacionesAsociadas = Evaluacion_Rubrica.objects.get(rubrica=rubricaID)
+    evaluacionesAsociadas = Evaluacion_Rubrica.objects.all() # Lista de OBJETOS
+    evaluacionesSTR = [] 
+    evaluacionesIDs = [] # Para obtener cursos asociados a evaluaciones
+    for e in evaluacionesAsociadas:
+        evaluacionesSTR.append(str(e.evaluacion))
+        evaluacionesIDs.append(e.id)
+    print(evaluacionesSTR)
+    cursosAsociados = [] # LISTA DE OBJETOS TIPO CURSO
+    for i in range(len(evaluacionesIDs)):
+        cursosAsociados.append(str(Cursos_Evaluacion.objects.get(evaluacion=evaluacionesIDs[i]).curso)) # Extraigo id de cursos asociados
 
+    return render(request, 'EvPresentaciones/FichasRubricas/FichaRubrica_eliminar.html', { 'evaluaciones' : evaluacionesSTR, 'cursos' : cursosAsociados})
+
+def Ficha_Rubrica_eliminar_definitivo(request, rubricaID):
+    rubrica = Rubrica.objects.get(id=rubricaID)
+
+    rubrica.delete()
+
+    
 
 # Request genérico que guarda o sobreescribe una rúbrica
 def guardarRubrica(request):
