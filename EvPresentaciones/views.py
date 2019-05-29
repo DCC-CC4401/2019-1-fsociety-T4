@@ -522,16 +522,17 @@ def Ficha_Rubrica_eliminar(request, nombre, version):
     rubricaID = rubrica.id
     #evaluacionesAsociadas = Evaluacion_Rubrica.objects.get(rubrica=rubricaID)
     evaluacionesAsociadas = Evaluacion_Rubrica.objects.all() # Lista de OBJETOS
-    evaluacionesSTR = [] 
+    evaluacionesSTR = []
     evaluacionesIDs = [] # Para obtener cursos asociados a evaluaciones
     for e in evaluacionesAsociadas:
         evaluacionesSTR.append(str(e.evaluacion))
         evaluacionesIDs.append(e.id)
     print(evaluacionesSTR)
+    evaluacionesSTR = list(dict.fromkeys(evaluacionesSTR))
     cursosAsociados = [] # LISTA DE OBJETOS TIPO CURSO
     for i in range(len(evaluacionesIDs)):
         cursosAsociados.append(str(Cursos_Evaluacion.objects.get(evaluacion=evaluacionesIDs[i]).curso)) # Extraigo id de cursos asociados
-
+    cursosAsociados = list(dict.fromkeys(cursosAsociados))
     return render(request, 'EvPresentaciones/FichasRubricas/FichaRubrica_eliminar.html', { 'evaluaciones' : evaluacionesSTR, 'cursos' : cursosAsociados})
 
 def Ficha_Rubrica_eliminar_definitivo(request, rubricaID):
