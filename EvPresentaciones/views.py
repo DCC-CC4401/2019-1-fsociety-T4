@@ -520,8 +520,9 @@ def Ficha_Rubrica_crear(request):
 def Ficha_Rubrica_eliminar(request, nombre, version):
     rubrica = Rubrica.objects.get(nombre=nombre, version=version)
     rubricaID = rubrica.id
-    #evaluacionesAsociadas = Evaluacion_Rubrica.objects.get(rubrica=rubricaID)
-    evaluacionesAsociadas = Evaluacion_Rubrica.objects.all() # Lista de OBJETOS
+    print(rubricaID)
+    evaluacionesAsociadas = Evaluacion_Rubrica.objects.filter(rubrica=rubricaID)
+    #evaluacionesAsociadas = Evaluacion_Rubrica.objects.all() # Lista de OBJETOS
     evaluacionesSTR = []
     evaluacionesIDs = [] # Para obtener cursos asociados a evaluaciones
     for e in evaluacionesAsociadas:
