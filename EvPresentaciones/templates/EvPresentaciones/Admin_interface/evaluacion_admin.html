@@ -1,27 +1,42 @@
 {% extends 'EvPresentaciones/BASE/base.html' %}
 {% block contenido %}
-
+    <!--TODO meter js en todo esto-->
     <!-- Evaluacion -->
     <div class="w3-container" id="designers" style="margin-top:50px">
         <h1 class="w3-xxxlarge w3-text-red"><b>Evaluación <i class="w3-text-green">en curso</i> </b></h1>
         <hr style="width:50px;border:5px solid red" class="w3-round">
+
+        <!-- Aqui van los grupos-->
+
+        <div class="w3-panel  w3-margin-bottom">
+            <ul class="w3-ul w3-light-grey w3-center w3-card-4">
+                <li class="w3-dark-grey w3-xlarge w3-padding-32">Grupos <i class="fas fa-user-tie"></i></li>
+                {% for grupo in grupos %}
+                    <form id="pedir_grupo" method="POST" action="{% url 'cargar_grupo' evaluacion.id "No Group" %}">
+                    {% csrf_token %}
+                    <li class="w3-padding-16" id={{ grupo }}>  {{ grupo }}   </i>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+
+        <button class="w3-button w3-large w3-red w3-right w3-round"
+                type="submit">Agregar
+        </button>
+        </form>
+        <!--TODO Puede que sea mas facil sacar id tonteando con id de js -->
+
         <div class="w3-container w3-center">
             <p><b></b> Presentación {{ evaluacion }} <i>{{ curso }}</i></p>
             <br>
-
             <!-- Despliegue de evaluadores -->
             <div class="w3-panel  w3-margin-bottom">
                 <ul class="w3-ul w3-light-grey w3-center w3-card-4">
                     <li class="w3-dark-grey w3-xlarge w3-padding-32">Evaluadores <i class="fas fa-user-tie"></i></li>
-
                     {% for evaluador in evaluadores %}
                         <li class="w3-padding-16">  {{ evaluador.first_name }} {{ evaluador.last_name }} </i>
                         </li>
-                        <!-- Despliegue de evaluadores
-        <li class=" w3-padding-16 presentado"> Evaluador 2 <i style="margin-left: 10px"
-            class="far fa-check-circle"><i class="w3-small"> ya evaluó</i></i>
-        </li>
-        <li class="w3-padding-16"> Evaluador 3 <i style="margin-left: 10px" class="w3-large fas fa-times"></i></li>-->
                     {% endfor %}
                     <li class="opcion w3-padding-16"> Agregar otro <i style="margin-left: 10px"
                                                                       class="fas fa-user-plus"></i>
@@ -29,22 +44,27 @@
                 </ul>
             </div>
 
-            <div class="w3-row-padding" style="margin-top:30px">
+            <div class="w3-row-padding" id="miembros_grupo" style="margin-top:30px">
+                <!-- despliegue miebros del grupo -->
                 <div class="w3-half w3-margin-bottom ">
                     <ul class="w3-ul w3-light-grey w3-center w3-card-4">
                         <li class="w3-dark-grey w3-xlarge w3-padding-32">Miembros del equipo <i
                                 class="fas fa-user-friends"></i>
                         </li>
-                        <li class="presentado w3-padding-16">Pablo Aliaga <i class="far fa-check-circle"></i> <i
-                                class="w3-small">ya presentó</i></li>
-                        <li class="w3-padding-16">Bastián Matamala</li>
-                        <li class="presentado w3-padding-16">Camila Quilape <i class="far fa-check-circle"></i><i
-                                class="w3-small">ya presentó</i></li>
-                        <li class=" w3-padding-16">Andrea Park</li>
+                        {% for par in alumnos %}
+                            {% if par.presento %}
+                                <li class="presentado w3-padding-16"> {{ par.nombre }} {{ par.apellido }} <i
+                                        class="far fa-check-circle"></i> <i
+                                        class="w3-small">ya presentó</i></li>
+                            {% else %}
+                                <li class="presentado w3-padding-16"> {{ par.nombre }} {{ par.apellido }}</li>
+
+                            {% endif %}
+                        {% endfor %}
                     </ul>
                 </div>
-
-                <div class="w3-half w3-margin-bottom ">
+                <!-- despliegue de presentadores -->
+                <div class="w3-half w3-margin-bottom " id="presentadores">
                     <ul class="w3-ul w3-light-grey w3-center w3-card-4">
                         <li class="w3-dark-grey w3-xlarge w3-padding-32">Miembros que presentan <i
                                 class="fas fa-chalkboard-teacher"></i></li>
@@ -52,21 +72,15 @@
                                                                  class="w3-large fas fa-times"></i></li>
                         <li class=" opcion w3-padding-16" id="mas"> Agregar otro <i style="margin-left: 10px"
                                                                                     class="fas fa-user-plus"></i></li>
-
                     </ul>
                 </div>
             </div>
-            <!--TODO Arreglar el formateo de la nota de los criterios de evaluacion-->
-            <!-- Aqui puse el valor de los criterios por si acaso, hay que formatearlo mejor-->
             <p>Seleccione el nivel de logro alcanzado por el grupo en cada ámbito</p>
-            Los criterios de Evaluación tienen los siguiente valores posibles:
-            {% for numero in rubrica.0 %}
-                {{ numero }}
-            {% endfor %}
+
         </div>
         <!--Aqui van los bloques de cada criterio de la rubrica-->
         {% for asp in aspecto %}
-            <div class="w3-panel  w3-margin-bottom">
+            <div class="w3-panel  w3-margin-bottom" id="criterios">
                 <ul class="w3-ul w3-light-grey w3-center w3-card-4">
                     <li class="w3-red w3-xlarge w3-padding-32">{{ asp }} <i class="far fa-check-circle"></i></li>
 
@@ -98,12 +112,11 @@
 
         </div>
     </div>
+    <!--Aqui empiezan los scripts -->
+    <script>
 
-
-
-
-
-
+    </script>
     <!-- End page content -->
-    </div>
+
+
 {% endblock %}

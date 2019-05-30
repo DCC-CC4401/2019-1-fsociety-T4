@@ -244,33 +244,68 @@ def Post_evaluacion(request):
 def Post_evaluaciones_admin(request):
     return render(request, 'EvPresentaciones/Eval_interface/postevaluacionadmin.html')
 
+def cargar_grupo(request, id, grupo ):
+    print("llegue aqui boludo")
+    return ver_evaluacion_admin(request,id,grupo)
 
-def ver_evaluacion_admin(request, id):
+def ver_evaluacion_admin(request, id, grupo):
     context = {}
+    lineas = []
+    alumnos = []
+    aux = []
+    grupos = []
+    if grupo != " " :
+        alumnos = Cursos_Alumnos.objects.filter(nombreGrupo=grupo)
+    else:
+        alumnos = []
+
+    #TODO la pagina debe partir con los grupos para seleccionar, se envia el grupo seleccionado con un boton y se cargan los alumnos.
+    #TODO en cuanto cargue la pagina hay que permitir que elija los criterios de la rubrica.
+    #TODO lista con los miembros del grupo en el mismo orden en que aparece el grupo en la lista
+
+
+
+
     par_curso_evaluacion = Cursos_Evaluacion.objects.get(evaluacion=id)
+    par_evaluacion_rubrica = Evaluacion_Rubrica.objects.get(evaluacion=id)
     evaluacion = par_curso_evaluacion.evaluacion
     curso = par_curso_evaluacion.curso
-    #hardcodeado mientras para probar
-    rubrica = Rubrica.objects.get(nombre='Rubrica Dummy 1')
-    print(rubrica.nombre)
-    # lineas = []
+    rubrica = par_evaluacion_rubrica.rubrica
+
+    par_curso_alumnos = Cursos_Alumnos.objects.filter(curso=curso)
+    for team in par_curso_alumnos:
+        if team.nombreGrupo not in grupos:
+            grupos.append(team.nombreGrupo)
+
+    #Query para pedir alumnos del grupo en particular
+
+    #para guardar objeto alumno y mandarlo
+    sacar = 0
+    while sacar < len(alumnos):
+        par = alumnos[sacar]
+        group = par.alumnos
+        aux.append(group)
+        sacar = sacar + 1
 
     # procesar archivo ingresado
     with open(rubrica.archivo) as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
         for row in csv_reader:
-            if row!=[]:
+            if row != []:
                 lineas.append(row)
-
-    criterios=lineas.copy()
+    # criterios para poder sacar la descripcion de cada aspecto de la rubrica
+    criterios = lineas.copy()
     criterios.pop(0)
-    aspecto=[]
-    algo=0
-    while algo<len(criterios):
-        lik=criterios[algo]
+    # aspecto para guardar los encabezados de cada fila
+    aspecto = []
+    count = 0
+    while count < len(criterios):
+        lik = criterios[count]
         aspecto.append(lik[0])
-        criterios[algo].pop(0)
-        algo=algo+1
+        criterios[count].pop(0)
+        count = count + 1
+
+
     # Obtener los evaluadores: se puede hacer con una query, pero creo que es mas complicado de arreglar si hay cambios
     # en el modelo
     evaluadores = list()
@@ -283,13 +318,15 @@ def ver_evaluacion_admin(request, id):
     except Usuario_Evaluacion.DoesNotExist:
         pass
 
-
-    context['evaluacion']=evaluacion
-    context['curso']=curso
-    context['evaluadores']=evaluadores
-    context['rubrica']=lineas
-    context['aspecto']=aspecto
-    context['criterios']=criterios
+    print(alumnos)
+    context['evaluacion'] = evaluacion
+    context['curso'] = curso
+    context['evaluadores'] = evaluadores
+    context['rubrica'] = lineas
+    context['aspecto'] = aspecto
+    context['criterios'] = criterios
+    context['grupos'] = grupos
+    context['alumnos'] = aux
 
     return render(request, 'EvPresentaciones/Admin_interface/evaluacion_admin.html',
                   context)

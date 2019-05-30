@@ -106,12 +106,13 @@
 
         <!-- botones de ver y modificar evaluacion-->
 
-        <form action="{% url 'ficha_evaluacion_admin' o.evaluacion.id %}">
+        <form action="{% url 'ficha_evaluacion_admin' o.evaluacion.id " " %}">
             <!-- ver evaluacion -->
             <button class="w3-button w3-large w3-red w3-round" type="submit">Ver</button>
             <!-- modificar evaluacion -->
             <button onclick="document.getElementById('modificar_{{ o.evaluacion.id }}').style.display='block'"
-                class="w3-button w3-large w3-red w3-margin-left w3-round">Modificar</button>
+                    class="w3-button w3-large w3-red w3-margin-left w3-round">Modificar
+            </button>
         </form>
 
 
@@ -136,11 +137,17 @@
                             <!-- simplemente agrega ceros cuando la fecha no tiene los digitos necesarios y la deja en
                                 formato YYYY-MM-DD-->
 
-                            <input class="w3-input w3-border w3-margin-bottom" type="date" value="{% if o.evaluacion.fechaInicio.year < 10 %}000{{ o.evaluacion.fechaInicio.year }}{% elif  o.evaluacion.fechaInicio.year < 100 %}00{{ o.evaluacion.fechaInicio.year }}{% elif  o.evaluacion.fechaInicio.year < 1000 %}0{{ o.evaluacion.fechaInicio.year }}{% else %}{{ o.evaluacion.fechaInicio.year }}{% endif %}-{% if o.evaluacion.fechaInicio.month < 10 %}0{{ o.evaluacion.fechaInicio.month }}{% else %}{{ o.evaluacion.fechaInicio.month }}{% endif %}-{% if o.evaluacion.fechaInicio.day < 10 %}0{{ o.evaluacion.fechaInicio.day }}{% else %}{{ o.evaluacion.fechaInicio.day }}{% endif %}" placeholder="Fecha de inicio" name="inicio" required>
+                            <input class="w3-input w3-border w3-margin-bottom" type="date"
+                                   value="{% if o.evaluacion.fechaInicio.year < 10 %}000
+                                       {{ o.evaluacion.fechaInicio.year }}{% elif  o.evaluacion.fechaInicio.year < 100 %}00
+                                       {{ o.evaluacion.fechaInicio.year }}{% elif  o.evaluacion.fechaInicio.year < 1000 %}0{{ o.evaluacion.fechaInicio.year }}{% else %}{{ o.evaluacion.fechaInicio.year }}{% endif %}-{% if o.evaluacion.fechaInicio.month < 10 %}0{{ o.evaluacion.fechaInicio.month }}{% else %}{{ o.evaluacion.fechaInicio.month }}{% endif %}-{% if o.evaluacion.fechaInicio.day < 10 %}0{{ o.evaluacion.fechaInicio.day }}{% else %}{{ o.evaluacion.fechaInicio.day }}{% endif %}"
+                                   placeholder="Fecha de inicio" name="inicio" required>
 
                             <label><b>Fecha de Termino</b></label>
                             <input class="w3-input w3-border" type="date" placeholder="Fecha Termino"
-                                   value="{% if o.evaluacion.fechaTermino.year < 10 %}000{{ o.evaluacion.fechaTermino.year }}{% elif  o.evaluacion.fechaTermino.year < 100 %}00{{ o.evaluacion.fechaTermino.year }}{% elif  o.evaluacion.fechaTermino.year < 1000 %}0{{ o.evaluacion.fechaTermino.year }}{% else %}{{ o.evaluacion.fechaTermino.year }}{% endif %}-{% if o.evaluacion.fechaTermino.month < 10 %}0{{ o.evaluacion.fechaTermino.month }}{% else %}{{ o.evaluacion.fechaTermino.month }}{% endif %}-{% if o.evaluacion.fechaTermino.day < 10 %}0{{ o.evaluacion.fechaTermino.day }}{% else %}{{ o.evaluacion.fechaTermino.day }}{% endif %}"
+                                   value="{% if o.evaluacion.fechaTermino.year < 10 %}000
+                                       {{ o.evaluacion.fechaTermino.year }}{% elif  o.evaluacion.fechaTermino.year < 100 %}00
+                                       {{ o.evaluacion.fechaTermino.year }}{% elif  o.evaluacion.fechaTermino.year < 1000 %}0{{ o.evaluacion.fechaTermino.year }}{% else %}{{ o.evaluacion.fechaTermino.year }}{% endif %}-{% if o.evaluacion.fechaTermino.month < 10 %}0{{ o.evaluacion.fechaTermino.month }}{% else %}{{ o.evaluacion.fechaTermino.month }}{% endif %}-{% if o.evaluacion.fechaTermino.day < 10 %}0{{ o.evaluacion.fechaTermino.day }}{% else %}{{ o.evaluacion.fechaTermino.day }}{% endif %}"
                                    name="termino" required>
 
 
@@ -165,7 +172,7 @@
                                     {% if o.curso.id == c.id %}
                                         <option value='{{ c.id }}' selected="selected">{{ c.nombre }}</option>
                                     {% else %}
-                                        <option value={{ c.id }} >{{ c.nombre }}</option>
+                                        <option value={{ c.id }}>{{ c.nombre }}</option>
                                     {% endif %}
                                 {% endfor %}
                             </select>
@@ -174,9 +181,10 @@
                             <select class="w3-input w3-border" name="rubricas" required>
                                 {% for r in ev_rub %}
                                     {% if r.evaluacion.id == o.evaluacion.id %}
-                                        <option value='{{ r.rubrica.nombre }}' selected="selected">{{ r.rubrica.nombre }}</option>
+                                        <option value='{{ r.rubrica.nombre }}'
+                                                selected="selected">{{ r.rubrica.nombre }}</option>
                                     {% else %}
-                                        <option value='{{ r.rubrica.nombre }}' >{{ r.rubrica.nombre }}</option>
+                                        <option value='{{ r.rubrica.nombre }}'>{{ r.rubrica.nombre }}</option>
                                     {% endif %}
                                 {% endfor %}
 
