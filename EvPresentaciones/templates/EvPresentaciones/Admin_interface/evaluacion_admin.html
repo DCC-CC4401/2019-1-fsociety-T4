@@ -7,12 +7,12 @@
         <hr style="width:50px;border:5px solid red" class="w3-round">
 
         <!-- Aqui van los grupos-->
-
+        <!-- TODO encontrar una forma mas elegante de hacer esto con js, mientras dejo vacio el nombre del grupo-->
         <div class="w3-panel  w3-margin-bottom">
             <ul class="w3-ul w3-light-grey w3-center w3-card-4">
                 <li class="w3-dark-grey w3-xlarge w3-padding-32">Grupos <i class="fas fa-user-tie"></i></li>
                 {% for grupo in grupos %}
-                    <form id="pedir_grupo" method="POST" action="{% url 'cargar_grupo' evaluacion.id "No Group" %}">
+                    <form id="pedir_grupo" method="POST" action="{% url 'cargar_grupo' evaluacion.id "" %}">
                     {% csrf_token %}
                     <li class="w3-padding-16" id={{ grupo }}>  {{ grupo }}   </i>
                     </li>
