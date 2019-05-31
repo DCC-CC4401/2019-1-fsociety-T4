@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.db import IntegrityError
+from django.http import HttpResponse
 from django.shortcuts import render
 from .models import *
 import csv
@@ -263,8 +264,13 @@ def Post_evaluaciones_admin(request):
     return render(request, 'EvPresentaciones/Eval_interface/postevaluacionadmin.html')
 
 def cargar_grupo(request, id, grupo ):
-    print("llegue aqui boludo")
-    return ver_evaluacion_admin(request,id,grupo)
+    print(grupo)
+    print("it wurks")
+    enviado = request.POST.get ('enviado',None)
+    group= request.POST.get('grupo_enviado',None)
+    print(group)
+    return HttpResponse()
+        #ver_evaluacion_admin(request,id,group)
 
 def ver_evaluacion_admin(request, id, grupo):
     context = {}
@@ -272,6 +278,8 @@ def ver_evaluacion_admin(request, id, grupo):
     alumnos = []
     aux = []
     grupos = []
+    grupo_elegido=grupo
+    print("el grupo es: " +grupo)
     if grupo != " " :
         alumnos = Cursos_Alumnos.objects.filter(nombreGrupo=grupo)
     else:
@@ -345,6 +353,7 @@ def ver_evaluacion_admin(request, id, grupo):
     context['criterios'] = criterios
     context['grupos'] = grupos
     context['alumnos'] = aux
+    context['grupo_elegido'] = grupo_elegido
 
     return render(request, 'EvPresentaciones/Admin_interface/evaluacion_admin.html',
                   context)

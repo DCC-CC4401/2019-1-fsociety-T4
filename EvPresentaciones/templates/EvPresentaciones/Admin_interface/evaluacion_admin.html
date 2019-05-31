@@ -8,22 +8,25 @@
 
         <!-- Aqui van los grupos-->
         <!-- TODO encontrar una forma mas elegante de hacer esto con js, mientras dejo vacio el nombre del grupo-->
+
         <div class="w3-panel  w3-margin-bottom">
             <ul class="w3-ul w3-light-grey w3-center w3-card-4">
                 <li class="w3-dark-grey w3-xlarge w3-padding-32">Grupos <i class="fas fa-user-tie"></i></li>
                 {% for grupo in grupos %}
-                    <form id="pedir_grupo" method="POST" action="{% url 'cargar_grupo' evaluacion.id "" %}">
-                    {% csrf_token %}
-                    <li class="w3-padding-16" id={{ grupo }}>  {{ grupo }}   </i>
+                    <li class="w3-padding-16" id="{{ grupo }}"
+                        onclick=guardar_grupo("{{ grupo }}")>  {{ grupo }}   </i>
                     </li>
                 {% endfor %}
             </ul>
         </div>
+        <form id="pedir_grupo" method="GET" action="{% url 'cargar_grupo' evaluacion.id 'var' %}">
+            {% csrf_token %}
 
+            <input type="hidden" name="grupo_enviado" id="grupo_enviado" value="">
 
-        <button class="w3-button w3-large w3-red w3-right w3-round"
-                type="submit">Agregar
-        </button>
+            <button class="w3-button w3-large w3-red w3-right w3-round" type="submit"
+            >Elegir Grupo
+            </button>
         </form>
         <!--TODO Puede que sea mas facil sacar id tonteando con id de js -->
 
@@ -63,6 +66,8 @@
                         {% endfor %}
                     </ul>
                 </div>
+
+                <!--TODO cambiar la funcion de los presentadores con js -->
                 <!-- despliegue de presentadores -->
                 <div class="w3-half w3-margin-bottom " id="presentadores">
                     <ul class="w3-ul w3-light-grey w3-center w3-card-4">
@@ -114,7 +119,21 @@
     </div>
     <!--Aqui empiezan los scripts -->
     <script>
+        var grupo = "";
 
+        function guardar_grupo(id) {
+            grupo = document.getElementById(id).id;
+            get_grupo();
+            alert("aprete " + grupo);
+            console.log("hola que hace" +grupo);
+        }
+
+        function get_grupo() {
+            console.log(document.getElementById('grupo_enviado').getAttribute("value"));
+            document.getElementById('grupo_enviado').setAttribute("value", grupo);
+            console.log(document.getElementById('grupo_enviado').getAttribute("value"));
+
+        }
     </script>
     <!-- End page content -->
 
