@@ -30,11 +30,16 @@ def testPage(request, value):
 
 
 def Cursos_admin(request):
+    if not request.user.is_staff:
+        return index(request)
+
     return render(request, 'EvPresentaciones/Admin_interface/Cursos_admin.html')
 
 
 def Evaluaciones_admin(request):
     if not request.user.is_authenticated:
+        return index(request)
+    elif not request.user.is_staff:
         return index(request)
 
     # obtenemos las evaluaciones y los cursos
@@ -88,6 +93,8 @@ def eliminar_evaluaciones(request, id):
 
     if not request.user.is_authenticated:
         return index(request)
+    elif not request.user.is_staff:
+        return index(request)
 
     # Eliminamos evaluacion por el id
     Evaluacion.objects.get(id=id).delete()
@@ -111,6 +118,8 @@ def modificar_evaluaciones(request, id):
     """
 
     if not request.user.is_authenticated:
+        return index(request)
+    elif not request.user.is_staff:
         return index(request)
 
     # buscamos la evlaucion por su id
@@ -164,6 +173,8 @@ def agregar_evaluaciones(request):
 
     if not request.user.is_authenticated:
         return index(request)
+    elif not request.user.is_staff:
+        return index(request)
 
     # extraemos los datos del post
     fecha_inicio = request.POST.get('inicio', None)
@@ -212,6 +223,8 @@ def Evaluadores_admin(request):
     print(request.user)
     if not request.user.is_authenticated:
         return index(request)
+    elif not request.user.is_staff:
+        return index(request)
 
     # obtenemos numero de evaluadores
     try:
@@ -223,6 +236,9 @@ def Evaluadores_admin(request):
 
 
 def Landing_page_admin(request):
+    if not request.user.is_staff:
+        return index(request)
+
     return render(request, 'EvPresentaciones/Admin_interface/Landing_page_admin.html')
 
 
