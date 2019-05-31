@@ -652,6 +652,17 @@ def guardarRubrica(request):
     # try:
     tminn = tmin.split(':')  # Extraer los minutos y segundos
     tmaxx = tmax.split(':')
+
+    #nos abrimos al caso en que solo haya colocado segundos
+    if len(tminn) == 1:
+        tminn2 = [0,tminn[0]]
+        tminn = tminn2
+
+    if len(tmaxx) == 1:
+        tmaxx2 = [0, tmaxx[0]]
+        tmaxx = tmaxx2
+
+
     Rubrica.create_rubrica(nombre=nombre, tiempoMin=timedelta(minutes=int(tminn[0]), seconds=int(tminn[1])),
                            tiempoMax=timedelta(minutes=int(tmaxx[0]), seconds=int(tmaxx[1])), version=version,
                            archivo=rutaNombre)

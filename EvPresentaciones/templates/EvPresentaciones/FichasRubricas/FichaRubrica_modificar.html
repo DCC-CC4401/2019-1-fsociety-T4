@@ -97,9 +97,10 @@
             table2JSList();
             alert("Se va a enviar la rúbrica");
             document.getElementById("rubricaForm").submit();
-            alert('sda');
         };
     }
+
+
 
     // Aquí implementar requisito 51!!
     function validarPuntajes(){
@@ -122,9 +123,17 @@
             alert("Debe ingresar un tiempo máximo");
             return false
         }
+        if(tmax.value < tmin.value){
+            alert("Tiempo máximo debe ser mayor que el tiempo minimo");
+            return false
+        }
         var ver = document.getElementsByName("version")[0];
         if(ver.value == ""){
             alert("Debe ingresar una versión de la rúbrica");
+            return false
+        }
+        if(ver.value <= {{ version }}){
+            alert("Debe ingresar una version mayor a la actual");
             return false
         }
         return true;
