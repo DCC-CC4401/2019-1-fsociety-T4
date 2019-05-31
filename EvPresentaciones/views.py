@@ -117,6 +117,8 @@ def modificar_evaluaciones(request, id):
     Vista que se ejecuta al modifcar una evaluacion
     """
 
+    print("Entro a vista modificar_evaluaciones")
+
     if not request.user.is_authenticated:
         return index(request)
     elif not request.user.is_staff:
