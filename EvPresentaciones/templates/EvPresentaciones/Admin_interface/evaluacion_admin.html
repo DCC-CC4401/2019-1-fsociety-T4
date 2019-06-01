@@ -7,7 +7,6 @@
         <hr style="width:50px;border:5px solid red" class="w3-round">
 
         <!-- Aqui van los grupos-->
-        <!-- TODO encontrar una forma mas elegante de hacer esto con js, mientras dejo vacio el nombre del grupo-->
 
         <div class="w3-panel  w3-margin-bottom">
             <ul class="w3-ul w3-light-grey w3-center w3-card-4">
@@ -56,11 +55,14 @@
                         </li>
                         {% for par in alumnos %}
                             {% if par.presento %}
-                                <li class="presentado w3-padding-16"> {{ par.nombre }} {{ par.apellido }} <i
-                                        class="far fa-check-circle"></i> <i
-                                        class="w3-small">ya presentó</i></li>
+                                <li class="presentado w3-padding-16" id="{{ par.rut }}"
+                                    onclick=get_presentador(this.id,"{{ par.nombre }}","{{ par.apellido }}");> {{ par.nombre }} {{ par.apellido }}
+                                    <i
+                                            class="far fa-check-circle"></i> <i
+                                            class="w3-small">ya presentó</i></li>
                             {% else %}
-                                <li class="presentado w3-padding-16"> {{ par.nombre }} {{ par.apellido }}</li>
+                                <li class="presentado w3-padding-16" id="{{ par.rut }}"
+                                    onclick=get_presentador(this.id,"{{ par.nombre }}","{{ par.apellido }}");> {{ par.nombre }} {{ par.apellido }} </li>
 
                             {% endif %}
                         {% endfor %}
@@ -73,8 +75,9 @@
                     <ul class="w3-ul w3-light-grey w3-center w3-card-4">
                         <li class="w3-dark-grey w3-xlarge w3-padding-32">Miembros que presentan <i
                                 class="fas fa-chalkboard-teacher"></i></li>
-                        <li class="w3-padding-16">Andrea Park <i style="margin-left: 10px"
-                                                                 class="w3-large fas fa-times"></i></li>
+                        <li class="w3-padding-16" id="presenta" onclick=eliminar_presentador(this.id);><i style="margin-left: 10px"
+                                                                                  class="w3-large fas fa-times"></i></li>
+
                         <li class=" opcion w3-padding-16" id="mas"> Agregar otro <i style="margin-left: 10px"
                                                                                     class="fas fa-user-plus"></i></li>
                     </ul>
@@ -87,7 +90,7 @@
         {% for asp in aspecto %}
             <div class="w3-panel  w3-margin-bottom" id="criterios">
                 <ul class="w3-ul w3-light-grey w3-center w3-card-4">
-                    <li class="w3-red w3-xlarge w3-padding-32">{{ asp }} <i class="far fa-check-circle"></i></li>
+                    <li class="w3-red w3-xlarge w3-padding-32">id="{{ asp }}" <i class="far fa-check-circle"></i></li>
 
                     {% for crit in criterios %}
                         {% if forloop.parentloop.counter == forloop.counter %}
@@ -120,18 +123,35 @@
     <!--Aqui empiezan los scripts -->
     <script>
         var grupo = "";
+        var presentador = "";
 
         function guardar_grupo(id) {
             grupo = document.getElementById(id).id;
             get_grupo();
             alert("aprete " + grupo);
-            console.log("hola que hace" +grupo);
+            console.log("hola que hace" + grupo);
         }
 
         function get_grupo() {
             console.log(document.getElementById('grupo_enviado').getAttribute("value"));
             document.getElementById('grupo_enviado').setAttribute("value", grupo);
             console.log(document.getElementById('grupo_enviado').getAttribute("value"));
+        }
+
+        function get_presentador(id, nombre, apellido) {
+            var nodo = document.createElement("LI");
+            var text= document.createTextNode(nombre +" "+ apellido);
+            nodo.appendChild(text);
+            document.getElementById("presenta").appendChild(nodo);
+        }
+
+        function eliminar_presentador(id) {
+            var element = document.getElementById(id).lastChild;
+            var tag = document.getElementById("presenta");
+            tag.removeChild(element);
+        }
+        //para guardar que aspecto fue elegido
+        function elegir_aspecto(id){
 
         }
     </script>
