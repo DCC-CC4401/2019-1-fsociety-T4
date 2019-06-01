@@ -81,7 +81,7 @@ def Evaluaciones_admin(request):
 
     return render(request, 'EvPresentaciones/Admin_interface/Evaluaciones_admin.html',
                   {'pareja': pareja, 'rubricas': rubricas, 'cursos': cursos, 'ev_rub': ev_rub,
-                   'rub_restantes': restantes, 'EvsConRubrica':listaDeEvaluacionesConRubricas})
+                   'rub_restantes': restantes, 'EvsConRubrica': listaDeEvaluacionesConRubricas})
 
 
 def eliminar_evaluaciones(request, id):
@@ -263,34 +263,26 @@ def Post_evaluacion(request):
 def Post_evaluaciones_admin(request):
     return render(request, 'EvPresentaciones/Eval_interface/postevaluacionadmin.html')
 
-def cargar_grupo(request, id, grupo ):
-    print(grupo)
-    print("it wurks")
-    enviado = request.POST.get ('enviado',None)
-    group= request.POST.get('grupo_enviado',None)
-    print(group)
-    return HttpResponse()
-        #ver_evaluacion_admin(request,id,group)
 
-def ver_evaluacion_admin(request, id, grupo):
+def cargar_grupo(request, id):
+    par_curso_evaluacion = Cursos_Evaluacion.objects.get(evaluacion=id)
+    group = request.POST.get('grupo_enviado', None)
+    par_curso_evaluacion.evaluando = group
+    par_curso_evaluacion.save()
+
+    return ver_evaluacion_admin(request, id)
+
+
+def ver_evaluacion_admin(request, id):
     context = {}
     lineas = []
     alumnos = []
     aux = []
     grupos = []
-    grupo_elegido=grupo
-    print("el grupo es: " +grupo)
-    if grupo != " " :
-        alumnos = Cursos_Alumnos.objects.filter(nombreGrupo=grupo)
-    else:
-        alumnos = []
 
-    #TODO la pagina debe partir con los grupos para seleccionar, se envia el grupo seleccionado con un boton y se cargan los alumnos.
-    #TODO en cuanto cargue la pagina hay que permitir que elija los criterios de la rubrica.
-    #TODO lista con los miembros del grupo en el mismo orden en que aparece el grupo en la lista
-
-
-
+    # TODO la pagina debe partir con los grupos para seleccionar, se envia el grupo seleccionado con un boton y se cargan los alumnos.
+    # TODO en cuanto cargue la pagina hay que permitir que elija los criterios de la rubrica.
+    # TODO lista con los miembros del grupo en el mismo orden en que aparece el grupo en la lista
 
     par_curso_evaluacion = Cursos_Evaluacion.objects.get(evaluacion=id)
     par_evaluacion_rubrica = Evaluacion_Rubrica.objects.get(evaluacion=id)
@@ -298,14 +290,21 @@ def ver_evaluacion_admin(request, id, grupo):
     curso = par_curso_evaluacion.curso
     rubrica = par_evaluacion_rubrica.rubrica
 
+    grupo_elegido = par_curso_evaluacion.evaluando
+    print("el grupo es: " + grupo_elegido)
+    if grupo_elegido != "No Group":
+        alumnos = Cursos_Alumnos.objects.filter(nombreGrupo=grupo_elegido)
+    else:
+        alumnos = []
+
     par_curso_alumnos = Cursos_Alumnos.objects.filter(curso=curso)
     for team in par_curso_alumnos:
         if team.nombreGrupo not in grupos:
             grupos.append(team.nombreGrupo)
 
-    #Query para pedir alumnos del grupo en particular
+    # Query para pedir alumnos del grupo en particular
 
-    #para guardar objeto alumno y mandarlo
+    # para guardar objeto alumno y mandarlo
     sacar = 0
     while sacar < len(alumnos):
         par = alumnos[sacar]
@@ -330,7 +329,6 @@ def ver_evaluacion_admin(request, id, grupo):
         aspecto.append(lik[0])
         criterios[count].pop(0)
         count = count + 1
-
 
     # Obtener los evaluadores: se puede hacer con una query, pero creo que es mas complicado de arreglar si hay cambios
     # en el modelo
@@ -374,7 +372,7 @@ def Summary(request):
 def ver_rubrica_select(request, id):
     rubrica = Evaluacion_Rubrica.objects.get(evaluacion=id).rubrica
 
-    return ver_rubrica_detalle(request,rubrica.nombre,rubrica.version)
+    return ver_rubrica_detalle(request, rubrica.nombre, rubrica.version)
 
 
 # Si se hace request de la landingpage, se verifica el tipo de usuario y se retorna el render correspondiente
@@ -571,45 +569,49 @@ def Ficha_Rubrica_modificar(request, nombre, version):
         for row in csv_reader:
             rows.append(row)
 
-    #codigo para quitar lineas en blanco
+    # codigo para quitar lineas en blanco
     rows2 = []
     for r in rows:
         if r != []:
             rows2.append(r)
 
-    #movemos la variable
+    # movemos la variable
     rows = rows2
 
-    primeraFila = rows[0][1:] # Quito el primer y ultimo elemento que son elementos vacios no editables
-
+    primeraFila = rows[0][1:]  # Quito el primer y ultimo elemento que son elementos vacios no editables
 
     contenido = rows[1:]
     return render(request, 'EvPresentaciones/FichasRubricas/FichaRubrica_modificar.html',
-                    {'nombre' : rubrica.nombre, 'version' : rubrica.version, 'tiempo' : rubrica.tiempo, 'tiempoMin' : rubrica.tiempoMin, 'primeraFila' : primeraFila, 'contenido' : contenido})
+                  {'nombre': rubrica.nombre, 'version': rubrica.version, 'tiempo': rubrica.tiempo,
+                   'tiempoMin': rubrica.tiempoMin, 'primeraFila': primeraFila, 'contenido': contenido})
 
 
 # Sólo para admin, permite crear rúbricas desde 0
 def Ficha_Rubrica_crear(request):
     return render(request, 'EvPresentaciones/FichasRubricas/FichaRubrica_crear.html')
 
+
 def Ficha_Rubrica_eliminar(request, nombre, version):
     rubrica = Rubrica.objects.get(nombre=nombre, version=version)
     rubricaID = rubrica.id
     print(rubricaID)
     evaluacionesAsociadas = Evaluacion_Rubrica.objects.filter(rubrica=rubricaID)
-    #evaluacionesAsociadas = Evaluacion_Rubrica.objects.all() # Lista de OBJETOS
+    # evaluacionesAsociadas = Evaluacion_Rubrica.objects.all() # Lista de OBJETOS
     evaluacionesSTR = []
-    evaluacionesIDs = [] # Para obtener cursos asociados a evaluaciones
+    evaluacionesIDs = []  # Para obtener cursos asociados a evaluaciones
     for e in evaluacionesAsociadas:
         evaluacionesSTR.append(str(e.evaluacion))
         evaluacionesIDs.append(e.id)
     print(evaluacionesSTR)
     evaluacionesSTR = list(dict.fromkeys(evaluacionesSTR))
-    cursosAsociados = [] # LISTA DE OBJETOS TIPO CURSO
+    cursosAsociados = []  # LISTA DE OBJETOS TIPO CURSO
     for i in range(len(evaluacionesIDs)):
-        cursosAsociados.append(str(Cursos_Evaluacion.objects.get(evaluacion=evaluacionesIDs[i]).curso)) # Extraigo id de cursos asociados
+        cursosAsociados.append(
+            str(Cursos_Evaluacion.objects.get(evaluacion=evaluacionesIDs[i]).curso))  # Extraigo id de cursos asociados
     cursosAsociados = list(dict.fromkeys(cursosAsociados))
-    return render(request, 'EvPresentaciones/FichasRubricas/FichaRubrica_eliminar.html', { 'evaluaciones' : evaluacionesSTR, 'cursos' : cursosAsociados})
+    return render(request, 'EvPresentaciones/FichasRubricas/FichaRubrica_eliminar.html',
+                  {'evaluaciones': evaluacionesSTR, 'cursos': cursosAsociados})
+
 
 def Ficha_Rubrica_eliminar_definitivo(request, rubricaID):
     rubrica = Rubrica.objects.get(id=rubricaID)
@@ -620,7 +622,6 @@ def Ficha_Rubrica_eliminar_definitivo(request, rubricaID):
     # Aquí eliminar rúbrica en su modelo
     rubrica.delete()
 
-    
 
 # Request genérico que guarda o sobreescribe una rúbrica
 def guardarRubrica(request):
@@ -653,15 +654,14 @@ def guardarRubrica(request):
     tminn = tmin.split(':')  # Extraer los minutos y segundos
     tmaxx = tmax.split(':')
 
-    #nos abrimos al caso en que solo haya colocado segundos
+    # nos abrimos al caso en que solo haya colocado segundos
     if len(tminn) == 1:
-        tminn2 = [0,tminn[0]]
+        tminn2 = [0, tminn[0]]
         tminn = tminn2
 
     if len(tmaxx) == 1:
         tmaxx2 = [0, tmaxx[0]]
         tmaxx = tmaxx2
-
 
     Rubrica.create_rubrica(nombre=nombre, tiempoMin=timedelta(minutes=int(tminn[0]), seconds=int(tminn[1])),
                            tiempoMax=timedelta(minutes=int(tmaxx[0]), seconds=int(tmaxx[1])), version=version,

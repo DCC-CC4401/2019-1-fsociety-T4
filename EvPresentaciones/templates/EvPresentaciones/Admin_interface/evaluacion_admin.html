@@ -19,7 +19,7 @@
                 {% endfor %}
             </ul>
         </div>
-        <form id="pedir_grupo" method="GET" action="{% url 'cargar_grupo' evaluacion.id 'var' %}">
+        <form id="pedir_grupo" method="POST" action="{% url 'cargar_grupo' evaluacion.id %}">
             {% csrf_token %}
 
             <input type="hidden" name="grupo_enviado" id="grupo_enviado" value="">
