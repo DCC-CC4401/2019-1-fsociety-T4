@@ -95,7 +95,7 @@
     function saveRubrica(){
         if(validarRubrica()){
             table2JSList();
-            alert("Se va a enviar la rúbrica");
+            //alert("Se va a enviar la rúbrica");
             document.getElementById("rubricaForm").submit();
         };
     }
@@ -132,7 +132,7 @@
             alert("Debe ingresar una versión de la rúbrica");
             return false
         }
-        if(ver.value <= {{ version }}){
+        if(ver.value < {{ version }}){ // Sólo menor, puede ser la misma versión, depende del admin
             alert("Debe ingresar una version mayor a la actual");
             return false
         }

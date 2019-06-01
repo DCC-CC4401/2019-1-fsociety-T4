@@ -16,6 +16,10 @@
         <p> {{ curso }} </p>
     {% endfor %}
 
+    <form action={% url 'ficha_rubrica_eliminar_definitivo' nombre version %} class="inline">
+        <button class="w3-button w3-large w3-margin-right w3-red w3-left w3-round">Eliminar definitivamente</button>
+    </form>
+
 
 <!-- End page content -->
 {% endblock %}
