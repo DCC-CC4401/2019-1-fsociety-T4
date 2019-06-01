@@ -201,6 +201,7 @@ class Evaluacion_Rubrica(models.Model):
 class Cursos_Evaluacion(models.Model):
     curso = models.ForeignKey(Cursos, on_delete=models.CASCADE, null=True)
     evaluacion = models.ForeignKey(Evaluacion, on_delete=models.CASCADE, null=True)
+    evaluando = models.CharField(max_length=50, null=True, default="No Group")
 
     class Meta:
         unique_together = (("curso", "evaluacion"),)
