@@ -580,10 +580,14 @@ def Ficha_Rubrica_modificar(request, nombre, version):
     rows = rows2
     primeraFila = rows[0][1:]  # Quito el primer y ultimo elemento que son elementos vacios no editables
     contenido = rows[1:]
-    
+    tiempoMax = str(rubrica.tiempo).split(":")
+    tMax = tiempoMax[1] + ":" + tiempoMax[2] # Tiempo en formato correcto: mm:ss
+    tiempoMin = str(rubrica.tiempoMin).split(":")
+    tMin = tiempoMin[1] + ":" + tiempoMin[2] # Tiempo en formato correcto: mm:ss
+
     return render(request, 'EvPresentaciones/FichasRubricas/FichaRubrica_modificar.html',
-                  {'nombre': rubrica.nombre, 'version': rubrica.version, 'tiempo': rubrica.tiempo,
-                   'tiempoMin': rubrica.tiempoMin, 'primeraFila': primeraFila, 'contenido': contenido})
+                  {'nombre': rubrica.nombre, 'version': rubrica.version, 'tiempo': tMax,
+                   'tiempoMin': tMin, 'primeraFila': primeraFila, 'contenido': contenido})
 
 
 # Sólo para admin, permite crear rúbricas desde 0
