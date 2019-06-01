@@ -569,13 +569,13 @@ def Ficha_Rubrica_modificar(request, nombre, version):
         for row in csv_reader:
             rows.append(row)
 
-    # codigo para quitar lineas en blanco
+    # Código para quitar lineas en blanco
     rows2 = []
     for r in rows:
-        if r != []:
-            rows2.append(r)
+        if r != []: # Sólo si no es vacío
+            rows2.append(r) # Se agrega
 
-    # movemos la variable
+    # Movemos las filas no balncas
     rows = rows2
 
     primeraFila = rows[0][1:]  # Quito el primer y ultimo elemento que son elementos vacios no editables
@@ -654,7 +654,7 @@ def guardarRubrica(request):
     tminn = tmin.split(':')  # Extraer los minutos y segundos
     tmaxx = tmax.split(':')
 
-    # nos abrimos al caso en que solo haya colocado segundos
+    # Nos abrimos al caso en que solo haya colocado segundos
     if len(tminn) == 1:
         tminn2 = [0, tminn[0]]
         tminn = tminn2
