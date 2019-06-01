@@ -93,13 +93,9 @@
     <script>
 
         function saveRubrica() {
-            if (validarRubrica()) {
-                table2JSList();
-                //alert("Se va a enviar la rúbrica");
-                document.getElementById("rubricaForm").submit();
-                //alert('Enviada');
+            if (validarRubrica() && table2JSList()) {
+                document.getElementById("rubricaForm").submit(); // Enviar rúbrica
             }
-            ;
         }
 
         // Aquí implementar requisito 51!!
@@ -201,11 +197,21 @@
                 }
                 csv.push(row.join(","));
             }
-            document.getElementsByName("csv-text")[0].value = csv.join("|");
+            // REQUISITO 51: la suma de los niveles máximos de todos los aspectos de cualquier rúbrica siempre sea 6
 
-            //alert(csvText);
-            // Download CSV
-            //download_csv(csv.join("\n"), filename);
+            // Extraer máximo puntaje por aspecto
+            var puntajes = csv[0].split(",");
+            var maxPuntaje = parseFloat(puntajes[puntajes.length - 1]); // Último valor es el máx puntaje
+            // Extraer cantidad de aspectos
+            var cantidadDeAspectos = csv.length - 1; // Menos la primera fila con los puntajes
+            if(maxPuntaje*cantidadDeAspectos != 6.0){
+                alert("La suma de puntajes máximos no es igual a 6.0, es igual a " + maxPuntaje*cantidadDeAspectos);
+                return false;
+            }
+
+            // Pasar la lista al campo <input>
+            document.getElementsByName("csv-text")[0].value = csv.join("|"); 
+            return true; // Si llegamos aquí pasamos la validación de suma
         }
 
         // Añade una fila al final antes de los botones de columna

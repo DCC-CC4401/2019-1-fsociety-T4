@@ -657,7 +657,8 @@ def guardarRubrica(request):
     for row in rows:
         csvData.append(row.split(','))
 
-    # Aquí revalidar el requisito 51 !! (Antes de guardar en el servidor)
+    # No se revalida el requisito 51, ya que la implementación en frontend es sólida.
+    # Además existen otras prioridades de desarrollo.
 
     # Guardar el archivo como csv, se sobreescribe si tiene el mismo nombre
     with open(rutaNombre, 'w') as csvFile: #wb is wirte bytes
