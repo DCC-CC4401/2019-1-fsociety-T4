@@ -262,7 +262,81 @@ def Post_evaluacion(request):
 
 
 def Post_evaluaciones_admin(request):
-    return render(request, 'EvPresentaciones/Eval_interface/postevaluacionadmin.html')
+    lineas = []
+    # todos los post
+    lista_atributos = request.POST.get('lista_atributos', None)
+    idevaluacion = request.POST.get('idevaluacion', None)
+    minutos = request.POST.get('minutos', None)
+    segundo = request.POST.get('segundos', None)
+    presentador = request.POST.get('presentador', None)
+
+    # todas las peticiones a la base de datos
+    grupo = Cursos_Evaluacion.objects.get(evaluacion=idevaluacion)
+    evaluador = Usuario.objects.get(email=request.user)
+    rubrica = Evaluacion_Rubrica.objects.get(evaluacion=idevaluacion)
+    evaluacion = Cursos_Evaluacion.objects.get(evaluacion=idevaluacion)
+    grupo_integrantes= Cursos_Alumnos.objects.get(alumnos=presentador)
+    grupo_integrantes=grupo_integrantes.nombreGrupo
+    par_curso_integrantes=Cursos_Alumnos.objects.filter(nombreGrupo=grupo_integrantes)
+    integrantes=[]
+
+
+    for i in par_curso_integrantes:
+        integrantes.append(i.alumnos)
+    for al in integrantes:
+        aux=Alumnos_Evaluacion(tiempo=timedelta(minutes=int(minutos),seconds=int(segundo)),alumno=al,
+                               evaluacion=evaluacion.evaluacion)
+        aux.save()
+
+    print(integrantes)
+    nombreArchivo = evaluacion.curso.codigo + '-' + evaluacion.curso.semestre + '.csv'
+    rutaNombre = './EvPresentaciones/ArchivosEvaluaciones/' + nombreArchivo
+
+    # procesar archivo ingresado
+    with open(rubrica.rubrica.archivo) as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=',')
+        for row in csv_reader:
+            if row != []:
+                lineas.append(row)
+    # criterios para poder sacar la descripcion de cada aspecto de la rubrica
+    criterios = lineas.copy()
+    escala = criterios.pop(0)
+    escala.pop(0)
+
+    alumno = Alumnos.objects.get(rut=presentador)
+    alumno.presento = True
+    alumno.save()
+
+    # manejo de string con las elecciones del evaluador
+    lista_csv = []
+    dict = {}
+
+    lista_arreglada = lista_atributos.split("|")
+    lista_arreglada = lista_arreglada[:-1]
+    # crea diccionario para manejar
+    for pareja in lista_arreglada:
+        aux = pareja.split(":")
+        dict[aux[0]] = aux[1]
+    i = 0
+    while i < len(dict.items()):
+        aux = str(i + 1)
+        lista_csv.append(dict[aux])
+        i = i + 1
+
+    # creacion de csv
+    nombre_evaluador = evaluador.first_name + " " + evaluador.last_name
+    nombre_grupo = grupo.evaluando
+    nombre_evaluacion = str(idevaluacion)
+    csvData = [nombre_evaluador, nombre_grupo, nombre_evaluacion, lista_csv]
+    with open(rutaNombre, 'a', newline='') as csvFile:  # wb is wirte bytes
+        writer = csv.writer(csvFile)
+        writer.writerows([csvData])
+    csvFile.close
+
+    #actualizamos el tiempo de los alumnos del grupo
+
+    return render(request,
+                  'EvPresentaciones/Admin_interface/postevaluacionadmin.html')
 
 
 def cargar_grupo(request, id):
@@ -281,9 +355,7 @@ def ver_evaluacion_admin(request, id):
     aux = []
     grupos = []
 
-    # TODO la pagina debe partir con los grupos para seleccionar, se envia el grupo seleccionado con un boton y se cargan los alumnos.
-    # TODO en cuanto cargue la pagina hay que permitir que elija los criterios de la rubrica.
-    # TODO lista con los miembros del grupo en el mismo orden en que aparece el grupo en la lista
+    # TODO falta indicar que grupos faltan
 
     par_curso_evaluacion = Cursos_Evaluacion.objects.get(evaluacion=id)
     par_evaluacion_rubrica = Evaluacion_Rubrica.objects.get(evaluacion=id)
@@ -550,9 +622,9 @@ def ver_rubrica_detalle(request, nombre, version):
             lineas.append(row)
     # Tiempo en formato simplificado
     tiempoMax = str(rubrica.tiempo).split(":")
-    tMax = tiempoMax[1] + ":" + tiempoMax[2] # Tiempo en formato correcto: mm:ss
+    tMax = tiempoMax[1] + ":" + tiempoMax[2]  # Tiempo en formato correcto: mm:ss
     tiempoMin = str(rubrica.tiempoMin).split(":")
-    tMin = tiempoMin[1] + ":" + tiempoMin[2] # Tiempo en formato correcto: mm:ss
+    tMin = tiempoMin[1] + ":" + tiempoMin[2]  # Tiempo en formato correcto: mm:ss
 
     return render(request, 'EvPresentaciones/Admin_interface/ver_rubrica_detalle.html',
                   {'lineas': lineas, 'tmax': tMax, 'tmin': tMin})
@@ -570,17 +642,17 @@ def Ficha_Rubrica_modificar(request, nombre, version):
     # Código para quitar lineas en blanco
     rows2 = []
     for r in rows:
-        if r != []: # Sólo si no es vacío
-            rows2.append(r) # Se agrega
+        if r != []:  # Sólo si no es vacío
+            rows2.append(r)  # Se agrega
 
     # Movemos las filas no balncas
     rows = rows2
     primeraFila = rows[0][1:]  # Quito el primer y ultimo elemento que son elementos vacios no editables
     contenido = rows[1:]
     tiempoMax = str(rubrica.tiempo).split(":")
-    tMax = tiempoMax[1] + ":" + tiempoMax[2] # Tiempo en formato correcto: mm:ss
+    tMax = tiempoMax[1] + ":" + tiempoMax[2]  # Tiempo en formato correcto: mm:ss
     tiempoMin = str(rubrica.tiempoMin).split(":")
-    tMin = tiempoMin[1] + ":" + tiempoMin[2] # Tiempo en formato correcto: mm:ss
+    tMin = tiempoMin[1] + ":" + tiempoMin[2]  # Tiempo en formato correcto: mm:ss
 
     return render(request, 'EvPresentaciones/FichasRubricas/FichaRubrica_modificar.html',
                   {'nombre': rubrica.nombre, 'version': rubrica.version, 'tiempo': tMax,
@@ -595,20 +667,20 @@ def Ficha_Rubrica_crear(request):
 def Ficha_Rubrica_eliminar(request, nombre, version):
     rubrica = Rubrica.objects.get(nombre=nombre, version=version)
     rubricaID = rubrica.id
-    #print(rubricaID)
+    # print(rubricaID)
     evaluacionesAsociadas = Evaluacion_Rubrica.objects.filter(rubrica=rubricaID)
     evaluacionesSTR = []
     evaluacionesIDs = []  # Para obtener cursos asociados a evaluaciones
     for e in evaluacionesAsociadas:
         evaluacionesSTR.append(str(e.evaluacion))
         evaluacionesIDs.append(e.id)
-    #print(evaluacionesSTR)
-    evaluacionesSTR = list(dict.fromkeys(evaluacionesSTR)) # Saca duplicados
+    # print(evaluacionesSTR)
+    evaluacionesSTR = list(dict.fromkeys(evaluacionesSTR))  # Saca duplicados
     cursosAsociados = []  # LISTA DE OBJETOS TIPO CURSO
     for i in range(len(evaluacionesIDs)):
         cursosAsociados.append(
             str(Cursos_Evaluacion.objects.get(evaluacion=evaluacionesIDs[i]).curso))  # Extraigo id de cursos asociados
-    cursosAsociados = list(dict.fromkeys(cursosAsociados)) # Saca duplicados
+    cursosAsociados = list(dict.fromkeys(cursosAsociados))  # Saca duplicados
     return render(request, 'EvPresentaciones/FichasRubricas/FichaRubrica_eliminar.html',
                   {'evaluaciones': evaluacionesSTR, 'cursos': cursosAsociados, 'nombre': nombre, 'version': version})
 
@@ -636,7 +708,8 @@ def Ficha_Rubrica_eliminar_definitivo(request, nombre, version):
 
     # Aquí eliminar archivo
     os.remove(archivo)
-    return render(request, 'EvPresentaciones/FichasRubricas/FichaRubrica_eliminar_definitivo.html', {'nombre': nombre, 'version': version})
+    return render(request, 'EvPresentaciones/FichasRubricas/FichaRubrica_eliminar_definitivo.html',
+                  {'nombre': nombre, 'version': version})
 
 
 # Request genérico que guarda o sobreescribe una rúbrica
@@ -661,7 +734,7 @@ def guardarRubrica(request):
     # Además existen otras prioridades de desarrollo.
 
     # Guardar el archivo como csv, se sobreescribe si tiene el mismo nombre
-    with open(rutaNombre, 'w') as csvFile: #wb is wirte bytes
+    with open(rutaNombre, 'w') as csvFile:  # wb is wirte bytes
         writer = csv.writer(csvFile)
         writer.writerows(csvData)
     csvFile.close
@@ -679,7 +752,7 @@ def guardarRubrica(request):
     if len(tmaxx) == 1:
         tmaxx2 = [0, tmaxx[0]]
         tmaxx = tmaxx2
-    
+
     # Aquí modificar los parametros de una existente, o crear una nueva
     try:
         r = Rubrica.objects.get(nombre=nombre, version=version)
@@ -687,8 +760,8 @@ def guardarRubrica(request):
         r.tiempoMin = timedelta(minutes=int(tminn[0]), seconds=int(tminn[1]))
     except Rubrica.DoesNotExist:
         Rubrica.create_rubrica(nombre=nombre, tiempoMin=timedelta(minutes=int(tminn[0]), seconds=int(tminn[1])),
-                           tiempoMax=timedelta(minutes=int(tmaxx[0]), seconds=int(tmaxx[1])), version=version,
-                           archivo=rutaNombre)
+                               tiempoMax=timedelta(minutes=int(tmaxx[0]), seconds=int(tmaxx[1])), version=version,
+                               archivo=rutaNombre)
     # except IntegrityError:
     #    messages.error(request, 'Error: Ya existe la rúbrica ' + nombre+'-'+version, extra_tags='w3-panel w3-red')
     return render(request, 'EvPresentaciones/FichasRubricas/Rubrica_guardada.html')
