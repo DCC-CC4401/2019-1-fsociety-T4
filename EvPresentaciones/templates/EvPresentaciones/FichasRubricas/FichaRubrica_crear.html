@@ -71,7 +71,7 @@
             </table>
         </div>
 
-        <input id"csv-text-id" type="text" style="display: block;" name="csv-text" value="">
+        <input id"csv-text-id" type="text" style="display: none;" name="csv-text" value="">
 
         <div class="w3-row">
             <button type="button" class="button1" onclick="saveRubrica();">Guardar rúbrica <i class="far fa-save"></i>
@@ -82,13 +82,9 @@
     <script>
 
         function saveRubrica() {
-            if (validarRubrica()) {
-                table2JSList();
-                //alert("Se va a enviar la rúbrica");
-                document.getElementById("rubricaForm").submit();
-                //alert('Enviada');
+            if (validarRubrica() && table2JSList()) {
+                document.getElementById("rubricaForm").submit(); // Enviar rúbrica
             }
-            ;
         }
 
         // Aquí implementar requisito 51!!
@@ -97,6 +93,7 @@
         }
 
         function validarRubrica() {
+            // Validaciones de campos vacíos
             var nombre = document.getElementsByName("nombre-rubrica")[0];
             if (nombre.value == "") {
                 alert("Debe ingresar un nombre de Rúbrica");
@@ -112,16 +109,68 @@
                 alert("Debe ingresar un tiempo máximo");
                 return false
             }
-            if (tmax.value < tmin.value) {
-                alert("Tiempo máximo debe ser mayor que el tiempo minimo");
-                return false
-            }
             var ver = document.getElementsByName("version")[0];
             if (ver.value == "") {
                 alert("Debe ingresar una versión de la rúbrica");
                 return false
             }
+
+            /************* Validaciones de tiempo **************/
+            split_Max = tmax.value.split(":")
+            split_Min = tmin.value.split(":")
+
+            // Que tenga un sólo ':'
+            if(split_Min.length != 2){
+                alert("Ingresar el tiempo mínimo en el formato solicitado: mm:ss");return false;
+            }
+            if(split_Max.length != 2){
+                alert("Ingresar el tiempo máximo en el formato solicitado: mm:ss");return false;
+            }
+            // Que sólo tenga números
+            var regex = /^\d+$/;
+            if(!regex.test(split_Min[0]) | !regex.test(split_Min[1])){
+                alert("Caracteres inválidos en tiempo mínimo");
+                return false;
+            }
+            if(!regex.test(split_Max[0]) | !regex.test(split_Max[1])){
+                alert("Caracteres inválidos en tiempo máximo");
+                return false;
+            }
+            // Que los números de los tiempos esten en rangos correctos
+            if(parseInt(split_Min[0]) < 0 | parseInt(split_Min[0]) > 59){
+                alert("El rango de minutos va entre 0 y 59, modificar tiempo mínimo");return false;
+            }
+            if(parseInt(split_Min[1]) < 0 | parseInt(split_Min[1]) > 59){
+                alert("El rango de segundos va entre 0 y 59, modificar tiempo mínimo");return false;
+            }
+            if(parseInt(split_Max[0]) < 0 | parseInt(split_Max[0]) > 59){
+                alert("El rango de minutos va entre 0 y 59, modificar tiempo máximo");return false;
+            }
+            if(parseInt(split_Max[1]) < 0 | parseInt(split_Max[1]) > 59){
+                alert("El rango de segundos va entre 0 y 59, modificar tiempo máximo");return false;
+            }
+
+            // Que el tiempo max sea mayor al min
+            if (parseInt(split_Min[0]) > parseInt(split_Max[0])){ // Minutos del tmin superan a minutos del tmax
+                alert("Tiempo máximo debe ser mayor que el tiempo minimo");
+                return false
+            }else if (parseInt(split_Min) == parseInt(split_Max)){
+                if(parseInt(split_Min[1]) > parseInt(split_Max[1])){ // Segundos del tmin superan a segundos del tmax
+                    alert("Tiempo máximo debe ser mayor que el tiempo minimo");
+                    return false
+                }else if(parseInt(split_Min[1]) == parseInt(split_Max[1])){
+                    alert("Tiempo máximo debe ser diferente que el tiempo minimo");
+                    return false
+                }
+            }
+            
             return true;
+        }
+
+        function IsANumber(strNumber) {
+            var regExp = new RegExp("^\\d+$");
+            var isValid = regExp.test(strNumber); // or just: /^\d+$/.test(strNumber);
+            return isValid;
         }
 
         function table2JSList() {
@@ -137,11 +186,21 @@
                 }
                 csv.push(row.join(","));
             }
-            document.getElementsByName("csv-text")[0].value = csv.join("|");
+            // REQUISITO 51: la suma de los niveles máximos de todos los aspectos de cualquier rúbrica siempre sea 6
 
-            //alert(csvText);
-            // Download CSV
-            //download_csv(csv.join("\n"), filename);
+            // Extraer máximo puntaje por aspecto
+            var puntajes = csv[0].split(",");
+            var maxPuntaje = parseFloat(puntajes[puntajes.length - 1]); // Último valor es el máx puntaje
+            // Extraer cantidad de aspectos
+            var cantidadDeAspectos = csv.length - 1; // Menos la primera fila con los puntajes
+            if(maxPuntaje*cantidadDeAspectos != 6.0){
+                alert("La suma de puntajes máximos no es igual a 6.0, es igual a " + maxPuntaje*cantidadDeAspectos);
+                return false;
+            }
+
+            // Pasar la lista al campo <input>
+            document.getElementsByName("csv-text")[0].value = csv.join("|"); 
+            return true; // Si llegamos aquí pasamos la validación de suma
         }
 
         // Añade una fila al final antes de los botones de columna

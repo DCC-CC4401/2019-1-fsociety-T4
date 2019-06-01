@@ -7,6 +7,7 @@ from .models import *
 import csv
 import random
 import string
+import os
 from datetime import timedelta
 
 
@@ -540,24 +541,21 @@ def Ficha_Rubrica_evaluador(request):
 
 def ver_rubrica_detalle(request, nombre, version):
     rubrica = Rubrica.objects.get(nombre=nombre, version=version)
-    tmax = rubrica.tiempo
-    tmin = rubrica.tiempoMin
+    # Filas
     lineas = []
     # procesar archivo ingresado
     with open(rubrica.archivo) as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
         for row in csv_reader:
             lineas.append(row)
-
-    # print(lineas)
-    # tmax = lineas[-1][2]    # Extraer tiempo maximo en ultima fila
-    # tmin = lineas[-1][1]    # Extraer tiempo minimo en ultima fila
-
-    # lineas[0][0] = ''       # Poner en blanco la primera columna de la primera fila
-    # lineas = lineas[:-1]    # Quitar la ultima fila que contiene el tiempo
+    # Tiempo en formato simplificado
+    tiempoMax = str(rubrica.tiempo).split(":")
+    tMax = tiempoMax[1] + ":" + tiempoMax[2] # Tiempo en formato correcto: mm:ss
+    tiempoMin = str(rubrica.tiempoMin).split(":")
+    tMin = tiempoMin[1] + ":" + tiempoMin[2] # Tiempo en formato correcto: mm:ss
 
     return render(request, 'EvPresentaciones/Admin_interface/ver_rubrica_detalle.html',
-                  {'lineas': lineas, 'tmax': tmax, 'tmin': tmin})
+                  {'lineas': lineas, 'tmax': tMax, 'tmin': tMin})
 
 
 def Ficha_Rubrica_modificar(request, nombre, version):
@@ -577,13 +575,16 @@ def Ficha_Rubrica_modificar(request, nombre, version):
 
     # Movemos las filas no balncas
     rows = rows2
-
     primeraFila = rows[0][1:]  # Quito el primer y ultimo elemento que son elementos vacios no editables
-
     contenido = rows[1:]
+    tiempoMax = str(rubrica.tiempo).split(":")
+    tMax = tiempoMax[1] + ":" + tiempoMax[2] # Tiempo en formato correcto: mm:ss
+    tiempoMin = str(rubrica.tiempoMin).split(":")
+    tMin = tiempoMin[1] + ":" + tiempoMin[2] # Tiempo en formato correcto: mm:ss
+
     return render(request, 'EvPresentaciones/FichasRubricas/FichaRubrica_modificar.html',
-                  {'nombre': rubrica.nombre, 'version': rubrica.version, 'tiempo': rubrica.tiempo,
-                   'tiempoMin': rubrica.tiempoMin, 'primeraFila': primeraFila, 'contenido': contenido})
+                  {'nombre': rubrica.nombre, 'version': rubrica.version, 'tiempo': tMax,
+                   'tiempoMin': tMin, 'primeraFila': primeraFila, 'contenido': contenido})
 
 
 # Sólo para admin, permite crear rúbricas desde 0
@@ -594,33 +595,48 @@ def Ficha_Rubrica_crear(request):
 def Ficha_Rubrica_eliminar(request, nombre, version):
     rubrica = Rubrica.objects.get(nombre=nombre, version=version)
     rubricaID = rubrica.id
-    print(rubricaID)
+    #print(rubricaID)
     evaluacionesAsociadas = Evaluacion_Rubrica.objects.filter(rubrica=rubricaID)
-    # evaluacionesAsociadas = Evaluacion_Rubrica.objects.all() # Lista de OBJETOS
     evaluacionesSTR = []
     evaluacionesIDs = []  # Para obtener cursos asociados a evaluaciones
     for e in evaluacionesAsociadas:
         evaluacionesSTR.append(str(e.evaluacion))
         evaluacionesIDs.append(e.id)
-    print(evaluacionesSTR)
-    evaluacionesSTR = list(dict.fromkeys(evaluacionesSTR))
+    #print(evaluacionesSTR)
+    evaluacionesSTR = list(dict.fromkeys(evaluacionesSTR)) # Saca duplicados
     cursosAsociados = []  # LISTA DE OBJETOS TIPO CURSO
     for i in range(len(evaluacionesIDs)):
         cursosAsociados.append(
             str(Cursos_Evaluacion.objects.get(evaluacion=evaluacionesIDs[i]).curso))  # Extraigo id de cursos asociados
-    cursosAsociados = list(dict.fromkeys(cursosAsociados))
+    cursosAsociados = list(dict.fromkeys(cursosAsociados)) # Saca duplicados
     return render(request, 'EvPresentaciones/FichasRubricas/FichaRubrica_eliminar.html',
-                  {'evaluaciones': evaluacionesSTR, 'cursos': cursosAsociados})
+                  {'evaluaciones': evaluacionesSTR, 'cursos': cursosAsociados, 'nombre': nombre, 'version': version})
 
 
-def Ficha_Rubrica_eliminar_definitivo(request, rubricaID):
-    rubrica = Rubrica.objects.get(id=rubricaID)
-    # Aquí eliminar archivo
+def Ficha_Rubrica_eliminar_definitivo(request, nombre, version):
+    rubrica = Rubrica.objects.get(nombre=nombre, version=version)
+    archivo = rubrica.archivo
 
     # Aquí eliminar fila de Evaluacion_Rubrica
+    rubrica = Rubrica.objects.get(nombre=nombre, version=version)
+    rubricaID = rubrica.id
+    evaluacionesAsociadas = Evaluacion_Rubrica.objects.filter(rubrica=rubricaID)
+    evaluacionesIDs = []  # Para obtener cursos asociados a evaluaciones
+    for e in evaluacionesAsociadas:
+        evaluacionesIDs.append(e.id)
+    evaluacion_rubrica_Asociadas = []
+    for id in evaluacionesIDs:
+        evaluacion_rubrica_Asociadas = Evaluacion_Rubrica.objects.filter(id=id)
+
+    for evaluacion_rubrica in evaluacion_rubrica_Asociadas:
+        evaluacion_rubrica.remove()
 
     # Aquí eliminar rúbrica en su modelo
     rubrica.delete()
+
+    # Aquí eliminar archivo
+    os.remove(archivo)
+    return render(request, 'EvPresentaciones/FichasRubricas/FichaRubrica_eliminar_definitivo.html', {'nombre': nombre, 'version': version})
 
 
 # Request genérico que guarda o sobreescribe una rúbrica
@@ -641,10 +657,11 @@ def guardarRubrica(request):
     for row in rows:
         csvData.append(row.split(','))
 
-    # Aquí revalidar el requisito 51 !! (Antes de guardar en el servidor)
+    # No se revalida el requisito 51, ya que la implementación en frontend es sólida.
+    # Además existen otras prioridades de desarrollo.
 
     # Guardar el archivo como csv, se sobreescribe si tiene el mismo nombre
-    with open(rutaNombre, 'w') as csvFile:
+    with open(rutaNombre, 'w') as csvFile: #wb is wirte bytes
         writer = csv.writer(csvFile)
         writer.writerows(csvData)
     csvFile.close
@@ -662,8 +679,14 @@ def guardarRubrica(request):
     if len(tmaxx) == 1:
         tmaxx2 = [0, tmaxx[0]]
         tmaxx = tmaxx2
-
-    Rubrica.create_rubrica(nombre=nombre, tiempoMin=timedelta(minutes=int(tminn[0]), seconds=int(tminn[1])),
+    
+    # Aquí modificar los parametros de una existente, o crear una nueva
+    try:
+        r = Rubrica.objects.get(nombre=nombre, version=version)
+        r.tiempo = timedelta(minutes=int(tmaxx[0]), seconds=int(tmaxx[1]))
+        r.tiempoMin = timedelta(minutes=int(tminn[0]), seconds=int(tminn[1]))
+    except Rubrica.DoesNotExist:
+        Rubrica.create_rubrica(nombre=nombre, tiempoMin=timedelta(minutes=int(tminn[0]), seconds=int(tminn[1])),
                            tiempoMax=timedelta(minutes=int(tmaxx[0]), seconds=int(tmaxx[1])), version=version,
                            archivo=rutaNombre)
     # except IntegrityError:

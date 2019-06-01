@@ -17,7 +17,7 @@
 
 ## Activar enviroment de python3
 
-    source pyenv/bin/activate
+    source venv/bin/activate
 
 ## Para que el proyecto reconozca la base de datos hacer lo siguiente
 
