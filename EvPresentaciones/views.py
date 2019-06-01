@@ -541,24 +541,21 @@ def Ficha_Rubrica_evaluador(request):
 
 def ver_rubrica_detalle(request, nombre, version):
     rubrica = Rubrica.objects.get(nombre=nombre, version=version)
-    tmax = rubrica.tiempo
-    tmin = rubrica.tiempoMin
+    # Filas
     lineas = []
     # procesar archivo ingresado
     with open(rubrica.archivo) as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
         for row in csv_reader:
             lineas.append(row)
-
-    # print(lineas)
-    # tmax = lineas[-1][2]    # Extraer tiempo maximo en ultima fila
-    # tmin = lineas[-1][1]    # Extraer tiempo minimo en ultima fila
-
-    # lineas[0][0] = ''       # Poner en blanco la primera columna de la primera fila
-    # lineas = lineas[:-1]    # Quitar la ultima fila que contiene el tiempo
+    # Tiempo en formato simplificado
+    tiempoMax = str(rubrica.tiempo).split(":")
+    tMax = tiempoMax[1] + ":" + tiempoMax[2] # Tiempo en formato correcto: mm:ss
+    tiempoMin = str(rubrica.tiempoMin).split(":")
+    tMin = tiempoMin[1] + ":" + tiempoMin[2] # Tiempo en formato correcto: mm:ss
 
     return render(request, 'EvPresentaciones/Admin_interface/ver_rubrica_detalle.html',
-                  {'lineas': lineas, 'tmax': tmax, 'tmin': tmin})
+                  {'lineas': lineas, 'tmax': tMax, 'tmin': tMin})
 
 
 def Ficha_Rubrica_modificar(request, nombre, version):
@@ -598,7 +595,7 @@ def Ficha_Rubrica_crear(request):
 def Ficha_Rubrica_eliminar(request, nombre, version):
     rubrica = Rubrica.objects.get(nombre=nombre, version=version)
     rubricaID = rubrica.id
-    print(rubricaID)
+    #print(rubricaID)
     evaluacionesAsociadas = Evaluacion_Rubrica.objects.filter(rubrica=rubricaID)
     evaluacionesSTR = []
     evaluacionesIDs = []  # Para obtener cursos asociados a evaluaciones
