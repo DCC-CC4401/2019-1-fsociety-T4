@@ -578,10 +578,9 @@ def Ficha_Rubrica_modificar(request, nombre, version):
 
     # Movemos las filas no balncas
     rows = rows2
-
     primeraFila = rows[0][1:]  # Quito el primer y ultimo elemento que son elementos vacios no editables
-
     contenido = rows[1:]
+    
     return render(request, 'EvPresentaciones/FichasRubricas/FichaRubrica_modificar.html',
                   {'nombre': rubrica.nombre, 'version': rubrica.version, 'tiempo': rubrica.tiempo,
                    'tiempoMin': rubrica.tiempoMin, 'primeraFila': primeraFila, 'contenido': contenido})
