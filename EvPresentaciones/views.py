@@ -431,6 +431,7 @@ def ver_evaluacion_admin(request,id,grupo):
     context['criterios'] = criterios
     context['alumnos'] = aux
     context['grupo_elegido'] = grupo_elegido
+    context['tamaño_atributos'] =len(aspecto)
 
     return render(request, 'EvPresentaciones/Admin_interface/evaluacion_admin.html',
                   context)
