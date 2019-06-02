@@ -53,40 +53,16 @@
                 </ul>
             </div>
 
-            <div class="w3-half w3-margin-bottom ">
-                <ul class="w3-ul w3-light-grey w3-center w3-card-4" id="Presentacion">
+            <div class="w3-half w3-margin-bottom " id="presentadores">
+                <ul class="w3-ul w3-light-grey w3-center w3-card-4" id="Presentación">
                     <li class="w3-dark-grey w3-xlarge w3-padding-32">Miembros que presentan <i class="fas fa-chalkboard-teacher"></i></li>
                     <li class="w3-padding-16" id="presenta" onclick=eliminar_presentador(this.id);><i
                         style="margin-left: 10px"
                         class="w3-large fas fa-times"></i></li>
-                    <li class=" opcion w3-padding-16" id="mas" onclick="getElementById('modificar_miembro').style.display='block'"> Agregar otro <i style="margin-left: 10px"
-                                                                                class="fas fa-user-plus"></i></li>
                 </ul>
             </div>
         </div>
 
-        <div id="modificar_miembro" class="w3-modal">
-            <div class="w3-modal-content w3-card-4 w3-animate-zoom" style="max-width:600px">
-                <div class="w3-center">
-                    <br>
-                    <span onclick="document.getElementById('modificar_miembro').style.display='none'" 
-                    class="w3-button w3-large w3-transparent w3-display-topright" title="Close Modal">x</span>
-                    <form id="form" method="POST" class="w3-container" action="{url 'agregar_alumno_presentacion'">
-                        <label><b>Alumno que Presentará</b></label>
-                        <select class="w3-input w3-border" name="nombre" required id="valorAlumno">
-                            {% for a in alumnos%}
-                                {% if a.presento == false %}
-                                  <option>{{a.nombre}}{{a.apellido}}</option>
-                                {% endif %}
-                            {% endfor%}
-                        </select>
-                        <button class="w3-button w3-block w3-red w3-section w3-padding"
-                                type="submit" onclick="modificar(document.getElementById('valorAlumno').value)">Agregar
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
         <!--TODO Arreglar el formateo de la nota de los criterios de evaluacion-->
         <!-- Aqui puse el valor de los criterios por si acaso, hay que formatearlo mejor-->
         <p>Seleccione el nivel de logro alcanzado por el grupo en cada ámbito</p>
@@ -135,7 +111,6 @@
                    onclick=guardar();>
 
         </div>
-    </form>
 </div>
 
     <!-- End page content -->

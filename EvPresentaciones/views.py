@@ -271,28 +271,6 @@ def Post_evaluacion(request):
 
 
 def Post_evaluaciones_admin(request):
-
-    return render(request, 'EvPresentaciones/Eval_interface/postevaluacionadmin.html')
-
-
-def ver_evaluacion_admin(request, id, grupo):
-    context = {}
-    par_curso_evaluacion = Cursos_Evaluacion.objects.get(evaluacion=id)
-    evaluacion = par_curso_evaluacion.evaluacion
-    curso=par_curso_evaluacion.curso
-    grupoE=Cursos_Alumnos.objects.get(curso=curso, nombreGrupo=grupo)
-    curso = par_curso_evaluacion.curso
-    alumnos=[]
-    
-    miembros=Cursos_Alumnos.objects.filter(curso=curso, nombreGrupo=grupo)
-    for a in miembros:
-        alumnos.append(a.alumnos)
-
-    par_evaluacion_rubrica=Evaluacion_Rubrica.objects.get(evaluacion=id)
-    rubrica = par_evaluacion_rubrica.rubrica
-    print(rubrica.nombre)
-    lineas = []
-=======
     lineas = []
     # todos los post
     lista_atributos = request.POST.get('lista_atributos', None)
@@ -378,8 +356,8 @@ def cargar_grupo(request, id):
 
     return ver_evaluacion_admin(request, id)
 
-
-def ver_evaluacion_admin(request, id,grupo):
+#Esta pagina recibe al grupo que estamos evaluando
+def ver_evaluacion_admin(request,id,grupo):
     context = {}
     lineas = []
     alumnos = []
@@ -391,7 +369,9 @@ def ver_evaluacion_admin(request, id,grupo):
     curso = par_curso_evaluacion.curso
     rubrica = par_evaluacion_rubrica.rubrica
 
-    grupo_elegido = par_curso_evaluacion.evaluando
+    #falta que cambiemos a que el grupo este siendo evaluado
+    grupo_elegido = grupo
+    
     print("el grupo es: " + grupo_elegido)
     if grupo_elegido != "No Group":
         alumnos = Cursos_Alumnos.objects.filter(nombreGrupo=grupo_elegido)
@@ -414,19 +394,7 @@ def ver_evaluacion_admin(request, id,grupo):
         for row in csv_reader:
             if row!=[]:
                 lineas.append(row)
-    lineas[0][0]=''
-    lineas=lineas[:-1]
-    criterios=lineas.copy()
-    criterios.pop(0)
-    aspecto=[]
-    algo=0
-    while algo<len(criterios):
-        lik=criterios[algo]
-        aspecto.append(lik[0])
-        criterios[algo].pop(0)
-        algo=algo+1
-            if row != []:
-                lineas.append(row)
+                
     # criterios para poder sacar la descripcion de cada aspecto de la rubrica
     criterios = lineas.copy()
     criterios.pop(0)
@@ -462,6 +430,7 @@ def ver_evaluacion_admin(request, id,grupo):
     return render(request, 'EvPresentaciones/Admin_interface/evaluacion_admin.html',
                   context)
 
+#muestra los grupos que pueden ser evaluados, y los que ya fueron evaluados
 def verGrupos(request, id):
    par_curso_evaluacion=Cursos_Evaluacion.objects.get(evaluacion=id)
    evaluacion=par_curso_evaluacion.evaluacion
@@ -476,11 +445,6 @@ def verGrupos(request, id):
            grupos_e.append(g.nombreGrupo)
             
    return render(request, 'EvPresentaciones/Admin_interface/ver_grupos.html',{'grupos_e':grupos_e, 'grupos_p':grupos_p, 'evaluacion':evaluacion})
-
-def agregar_alumno_presentacion(request,id,grupo):
-
-
-   return ver_evaluacion_admin(request,id,grupo)
 
 
 # funciones resumen evaluacion
@@ -497,7 +461,6 @@ def Summary(request):
 # Se hace así porque hay que sacar la rúbrica del modelo Evaluacion_Rubrica, no es directo
 def ver_rubrica_select(request, id):
     rubrica = Evaluacion_Rubrica.objects.get(evaluacion=id).rubrica
-
     return ver_rubrica_detalle(request, rubrica.nombre, rubrica.version)
 
 # Si se hace request de la landingpage, se verifica el tipo de usuario y se retorna el render correspondiente
