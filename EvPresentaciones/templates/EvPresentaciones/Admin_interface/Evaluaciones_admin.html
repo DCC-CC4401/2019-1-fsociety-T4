@@ -1,0 +1,230 @@
+{% extends 'EvPresentaciones/BASE/base.html' %}
+{% block contenido %}
+    <!-- HEADER -->
+    <div class="w3-container" id="portada" style="margin-top:80px; margin-bottom:10px">
+        <h1 class="w3-xxxlarge w3-text-red"><b>Evaluaciones</b></h1>
+        <hr style="width:50px;border:5px solid red" class="w3-round">
+    </div>
+
+    <!--Agregar nueva evaluacion-->
+
+    <div class="w3-container">
+        <button onclick="document.getElementById('agregar').style.display='block'"
+                class="w3-button w3-large w3-red w3-right w3-round">Agregar nueva evaluación
+        </button>
+        <br>
+    </div>
+
+    <!--Menu desplegable que aparece al agregar nueva evaluacion-->
+    <div id="agregar" class="w3-modal">
+        <div class="w3-modal-content w3-card-4 w3-animate-zoom" style="max-width:600px">
+            <div class="w3-center"><br>
+                <span onclick="document.getElementById('agregar').style.display='none'"
+                      class="w3-button w3-xlarge w3-transparent w3-display-topright" title="Close Modal">×</span>
+                <form id="form" method="POST" class="w3-container"
+                      action="{% url 'agregar_evaluaciones' %}">
+                    {% csrf_token %}
+
+                    <div class="w3-section">
+
+                        <label><b>Fecha de Inicio</b></label>
+                        <input class="w3-input w3-border w3-margin-bottom" type="date"
+                               placeholder="Fecha de inicio" name="inicio" required>
+
+                        <label><b>Fecha de Termino</b></label>
+                        <input class="w3-input w3-border" type="date" placeholder="Fecha Termino"
+                               name="termino" required>
+
+                        <label><b>Estado</b></label>
+                        <select class="w3-input w3-border" name="estado" required>
+                            <option value="activa">Activa</option>
+                            <option value="inactiva">Inactiva</option>
+                        </select>
+
+
+                        <label><b>Curso</b></label>
+                        <select class="w3-input w3-border" name="curso" required>
+                            {% for c in cursos %}
+                                <option value={{ c.id }}>{{ c.nombre }}</option>
+                            {% endfor %}
+                        </select>
+
+                        <label><b>Rúbrica</b></label>
+                        <select class="w3-input w3-border" name="rubricas" required>
+                            {% for r in rubricas %}
+                                <option value={{ r.nombre }}>{{ r.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                        <button class="w3-button w3-block w3-red w3-section w3-padding"
+                                type="submit">Agregar
+                        </button>
+
+                    </div>
+
+                </form>
+            </div>
+        </div>
+        <!--cierre de cajas de cursos-->
+    </div>
+
+
+    <!--Seccion rubricas-->
+
+    {% for o in pareja %}
+
+        <button onclick="myFunction({{ o.evaluacion.id }})" class="w3-btn w3-red w3-block w3-margin"
+                style="width: 75%">
+            <h3>
+                Evaluación {{ o.evaluacion.id }}</h3>
+        </button>
+
+        <div id={{ o.evaluacion.id }} class="w3-hide w3-container w3-pale-red w3-padding-large w3-margin"
+        style="width: 75%">
+
+
+
+        <p>
+        <li>Curso: {{ o.curso.nombre }}</li>
+        <li>Fecha inicio: {{ o.evaluacion.fechaInicio }}</li>
+        <li>Fecha término: {{ o.evaluacion.fechaTermino }}</li>
+        <li>Estado: {{ o.evaluacion.estado }}</li>
+        <li>Tiempo esperado presentación: {{ o.evaluacion.duracion }}</li>
+        <form action="{% url 'ver_select' o.evaluacion.id %}">
+            <button class="w3-button w3-white w3-border w3-border-red w3-round-large">Rúbrica
+                asociada
+            </button>
+        </form>
+        <button class="w3-button w3-white w3-border w3-border-red w3-round-large">Exportar
+            puntajes
+        </button><br>
+        </p>
+
+        <!-- botones de ver y modificar evaluacion-->
+        
+
+        <form action="{% url 'ficha_evaluacion_admin' o.evaluacion.id %}">
+            <!-- ver evaluacion -->
+            <button class="w3-button w3-large w3-red w3-round" type="submit">Ver</button>
+            <!-- modificar evaluacion -->
+            <button onclick="document.getElementById('modificar_{{ o.evaluacion.id }}').style.display='block'"
+                class="w3-button w3-large w3-red w3-margin-left w3-round">Modificar</button>
+        </form>
+
+
+
+        <!-- Menu desplegable que aparece al modificar una evaluacion-->
+        <div id='modificar_{{ o.evaluacion.id }}' class="w3-modal">
+            <div class="w3-modal-content w3-card-4 w3-animate-zoom" style="max-width:600px">
+                <div class="w3-center"><br>
+                    <span onclick="document.getElementById('modificar_{{ o.evaluacion.id }}').style.display='none'"
+                          class="w3-button w3-xlarge w3-transparent w3-display-topright" title="Close Modal">×</span>
+                    <form id="form" method="POST" class="w3-container"
+                          action="{% url 'modificar_evaluaciones' o.evaluacion.id %}">
+                        {% csrf_token %}
+
+                        <div class="w3-section">
+
+                            <label><b>Fecha de Inicio</b></label>
+
+
+                            <!-- contiene If porque la fecha se necesita en un formato en especifico-->
+                            <!-- codigo es muy feo debido a el formato que piden las fechas-->
+                            <!-- simplemente agrega ceros cuando la fecha no tiene los digitos necesarios y la deja en
+                                formato YYYY-MM-DD-->
+
+                            <input class="w3-input w3-border w3-margin-bottom" type="date" value="{% if o.evaluacion.fechaInicio.year < 10 %}000{{ o.evaluacion.fechaInicio.year }}{% elif  o.evaluacion.fechaInicio.year < 100 %}00{{ o.evaluacion.fechaInicio.year }}{% elif  o.evaluacion.fechaInicio.year < 1000 %}0{{ o.evaluacion.fechaInicio.year }}{% else %}{{ o.evaluacion.fechaInicio.year }}{% endif %}-{% if o.evaluacion.fechaInicio.month < 10 %}0{{ o.evaluacion.fechaInicio.month }}{% else %}{{ o.evaluacion.fechaInicio.month }}{% endif %}-{% if o.evaluacion.fechaInicio.day < 10 %}0{{ o.evaluacion.fechaInicio.day }}{% else %}{{ o.evaluacion.fechaInicio.day }}{% endif %}" placeholder="Fecha de inicio" name="inicio" required>
+
+                            <label><b>Fecha de Termino</b></label>
+                            <input class="w3-input w3-border" type="date" placeholder="Fecha Termino"
+                                   value="{% if o.evaluacion.fechaTermino.year < 10 %}000{{ o.evaluacion.fechaTermino.year }}{% elif  o.evaluacion.fechaTermino.year < 100 %}00{{ o.evaluacion.fechaTermino.year }}{% elif  o.evaluacion.fechaTermino.year < 1000 %}0{{ o.evaluacion.fechaTermino.year }}{% else %}{{ o.evaluacion.fechaTermino.year }}{% endif %}-{% if o.evaluacion.fechaTermino.month < 10 %}0{{ o.evaluacion.fechaTermino.month }}{% else %}{{ o.evaluacion.fechaTermino.month }}{% endif %}-{% if o.evaluacion.fechaTermino.day < 10 %}0{{ o.evaluacion.fechaTermino.day }}{% else %}{{ o.evaluacion.fechaTermino.day }}{% endif %}"
+                                   name="termino" required>
+
+
+                            <!-- Para los demas parametros buscamos en la base de datos para que se muestre por defecto
+                                los datos de la evaluacion seleccionada -->
+
+                            <label><b>Estado</b></label>
+                            <select class="w3-input w3-border" name="estado" required>
+                                {% if o.evaluacion.estado == "activa" %}
+                                    <option value="activa" selected="selected">Activa</option>
+                                    <option value="inactiva">Inactiva</option>
+                                {% else %}
+                                    <option value="activa">Activa</option>
+                                    <option value="inactiva" selected="selected">Inactiva</option>
+                                {% endif %}
+                            </select>
+
+
+                            <label><b>Curso</b></label>
+                            <select class="w3-input w3-border" name="curso" required>
+                                {% for c in cursos %}
+                                    {% if o.curso.id == c.id %}
+                                        <option value='{{ c.id }}' selected="selected">{{ c.nombre }}</option>
+                                    {% else %}
+                                        <option value={{ c.id }} >{{ c.nombre }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+
+                            <label><b>Rúbrica</b></label>
+                            <select class="w3-input w3-border" name="rubricas" required>
+                                {% for r in ev_rub %}
+                                    {% if r.evaluacion.id == o.evaluacion.id %}
+                                        <option value='{{ r.rubrica.nombre }}' selected="selected">{{ r.rubrica.nombre }}</option>
+                                    {% else %}
+                                        <option value='{{ r.rubrica.nombre }}' >{{ r.rubrica.nombre }}</option>
+                                    {% endif %}
+                                {% endfor %}
+
+                                <!-- imprimimos las rubricas restantes  -->
+                                {% for r in rub_restantes %}
+                                    <option value={{ r.nombre }}>{{ r.nombre }}</option>
+                                {% endfor %}
+                            </select>
+
+
+                            <button class="w3-button w3-block w3-red w3-section w3-padding"
+                                    type="submit">Modificar
+                            </button>
+
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+            <!--cierre de cajas de cursos-->
+        </div>
+
+
+
+        <!-- boton de eliminar rubrica-->
+        <form action="{% url 'eliminar_evaluaciones'  o.evaluacion.id %}">
+            <button class="w3-button w3-large w3-red w3-right w3-round">Eliminar</button>
+        </form>
+
+
+
+
+        </div>
+
+
+    {% endfor %}
+
+
+
+
+
+
+    </div>
+    <script>
+        function myFunction(id) {
+            var x = document.getElementById(id);
+            if (x.className.indexOf("w3-show") == -1) {
+                x.className += " w3-show";
+            } else {
+                x.className = x.className.replace(" w3-show", "");
+            }
+        }
+    </script>
+
+{% endblock %}

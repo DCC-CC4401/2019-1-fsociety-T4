@@ -1,0 +1,207 @@
+{% extends 'EvPresentaciones/BASE/base.html' %}
+{% block contenido %}
+    <!-- HEADER -->
+    <div class="w3-container" id="portada" style="margin-top:80px; margin-bottom:10px">
+        <h1 class="w3-xxxlarge w3-text-red"><b>Ficha de rúbrica</b></h1>
+        <hr style="width:50px;border:5px solid red" class="w3-round">
+    </div>
+    <form id="rubricaForm" method="POST" action="{% url 'guardar_rubrica' %}"> 
+        {% csrf_token %}
+
+        <div class="w3-container">
+            <div class="w3-quarter">
+                <div class="form-inline">
+                    <label>Nombre</label>
+                    <input type="text" placeholder="Rúbrica Entrega 4" name="nombre-rubrica">
+                    
+                </div>
+            </div>
+            <div class="w3-quarter">
+                <div class="form-inline">
+                    <label>Tiempo mínimo</label>
+                    <input type="text" placeholder="5:00" name="t-min" style="width: 30%">
+                    
+                </div>
+            </div>
+            <div class="w3-quarter">
+                <div class="form-inline">
+                    <label>Tiempo máximo</label>
+                    <input type="text" placeholder="10:00" name="t-max" style="width: 30%">
+                    
+                </div>
+            </div>
+            <div class="w3-quarter">
+                <div class="form-inline">
+                    <label>Versión</label>
+                    <input type="text" placeholder="1.2" name="version" style="width: 30%">
+                    
+                </div>
+            </div>
+        </div>
+
+        <div class="w3-container">
+            <table id="tabla-rubrica" class="orange">
+                <tr>
+                    <th></th>
+                    <th contenteditable='true'>0.0</th>
+                    <th contenteditable='true'>0.3</th>
+                    <th contenteditable='true'>0.7</th>
+                    <th contenteditable='true'>1.0</th>
+                    <th></th>
+                </tr>
+                <tr>
+                    <th contenteditable='true'>Aspecto #1</th>
+                    <td contenteditable='true'>No cumple</td>
+                    <td contenteditable='true'>Cumple a penas</td>
+                    <td contenteditable='true'>Cumple decentemente</td>
+                    <td contenteditable='true'>Cumple en totalidad</td>
+                    <td><input type='button' class='button-add' value='Añadir fila' onclick="addRow()"></td>
+                </tr>
+                <tr>
+                    <th></th>
+                    <td><input type='button' class='button-add' value='Añadir columna' onclick="addCol()"></td>
+                    <td><input type='button' class='button-delete DeleteCol' value='Borrar columna' onclick="removeCol(this)"></td>
+                    <td><input type='button' class='button-delete DeleteCol' value='Borrar columna' onclick="removeCol(this)"></td>
+                    <td><input type='button' class='button-delete DeleteCol' value='Borrar columna' onclick="removeCol(this)"></td>
+                    <td></td>
+                </tr>
+            </table>
+        </div>
+
+        <input id"csv-text-id" type="text" style="display: block;" name="csv-text" value="">
+        
+        <div class="w3-row">
+            <button type="button" class="button1" onclick="saveRubrica();">Guardar rúbrica <i class="far fa-save"></i></button>
+        </div>
+    </form>
+
+    <script>
+
+    function saveRubrica(){
+        if(validarRubrica()){
+            table2JSList();
+            alert("Se va a enviar la rúbrica");
+            document.getElementById("rubricaForm").submit();
+            alert('sda');
+        };
+    }
+
+    // Aquí implementar requisito 51!!
+    function validarPuntajes(){
+
+    }
+
+    function validarRubrica(){
+        var nombre = document.getElementsByName("nombre-rubrica")[0];
+        if(nombre.value == ""){
+            alert("Debe ingresar un nombre de Rúbrica");
+            return false
+        }
+        var tmin = document.getElementsByName("t-min")[0];
+        if(tmin.value == ""){
+            alert("Debe ingresar un tiempo mínimo");
+            return false
+        }
+        var tmax = document.getElementsByName("t-max")[0];
+        if(tmax.value == ""){
+            alert("Debe ingresar un tiempo máximo");
+            return false
+        }
+        var ver = document.getElementsByName("version")[0];
+        if(ver.value == ""){
+            alert("Debe ingresar una versión de la rúbrica");
+            return false
+        }
+        return true;
+    }
+
+    function table2JSList(){
+        var csv = [];
+	    var rows = document.querySelectorAll("table tr");
+	
+        for (var i = 0; i < rows.length - 1; i++) { // Sin botones
+		    var row = [];
+            var cols = rows[i].querySelectorAll("td, th");
+		
+            for (var j = 0; j < cols.length - 1; j++){ // Sin botones
+                row.push(cols[j].innerText);
+            }
+		    csv.push(row.join(","));		
+	    }
+        document.getElementsByName("csv-text")[0].value = csv.join("|");
+
+        //alert(csvText);
+        // Download CSV
+        //download_csv(csv.join("\n"), filename);
+    }
+
+    // Añade una fila al final antes de los botones de columna
+    function addRow(){
+        var total = $('#tabla-rubrica tr').length; // Total de filas
+        var cantidadDeTds = $('#tabla-rubrica tbody tr:nth(1)').find("td").length - 1; // Menos el boton
+        var interior = "<th contenteditable='true'></th>";
+        for(var i = 0; i < cantidadDeTds; i++){
+            interior += "<td contenteditable='true'></td>";
+        }
+        interior += "<td><input type='button' class='button-delete' value='Borrar fila' onclick=\"removeRow(this)\"></td>";
+        var newRow = $("<tr>").append(interior).append("</tr>");
+        newRow.insertAfter($('#tabla-rubrica tbody tr:nth('+(total-2)+')')); // Insertar antes de los botones de columna
+    }
+
+    // Remueve la fila donde esta el boton
+    function removeRow(object){
+        $(object).closest('tr').remove();
+    }
+
+    function removeCol(object){
+        var ColIndex = $(object).closest("td").index(); // El boton siempre a a estar dentro de un td
+        //alert(ColIndex);
+        $("#tabla-rubrica tr").each(function(){ // Para todas las filas
+            // Spy la primera o la última
+            //alert($(this).index());
+            if($(this).index() == 0){
+                $(this).find("th:eq(" + ColIndex + ")").remove();
+            }else if($(this).index() == $('#tabla-rubrica tr').length - 1){
+                $(this).find("td:eq(" + (ColIndex-1) + ")").remove();
+            }else{
+                //alert("Borro elemento " + ColIndex - 1);
+                $(this).find("td:eq(" + (ColIndex-1) + ")").remove();
+            }
+        });
+    }
+
+    // Añade columna en la penultima fila (antes de los botones)
+    function addCol(){
+        $("#tabla-rubrica tr").each(function(){
+            if($(this).find("th").length != 1){ // Si soy cabecera
+                var n = $(this).find("th").length; // largo de yo
+                $(this).find("th:eq("+(n-1)+")").remove(); // Saco vacio
+                $(this).append("<th contenteditable='true'></th>"); // Pongo celda editable
+                $(this).append("<th></th>"); // Pongo vacio
+            }else{ // Si soy fila de abajo porque tengo un header en la primera columna
+                var total = $('#tabla-rubrica tr').length; // Total de filas
+                var yo = $(this).closest("tr").index();
+                //alert("total " + total+" yo " + yo);
+                if((total-1) == yo){ // Si soy la ultima fila
+                    var n = $(this).find("td").length; // Largo de td de ultima fila
+                    //var d = $(this).find("td:eq("+(n-2)+")").html(); // Copiar el boton eliminar
+                    $(this).find("td:eq("+(n-1)+")").remove(); // Borrar vacío
+                    $(this).append("<td><input type='button' class='button-delete DeleteCol' value='Borrar columna' onclick=\"removeCol(this)\"></td>"); // Agregar boton eliminar
+                    $(this).append("<td></td>"); // Agregar vacío
+                    
+                }else{
+                    var n = $(this).find("td").length; // Largo de fila actual
+                    var d = $(this).find("td:eq("+(n-1)+")").html(); // Copio boton
+                    $(this).find("td:eq("+(n-1)+")").remove(); // Saco boton
+                    $(this).append("<td contenteditable='true'></td>"); // Inserto celda vacia editable
+                    $(this).append("<td>"+d+"</td>"); // Inserto boton
+                }
+            }
+            
+        })
+    }
+    
+
+    </script>
+    <!-- End page content -->
+    {% endblock %}
