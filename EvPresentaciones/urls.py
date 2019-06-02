@@ -12,7 +12,7 @@ urlpatterns = [
     path('Admin_interface/Evaluaciones_admin1',             views.agregar_evaluaciones,   name='agregar_evaluaciones'),
     path('Admin_interface/Evaluaciones_admin2/<int:id>',    views.eliminar_evaluaciones,  name='eliminar_evaluaciones'),
     path('Admin_interface/Evaluaciones_admin3/<int:id>',    views.modificar_evaluaciones, name='modificar_evaluaciones'),
-    path('Admin_interface/evaluacion_admin/<int:id>',       views.ver_evaluacion_admin,   name='ficha_evaluacion_admin'),
+    path('Admin_interface/evaluacion_admin/<int:id> <str:grupo>',       views.ver_evaluacion_admin,   name='ficha_evaluacion_admin'),
     path('Admin_interface/Evaluadores_admin',               views.Evaluadores_admin,      name='evaluadores_admin'),
     path('Admin_interface/Landing_page_admin',              views.Landing_page_admin,     name='landing_page_admin'),
     path('Admin_interface/Rubricas_admin',                  views.Rubricas_admin,         name='rubricas_admin'),
@@ -22,6 +22,8 @@ urlpatterns = [
     path('Admin_interface/Ver_rubrica/<int:id>',            views.ver_rubrica_select,     name='ver_select'),
     path('Admin_interface/Ver_rubrica_detalle/<str:nombre>',views.ver_rubrica_detalle,    name='ver_detalle'),
     path('FichasRubricas/Rubrica_guardada',                 views.guardarRubrica,         name='guardar_rubrica'),
+    path('Admin_interface/ver_grupos/<int:id>',             views.verGrupos,              name='ver_grupos'),
+    path('Admin_interface/evaluacion_admin2/<int:id><str:grupo>',  views.agregar_alumno_presentacion,  name='agregar_alumno_presentacion'),
 
     # Vistas de evaluador
 

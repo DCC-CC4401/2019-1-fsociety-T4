@@ -231,14 +231,20 @@ def Post_evaluaciones_admin(request):
     return render(request, 'EvPresentaciones/Eval_interface/postevaluacionadmin.html')
 
 
-def ver_evaluacion_admin(request, id):
+def ver_evaluacion_admin(request, id, grupo):
     context = {}
     par_curso_evaluacion = Cursos_Evaluacion.objects.get(evaluacion=id)
     evaluacion = par_curso_evaluacion.evaluacion
+    curso=par_curso_evaluacion.curso
+    grupoE=Cursos_Alumnos.objects.get(curso=curso, nombreGrupo=grupo)
     curso = par_curso_evaluacion.curso
+    alumnos=[]
+    
+    miembros=Cursos_Alumnos.objects.filter(curso=curso, nombreGrupo=grupo)
+    for a in miembros:
+        alumnos.append(a.alumnos)
 
     par_evaluacion_rubrica=Evaluacion_Rubrica.objects.get(evaluacion=id)
-    #hardcodeado mientras para probar
     rubrica = par_evaluacion_rubrica.rubrica
     print(rubrica.nombre)
     lineas = []
@@ -279,9 +285,32 @@ def ver_evaluacion_admin(request, id):
     context['rubrica']=lineas
     context['aspecto']=aspecto
     context['criterios']=criterios
+    context['grupo']=grupoE
+    context['alumnos']=alumnos
 
     return render(request, 'EvPresentaciones/Admin_interface/evaluacion_admin.html',
                   context)
+
+
+def verGrupos(request, id):
+   par_curso_evaluacion=Cursos_Evaluacion.objects.get(evaluacion=id)
+   evaluacion=par_curso_evaluacion.evaluacion
+   curso=par_curso_evaluacion.curso
+   grupos_p=[]
+   grupos_e=[]
+   grupo=Cursos_Alumnos.objects.filter(curso=curso)
+   for g in grupo:
+       if(g.evaluado==False):
+           grupos_p.append(g.nombreGrupo)
+       else:
+           grupos_e.append(g.nombreGrupo)
+            
+   return render(request, 'EvPresentaciones/Admin_interface/ver_grupos.html',{'grupos_e':grupos_e, 'grupos_p':grupos_p, 'evaluacion':evaluacion})
+
+def agregar_alumno_presentacion(request,id,grupo):
+
+
+   return ver_evaluacion_admin(request,id,grupo)
 
 
 # funciones resumen evaluacion
@@ -468,6 +497,7 @@ def Rubricas_admin(request):
         listaEntregada.append([i, listaNombres[i], listaVersiones[i],
                                listaArchivos[i]])  # Le paso el indice para poder usarlo de id en elementos html
     print(listaEntregada)
+
 
     return render(request, 'EvPresentaciones/Admin_interface/Rubricas_admin.html', {'lista': listaEntregada})
 

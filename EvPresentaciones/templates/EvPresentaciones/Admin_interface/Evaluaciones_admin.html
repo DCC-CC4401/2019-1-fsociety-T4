@@ -102,13 +102,13 @@
         <!-- botones de ver y modificar evaluacion-->
         
 
-        <form action="{% url 'ficha_evaluacion_admin' o.evaluacion.id %}">
+        <form action="{% url 'ver_grupos' o.evaluacion.id %}">
             <!-- ver evaluacion -->
             <button class="w3-button w3-large w3-red w3-round" type="submit">Ver</button>
-            <!-- modificar evaluacion -->
+        </form>
             <button onclick="document.getElementById('modificar_{{ o.evaluacion.id }}').style.display='block'"
                 class="w3-button w3-large w3-red w3-margin-left w3-round">Modificar</button>
-        </form>
+        
 
 
 

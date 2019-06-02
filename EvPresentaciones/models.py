@@ -212,6 +212,7 @@ class Cursos_Alumnos(models.Model):
     nombreGrupo = models.CharField(max_length=50, null=True, default="No Group")
     curso = models.ForeignKey(Cursos, on_delete=models.CASCADE, null=True)
     alumnos = models.ForeignKey(Alumnos, on_delete=models.CASCADE, null=True)
+    evaluado=models.BooleanField()
 
     class Meta:
         unique_together = (("curso", "alumnos"),)
@@ -222,6 +223,7 @@ class Cursos_Alumnos(models.Model):
 
 class Alumnos_Evaluacion(models.Model):
     nota = models.FloatField(null=True)
+    tiempo = models.DurationField(default=0) 
     alumno = models.ForeignKey(Alumnos, on_delete=models.CASCADE, null=True)
     evaluacion = models.ForeignKey(Evaluacion, on_delete=models.CASCADE, null=True)
 
