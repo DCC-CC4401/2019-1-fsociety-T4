@@ -136,8 +136,10 @@ def modificar_evaluaciones(request, id):
     curso = request.POST.get('curso', None)
     rubrica = request.POST.get('rubricas', None)
 
+    print(rubrica)
+
     # calculamos duracion a partir de la rubrica, Rubrica siempre va a existir en la base de datos
-    rubricaObj = Rubrica.objects.get(nombre=rubrica)
+    rubricaObj = Rubrica.objects.get(id=rubrica)
     tMax = rubricaObj.tiempo
 
     # cambiamos los datos de la evaluacion
@@ -187,8 +189,10 @@ def agregar_evaluaciones(request):
     curso = request.POST.get('curso', None)
     rubrica = request.POST.get('rubricas', None)
 
+    print(rubrica)
+
     # calculamos duracion a partir de la rubrica, Rubrica siempre va a existir en la base de datos
-    rubricaObj = Rubrica.objects.get(nombre=rubrica)
+    rubricaObj = Rubrica.objects.get(id=rubrica)
     tMax = rubricaObj.tiempo
 
     # añadimos la evaluacion a las tablas correspondientes

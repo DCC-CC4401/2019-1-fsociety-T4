@@ -53,7 +53,7 @@
                         <label><b>Rúbrica</b></label>
                         <select class="w3-input w3-border" name="rubricas" required>
                             {% for r in rubricas %}
-                                <option value={{ r.nombre }}>{{ r.nombre }}</option>
+                                <option value={{ r.id }}>{{ r.nombre }} v{{ r.version }}</option>
                             {% endfor %}
                         </select>
                         <button class="w3-button w3-block w3-red w3-section w3-padding"
@@ -108,14 +108,16 @@
         <!-- botones de ver y modificar evaluacion-->
 
 
-        <form action="{% url 'ficha_evaluacion_admin' o.evaluacion.id %}">
+        <form class="w3-button w3-large w3-red w3-margin-left w3-round" action="{% url 'ficha_evaluacion_admin' o.evaluacion.id %}">
             <!-- ver evaluacion -->
             <button class="w3-button w3-large w3-red w3-round" type="submit">Ver</button>
+        </form>
+
             <!-- modificar evaluacion -->
             <button onclick="document.getElementById('modificar_{{ o.evaluacion.id }}').style.display='block'"
                     class="w3-button w3-large w3-red w3-margin-left w3-round">Modificar
             </button>
-        </form>
+
 
 
 
@@ -196,16 +198,16 @@
                             <select class="w3-input w3-border" name="rubricas" required>
                                 {% for r in ev_rub %}
                                     {% if r.evaluacion.id == o.evaluacion.id %}
-                                        <option value='{{ r.rubrica.nombre }}'
-                                                selected="selected">{{ r.rubrica.nombre }}</option>
+                                        <option value='{{ r.rubrica.id }}'
+                                                selected="selected">{{ r.rubrica.nombre }} v{{ r.rubrica.version }}</option>
                                     {% else %}
-                                        <option value='{{ r.rubrica.nombre }}'>{{ r.rubrica.nombre }}</option>
+                                        <option value='{{ r.rubrica.id }}'>{{ r.rubrica.nombre }} v{{ r.rubrica.version }}</option>
                                     {% endif %}
                                 {% endfor %}
 
                                 <!-- imprimimos las rubricas restantes  -->
                                 {% for r in rub_restantes %}
-                                    <option value={{ r.nombre }}>{{ r.nombre }}</option>
+                                    <option value={{ r.id }}>{{ r.nombre }} v{{ r.version }}</option>
                                 {% endfor %}
 
                             </select>
