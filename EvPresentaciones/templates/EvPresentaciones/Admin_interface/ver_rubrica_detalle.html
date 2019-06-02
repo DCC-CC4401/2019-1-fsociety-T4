@@ -6,6 +6,7 @@
         <hr style="width:50px;border:5px solid red" class="w3-round">
     </div>
 
+<<<<<<< HEAD
         <div class="w3-row w3-container">
             <div class="w3-col">
 
@@ -177,3 +178,23 @@
         </head>
 
         {% endblock %}
+=======
+    <div class="w3-row w3-container">
+        <div class="w3-col" align="left">
+                <label>Intervalo de presentación: {{ tmin }} - {{ tmax }}</label>
+        </div>
+    </div>
+    <div class="w3-container">
+        <table class="orange">
+            {% for row in lineas %}
+            <tr>
+                {% for col in row %}
+                <th> {{ col }}</th>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+{% endblock %}
+>>>>>>> Tarea4/development

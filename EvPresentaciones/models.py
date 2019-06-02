@@ -70,7 +70,7 @@ class Usuario(AbstractUser):
 
     # nueva llave del usuario
     email = models.EmailField(unique=True)
-    
+
     # indica que el email es la llave
     USERNAME_FIELD = 'email'
 
@@ -127,7 +127,7 @@ class Alumnos(models.Model):
 
 class Rubrica(models.Model):
     # id es automatico
-    nombre = models.CharField(max_length=50, primary_key=True)
+    nombre = models.CharField(max_length=50)
     version = models.CharField(max_length=50)
     tiempo = models.DurationField() # tiempoMax
     tiempoMin = models.DurationField(default=0)
@@ -137,7 +137,7 @@ class Rubrica(models.Model):
         db_table = "Rubrica"
 
     def __str__(self):
-        return self.nombre + "-" + self.version
+        return self.nombre + " v" + self.version
     
     def create_rubrica(nombre, tiempoMin, tiempoMax, version, archivo):
         r = Rubrica(
@@ -162,7 +162,7 @@ class Evaluacion(models.Model):
         db_table = "Evaluacion"
 
     def __str__(self):
-        return "Evaluacion: " + str(self.id)
+        return "ID: " + str(self.id) + " | Inicio: " + str(self.fechaInicio) + " | Término: " + str(self.fechaTermino) + " | Estado: " + str(self.estado)
 
 
 ##############################################################
@@ -194,12 +194,13 @@ class Evaluacion_Rubrica(models.Model):
         unique_together = (("evaluacion", "rubrica"),)
 
     def __str__(self):
-        return "Evaluacion: " + str(self.evaluacion) + " Rubrica: " + str(self.rubrica)
+        return "Evaluacion: (" + str(self.evaluacion) + ")     Rúbrica: (" + str(self.rubrica) + ")"
 
 
 class Cursos_Evaluacion(models.Model):
     curso = models.ForeignKey(Cursos, on_delete=models.CASCADE, null=True)
     evaluacion = models.ForeignKey(Evaluacion, on_delete=models.CASCADE, null=True)
+    evaluando = models.CharField(max_length=50, null=True, default="No Group")
 
     class Meta:
         unique_together = (("curso", "evaluacion"),)

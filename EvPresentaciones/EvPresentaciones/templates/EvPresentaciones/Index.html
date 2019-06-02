@@ -1,0 +1,53 @@
+{% load static %}
+<!DOCTYPE html>
+<head>
+    <html lang="es">
+    <title>Plataforma de evaluación-Cursos</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'EvPresentaciones/style.css' %}">
+    <link rel="stylesheet" href="{% static 'EvPresentaciones/w3.css' %}">
+    <link rel="stylesheet" href="{% static 'EvPresentaciones/ficharubrica.css' %}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
+          integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+    </head>
+
+
+    {% block content %}
+
+        <div class="w3-modal-content w3-card-4 w3-animate-zoom" style="max-width:600px">
+            <div class="w3-center"><br>
+                <form id="login-form" method="POST" action="{% url 'LandingPage' %}">
+                    {% csrf_token %}
+
+                    <div class="w3-section">
+
+                        <label for="id_username">Usuario</label>
+                        <input id="id_username" name="username" type="text" class="w3-input w3-border w3-margin-bottom">
+
+
+                        <label for="id_password">Contraseña</label>
+                        <input id="id_password" name="password" type="password"
+                               class="w3-input w3-border w3-margin-bottom">
+
+                        <button class="w3-button w3-block w3-red w3-section w3-padding" type="submit">Ingresar</button>
+
+                    </div>
+
+                    {% if form.errors %}
+                        <p class=" label label-danger">
+                            Your username and password didn't match.
+                            Please try again.
+                        </p>
+                    {% endif %}
+
+                    {% if value %}
+                        <p> Correo o contraseña incorrecta.</p>
+                    {% endif %}
+
+                </form>
+            </div>
+        </div>
+    {% endblock content %}

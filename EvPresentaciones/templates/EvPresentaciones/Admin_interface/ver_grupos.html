@@ -21,7 +21,7 @@
                         <li class="w3-dark-grey w3-xlarge w3-padding-32">Grupos evaluados<i class="fas fa-user-tie"></i></li>
         
                         {% for g in grupos_e %}
-                            <li class="w3-padding-16"><a href={% url 'ficha_evaluacion_admin' evaluacion.id  g%}>{{g}}</a></i>
+                            <li class="w3-padding-16"><a href={% url 'ficha_evaluacion_admin' evaluacion.id  g %}>{{g}}</a></i>
                             </li>
                         {% endfor %}
                     </ul>
