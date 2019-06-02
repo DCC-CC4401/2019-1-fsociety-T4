@@ -290,14 +290,19 @@ def Post_evaluaciones_admin(request):
     integrantes=[]
 
 
+
+
     for i in par_curso_integrantes:
         integrantes.append(i.alumnos)
+        i.evaluado=True
+        i.save()
     for al in integrantes:
         aux=Alumnos_Evaluacion(tiempo=timedelta(minutes=int(minutos),seconds=int(segundo)),alumno=al,
                                evaluacion=evaluacion.evaluacion)
         aux.save()
 
-    print(integrantes)
+
+    #defino el nombre del archivo donde guardar
     nombreArchivo = evaluacion.curso.codigo + '-' + evaluacion.curso.semestre + '.csv'
     rutaNombre = './EvPresentaciones/ArchivosEvaluaciones/' + nombreArchivo
 
@@ -440,10 +445,12 @@ def verGrupos(request, id):
    grupo=Cursos_Alumnos.objects.filter(curso=curso)
    for g in grupo:
        if(g.evaluado==False):
-           grupos_p.append(g.nombreGrupo)
+           if g.nombreGrupo not in grupos_p:
+            grupos_p.append(g.nombreGrupo)
        else:
-           grupos_e.append(g.nombreGrupo)
-            
+           if g.nombreGrupo not in grupos_e:
+            grupos_e.append(g.nombreGrupo)
+
    return render(request, 'EvPresentaciones/Admin_interface/ver_grupos.html',{'grupos_e':grupos_e, 'grupos_p':grupos_p, 'evaluacion':evaluacion})
 
 
