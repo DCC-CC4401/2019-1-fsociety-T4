@@ -1,0 +1,25 @@
+{% extends 'EvPresentaciones/BASE/base.html' %}
+{% block contenido %}
+    <!-- HEADER -->
+    <div class="w3-container" id="portada" style="margin-top:80px; margin-bottom:10px">
+        <h1 class="w3-xxxlarge w3-text-red"><b>Advertencia</b></h1>
+        <hr style="width:50px;border:5px solid red" class="w3-round">
+    </div>
+
+    <h2>Evaluaciones asociadas: </h2>
+    {% for evaluacion in evaluaciones %}
+        <p> {{ evaluacion }} </p>
+    {% endfor %}
+
+    <h2>Cursos asociados: </h2>
+    {% for curso in cursos %}
+        <p> {{ curso }} </p>
+    {% endfor %}
+
+    <form action={% url 'ficha_rubrica_eliminar_definitivo' nombre version %} class="inline">
+        <button class="w3-button w3-large w3-margin-right w3-red w3-left w3-round">Eliminar definitivamente</button>
+    </form>
+
+
+<!-- End page content -->
+{% endblock %}

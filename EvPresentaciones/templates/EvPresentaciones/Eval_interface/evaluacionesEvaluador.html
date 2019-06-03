@@ -1,0 +1,60 @@
+{% extends 'EvPresentaciones/BASE/base_eval.html' %}
+{% block contenido %}
+
+        <div class="w3-container" id="portada" style="margin-top:80px; margin-bottom:10px">
+        <h1 class="w3-xxxlarge w3-text-red"><b>Evaluaciones</b></h1>
+        <hr style="width:50px;border:5px solid red" class="w3-round">
+    </div>
+    <!-- Evaluacion -->
+
+    <!--Seccion rubricas-->
+
+    {% for o in par %}
+        <button onclick="myFunction({{ o.id }})" class="w3-btn w3-red w3-block w3-margin"
+                style="width: 75%">
+            <h3>
+                Evaluación {{ o.fechaInicio }}</h3>
+        </button>
+
+        <div id={{ o.id }} class="w3-hide w3-container w3-pale-red w3-padding-large w3-margin"
+        style="width: 75%">
+
+
+        <p>
+        <li>Curso:
+            {% for eval in cursos %}
+                {% if eval.evaluacion.id == o.id %}
+                    {{ eval.curso.nombre }}
+                    {{ eval.curso.codigo }}-{{ eval.curso.seccion }}
+                    {{ eval.curso.semestre }}
+                    {{ eval.curso.año }}
+                {% endif %}
+            {% endfor %}
+
+        </li>
+        <li>Estado: {{ o.estado }}</li>
+        </p>
+        <form id="evaluacion_evaluador" method="POST" action="{% url 'evaluacion' o.id %}">
+            {% csrf_token %}
+            {% if o.estado != "Abierta" %}
+
+                <button class="w3-button w3-large w3-red w3-round" type="submit">Ver</button>
+            {% else %}
+                <button class="w3-button w3-large w3-red w3-round">Responder</button>
+            {% endif %}
+        </form>
+        </div>
+    {% endfor %}
+
+    </div>
+    <script>
+        function myFunction(id) {
+            var x = document.getElementById(id);
+            if (x.className.indexOf("w3-show") == -1) {
+                x.className += " w3-show";
+            } else {
+                x.className = x.className.replace(" w3-show", "");
+            }
+        }
+    </script>
+{% endblock %}

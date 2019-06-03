@@ -119,3 +119,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# Para que Usuario sea el usuario por defecto de la app
+AUTH_USER_MODEL = 'EvPresentaciones.Usuario'

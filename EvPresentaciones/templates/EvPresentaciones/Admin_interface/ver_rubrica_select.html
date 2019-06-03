@@ -1,0 +1,79 @@
+{% extends 'EvPresentaciones/BASE/base.html' %}
+{% block contenido %}
+    <!-- Se pone porque no se pudo hacer funcionar desde clase "orange" en CSS-->
+    <style>
+    table {
+      font-family: arial, sans-serif;
+      border-collapse: collapse;
+      width: 100%;
+      margin: 20px 0.5% 0.5%;
+      font-size: 15px;
+    }
+
+    td {
+      border: 1px solid #665f5f;
+      text-align: left;
+      width: 12%;
+      padding: 1%;
+    }
+
+    th {
+      border: 1px solid #665f5f;
+      text-align: center;
+      width: 12%;
+      padding: 1%;
+    }
+
+    tr:nth-child(even) {
+      background-color: #FFA07A;
+    }
+    </style>
+
+    <!-- HEADER -->
+    <div class="w3-container" id="portada" style="margin-top:80px; margin-bottom:10px">
+        <h1 class="w3-xxxlarge w3-text-red"><b>Rúbricas</b></h1>
+        <hr style="width:50px;border:5px solid red" class="w3-round">
+    </div>
+
+        <!--Seccion rubricas-->
+
+        <button onclick="myFunction('Demo3')" class="w3-btn w3-red w3-block w3-margin" style="width: 75%">
+            <h3>
+                {{ rubrica }}</h3>
+        </button>
+
+        <div id="Demo3" class="w3-hide w3-container w3-pale-red w3-center w3-padding-large w3-margin"
+            style="width: 75%">
+            <p>
+                {% for o in aspectos %}
+                <li>{{ o }}</li>
+                {% endfor %}
+            </p>
+            <div class="w3-container">
+
+                <form action={% url 'ver_detalle' rubrica %} class="inline">
+                    <button class="w3-button w3-large w3-margin-right w3-red w3-left w3-round">Ver</button>
+                </form>
+
+                <form action={% url 'ficha_rubrica_admin' %} class="inline">
+                    <button class="w3-button w3-large w3-red w3-left w3-round">Modificar</button>
+                </form>
+
+
+                <button class="w3-button w3-large w3-red w3-right w3-round">Eliminar</button>
+            </div>
+        </div>
+
+
+    </div>
+    <script>
+        function myFunction(id) {
+            var x = document.getElementById(id);
+            if (x.className.indexOf("w3-show") == -1) {
+                x.className += " w3-show";
+            } else {
+                x.className = x.className.replace(" w3-show", "");
+            }
+        }
+    </script>
+    {% endblock %}
