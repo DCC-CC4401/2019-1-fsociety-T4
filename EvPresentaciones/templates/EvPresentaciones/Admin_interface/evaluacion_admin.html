@@ -75,7 +75,7 @@
                                 class="fas fa-user-friends"></i>
                         </li>
                         {% for par in alumnos %}
-                            {% if par.presento %}c
+                            {% if par.presento %}
                                 <li class="presentado w3-padding-16" id="{{ par.rut }}"
                                     onclick=get_presentador(this.id,"{{ par.nombre }}","{{ par.apellido }}");> {{ par.nombre }} {{ par.apellido }}
                                     <i
