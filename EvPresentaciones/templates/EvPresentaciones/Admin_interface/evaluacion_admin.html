@@ -1,82 +1,76 @@
 {% extends 'EvPresentaciones/BASE/base.html' %}
 {% block contenido %}
-<!-- Evaluacion -->
-<div class="w3-container" id="designers" style="margin-top:50px">
-    <h1 class="w3-xxxlarge w3-text-red"><b>Evaluación <i class="w3-text-green">en curso</i> </b></h1>
-    <hr style="width:50px;border:5px solid red" class="w3-round">
-    <div class="w3-container w3-center">
-        <p><b></b> Presentación {{ evaluacion }} <i>{{ curso }}</i></p>
-        <br>
+    <!-- Evaluacion -->
+    <div class="w3-container" id="designers" style="margin-top:50px">
+        <h1 class="w3-xxxlarge w3-text-red"><b>Evaluación <i class="w3-text-green">en curso</i> </b></h1>
+        <hr style="width:50px;border:5px solid red" class="w3-round">
+        <div class="w3-container w3-center">
+            <p><b></b> Presentación {{ evaluacion }} <i>{{ curso }}</i></p>
+            <br>
 
-        <!-- Despliegue de evaluadores -->
-        <div class="w3-panel  w3-margin-bottom">
-            <ul class="w3-ul w3-light-grey w3-center w3-card-4">
-                <li class="w3-dark-grey w3-xlarge w3-padding-32">Evaluadores <i class="fas fa-user-tie"></i></li>
+            <!-- Despliegue de evaluadores -->
+            <div class="w3-panel  w3-margin-bottom">
+                <ul class="w3-ul w3-light-grey w3-center w3-card-4">
+                    <li class="w3-dark-grey w3-xlarge w3-padding-32">Evaluadores <i class="fas fa-user-tie"></i></li>
 
-                {% for evaluador in evaluadores %}
-                    <li class="w3-padding-16">  {{ evaluador.first_name }} {{ evaluador.last_name }} </i>
+                    {% for evaluador in evaluadores %}
+                        <li class="w3-padding-16">  {{ evaluador.first_name }} {{ evaluador.last_name }} </i>
+                        </li>
+                    {% endfor %}
+                    <li class="opcion w3-padding-16"> Agregar otro <i style="margin-left: 10px"
+                                                                      class="fas fa-user-plus"></i>
                     </li>
-                {% endfor %}
-                <li class="opcion w3-padding-16"> Agregar otro <i style="margin-left: 10px"
-                                                                  class="fas fa-user-plus"></i>
-                </li>
-            </ul>
-        </div>
-        <div class="w3-panel  w3-margin-bottom">
+                </ul>
+            </div>
+            <div class="w3-panel  w3-margin-bottom">
                 <ul class="w3-ul w3-light-grey w3-center w3-card-4">
                     <li class="w3-dark-grey w3-xlarge w3-padding-32">Grupo <i class="fas fa-user-tie"></i></li>
-    
-                        <li class="w3-padding-16"> {{grupo_elegido}} </i>
-                        </li>
-                </ul>
-        </div>
 
-
-        <div class="w3-row-padding" style="margin-top:30px">
-            <div class="w3-half w3-margin-bottom ">
-                <ul class="w3-ul w3-light-grey w3-center w3-card-4">
-                    <li class="w3-dark-grey w3-xlarge w3-padding-32">Miembros del equipo <i
-                            class="fas fa-user-friends"></i>
+                    <li class="w3-padding-16"> {{ grupo_elegido }} </i>
                     </li>
-                    {% for par in alumnos%}
-                       {% if par.presento %}
+                </ul>
+            </div>
+
+
+            <div class="w3-row-padding" style="margin-top:30px">
+                <div class="w3-half w3-margin-bottom ">
+                    <ul class="w3-ul w3-light-grey w3-center w3-card-4">
+                        <li class="w3-dark-grey w3-xlarge w3-padding-32">Miembros del equipo <i
+                                class="fas fa-user-friends"></i>
+                        </li>
+                        {% for par in alumnos %}
+                            {% if par.presento %}
                                 <li class="presentado w3-padding-16" id="{{ par.rut }}"
                                     onclick=get_presentador(this.id,"{{ par.nombre }}","{{ par.apellido }}");> {{ par.nombre }} {{ par.apellido }}
                                     <i
                                             class="far fa-check-circle"></i> <i
                                             class="w3-small">ya presentó</i></li>
-                       {% else %}
+                            {% else %}
                                 <li class="presentado w3-padding-16" id="{{ par.rut }}"
                                     onclick=get_presentador(this.id,"{{ par.nombre }}","{{ par.apellido }}");> {{ par.nombre }} {{ par.apellido }} </li>
                             {% endif %}
-                    {% endfor %}
-                </ul>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <div class="w3-half w3-margin-bottom " id="presentadores">
+                    <ul class="w3-ul w3-light-grey w3-center w3-card-4" id="Presentación">
+                        <li class="w3-dark-grey w3-xlarge w3-padding-32">Miembros que presentan <i
+                                class="fas fa-chalkboard-teacher"></i></li>
+                        <li class="w3-padding-16" id="presenta" onclick=eliminar_presentador(this.id);><i
+                                style="margin-left: 10px"
+                        ></i></li>
+                    </ul>
+                </div>
             </div>
 
-            <div class="w3-half w3-margin-bottom " id="presentadores">
-                <ul class="w3-ul w3-light-grey w3-center w3-card-4" id="Presentación">
-                    <li class="w3-dark-grey w3-xlarge w3-padding-32">Miembros que presentan <i class="fas fa-chalkboard-teacher"></i></li>
-                    <li class="w3-padding-16" id="presenta" onclick=eliminar_presentador(this.id);><i
-                        style="margin-left: 10px"
-                        class="w3-large fas fa-times"></i></li>
-                </ul>
-            </div>
         </div>
+        <!--Aqui van los bloques de cada criterio de la rubrica-->
 
-        <!--TODO Arreglar el formateo de la nota de los criterios de evaluacion-->
-        <!-- Aqui puse el valor de los criterios por si acaso, hay que formatearlo mejor-->
-        <p>Seleccione el nivel de logro alcanzado por el grupo en cada ámbito</p>
-        Los criterios de Evaluación tienen los siguiente valores posibles:
-        {% for numero in rubrica.0 %}
-            {{ numero }}
-        {% endfor %}
-    </div>
-    <!--Aqui van los bloques de cada criterio de la rubrica-->
-
-    {% for asp in aspecto %}
-        <div class="w3-panel  w3-margin-bottom" id="criterios">
-            <ul class="w3-ul w3-light-grey w3-center w3-card-4" id="{{ forloop.counter }}">
-                <li class="w3-red w3-xlarge w3-padding-32"> {{ asp }} <i class="far fa-check-circle"></i></li>    
+        {% for asp in aspecto %}
+            <div class="w3-panel  w3-margin-bottom" id="criterios">
+                <ul class="w3-ul w3-light-grey w3-center w3-card-4" id="{{ forloop.counter }}">
+                    <li class="w3-red w3-xlarge w3-padding-32"> {{ asp }} <i class="far fa-check-circle"></i></li>
                     {% for crit in criterios %}
                         {% if forloop.parentloop.counter == forloop.counter %}
                             {% for ble in crit %}
@@ -84,37 +78,37 @@
                                     onclick="elegir_aspecto(this.id,this.parentNode.id)">{{ ble }} </li>
                             {% endfor %}
                         {% endif %}
-    
+
                     {% endfor %}
-            </ul>
-        </div>
-    {% endfor %}
+                </ul>
+            </div>
+        {% endfor %}
 
 
-    <form id="evaluacion_lista" method="POST" action="{% url 'post_evaluacion_admin' %}">
-        {% csrf_token %}
-        <div class="w3-panel w3-margin-bottom w3-card-4 w3-padding-16 w3-half w3-right" style="margin-right: 1.8%">
+        <form id="evaluacion_lista" method="POST" action="{% url 'post_evaluacion_admin' %}">
+            {% csrf_token %}
+            <div class="w3-panel w3-margin-bottom w3-card-4 w3-padding-16 w3-half w3-right" style="margin-right: 1.8%">
                 <span style="margin-left:21%"><i class="far fa-clock"></i> Hora final
-      <input class="w3-input w3-border w3-round" type="number" size="1" placeholder="15" id="minutos" name="minutos"
+      <input class="w3-input w3-border w3-round" type="number" size="1" placeholder="0" id="minutos" name="minutos"
              style="width:15%; display:inline; margin-left: 10px"> : <input class="w3-input w3-border w3-round"
                                                                             style="width:15%; display:inline"
-                                                                            type="number" placeholder="35"
+                                                                            type="number" placeholder="0"
                                                                             id="segundos" name="segundos"></span>
-        </div>
-        <input type="hidden" id="idevaluacion" name="idevaluacion" value="{{ evaluacion.id }}">
-        <input type="hidden" id="lista_atributos" name="lista_atributos" value="">
-        <input type="hidden" id="presentador" name="presentador" value="">
-        <div class="w3-panel w3-right w3-half">
+            </div>
+            <input type="hidden" id="idevaluacion" name="idevaluacion" value="{{ evaluacion.id }}">
+            <input type="hidden" id="lista_atributos" name="lista_atributos" value="">
+            <input type="hidden" id="presentador" name="presentador" value="">
+            <div class="w3-panel w3-right w3-half">
 
-            <input type="submit" class="w3-button w3-xlarge w3-red" style="margin-left: 15%"
-                   value="Entregar evaluación"
-                   onclick=guardar();>
+                <input type="button" class="w3-button w3-xlarge w3-red" style="margin-left: 15%"
+                       value="Entregar evaluación"
+                       onclick=guardar();>
 
-        </div>
-</div>
+            </div>
+    </div>
 
     <!-- End page content -->
-  
+
     <!--TODO Arreglar los evaluadores, colocarle colores para identificar-->
     <!-- Evaluacion -->
     <!--Aqui empiezan los scripts -->
@@ -125,7 +119,6 @@
         var palabra = "";
         //diccionario para guardar el valor de los atributos
         var dict = {};
-
 
         function guardar_grupo(id) {
             grupo = document.getElementById(id).id;
@@ -140,7 +133,7 @@
         }
 
         function get_presentador(id, nombre, apellido) {
-            presentador=document.getElementById(id).id
+            presentador = document.getElementById(id).id
             var nodo = document.createElement("LI");
             var text = document.createTextNode(nombre + " " + apellido);
             nodo.appendChild(text);
@@ -151,23 +144,60 @@
             var element = document.getElementById(id).lastChild;
             var tag = document.getElementById("presenta");
             tag.removeChild(element);
+            presentador = ""
         }
 
         //para guardar que aspecto fue elegido
         function elegir_aspecto(valor, aspecto) {
+            var name = document.getElementById(valor)
+            dict[aspecto] = name.getAttribute("name");
             console.log("padre= " + aspecto + " " + "hijo= " + valor);
             dict[aspecto] = valor;
             console.log(dict);
         }
 
+
         function guardar() {
-            for (var key in dict) {
-                palabra += key + ":" + dict[key] + "|";
+            if (check()) {
+                for (var key in dict) {
+                    palabra += key + ":" + dict[key] + "|";
+                }
+                document.getElementById('presentador').setAttribute("value", presentador)
+                document.getElementById('lista_atributos').setAttribute("value", palabra);
+                document.getElementById("evaluacion_lista").submit();
             }
-            document.getElementById('presentador').setAttribute("value",presentador)
-            document.getElementById('lista_atributos').setAttribute("value", palabra);
-            alert(document.getElementById('lista_atributos').getAttribute("value")+"\n"+presentador)
         }
+
+        function check() {
+            var tamanho = {{ tamaño_atributos }};
+
+            if (Object.keys(dict).length !== tamanho) {
+                alert("Debe ingresar una respuesta en todos los campos");
+                return false
+            }
+            if (presentador === "") {
+                alert("Debe ingresar un presentador");
+                return false
+            }
+            if (document.getElementsByName("minuos").value < 0) {
+                alert("ingrese minutos mayor a 0");
+                return false
+            }
+            if (document.getElementsByName("segundos").value < 0) {
+                alert("ingrese segundo mayor a 0");
+                return false
+            }
+            if (document.getElementsByName("minuos").value < 60) {
+                alert("ingrese minutos menor a 600");
+                return false
+            }
+            if (document.getElementsByName("segundos").value < 60) {
+                alert("ingrese segundo menor a 60");
+                return false
+            }
+            return true
+        }
+
     </script>
     <!-- End page content -->
 
