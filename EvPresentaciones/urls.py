@@ -29,6 +29,7 @@ urlpatterns = [
     path('FichasRubricas/FichaRubrica_eliminar_definitivo/<str:nombre>/<str:version>/', views.Ficha_Rubrica_eliminar_definitivo, name='ficha_rubrica_eliminar_definitivo'),
     path('FichasRubricas/Rubrica_guardada',                                 views.guardarRubrica,         name='guardar_rubrica'),
     path('Admin_interface/postevalucionadmin',                              views.Post_evaluaciones_admin,name='post_evaluacion_admin'),
+    path('Admin_interface/postevaluacionadmin',                             views.reset_grupo,            name='reset'),
     
     # Vistas de evaluador
 

@@ -74,7 +74,8 @@
                     {% for crit in criterios %}
                         {% if forloop.parentloop.counter == forloop.counter %}
                             {% for ble in crit %}
-                                <li class="opcion w3-padding-16" id="{{ forloop.counter }}"
+                                <li class="opcion w3-padding-16" style="background-color: transparent"
+                                    name="{{ forloop.counter }}" id="{{ ble }}"
                                     onclick="elegir_aspecto(this.id,this.parentNode.id)">{{ ble }} </li>
                             {% endfor %}
                         {% endif %}
@@ -119,6 +120,9 @@
         var palabra = "";
         //diccionario para guardar el valor de los atributos
         var dict = {};
+        var dict_color = {};
+        var color = "#6FE1AF";
+
 
         function guardar_grupo(id) {
             grupo = document.getElementById(id).id;
@@ -142,6 +146,7 @@
 
         function eliminar_presentador(id) {
             var element = document.getElementById(id).lastChild;
+
             var tag = document.getElementById("presenta");
             tag.removeChild(element);
             presentador = ""
@@ -152,7 +157,20 @@
             var name = document.getElementById(valor)
             dict[aspecto] = name.getAttribute("name");
             console.log("padre= " + aspecto + " " + "hijo= " + valor);
-            dict[aspecto] = valor;
+
+            if (!dict_color.hasOwnProperty(aspecto)) {
+                name.setAttribute("style", "background-color: red;");
+                name.style.backgroundColor = color;
+                dict_color[aspecto] = name;
+            } else {
+                var aux = dict_color[aspecto];
+                aux.style.backgroundColor = "transparent"
+                dict_color[aspecto] = name
+                name.style.backgroundColor = color;
+
+            }
+
+
             console.log(dict);
         }
 

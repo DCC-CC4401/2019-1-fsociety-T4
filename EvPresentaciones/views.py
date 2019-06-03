@@ -342,11 +342,22 @@ def Post_evaluaciones_admin(request):
         writer = csv.writer(csvFile)
         writer.writerows([csvData])
     csvFile.close
+    # datos para mandar a la vista
+    curso = evaluacion.curso.codigo + '-' + str(evaluacion.curso.seccion) + " " + evaluacion.curso.semestre + " " + str(
+        evaluacion.curso.año)
 
-    # actualizamos el tiempo de los alumnos del grupo
+    if grupo.evaluando == grupo_integrantes:
+        estado = "Aún activa"
+    else:
+        estado = "Desactivada"
+    context = {}
+    context['grupo'] = grupo_integrantes
+    context['curso'] = curso
+    context['estado'] = estado
+    context['evaluacion'] = idevaluacion
 
     return render(request,
-                  'EvPresentaciones/Admin_interface/postevaluacionadmin.html')
+                  'EvPresentaciones/Admin_interface/postevaluacionadmin.html', context)
 
 
 def cargar_grupo(request, id):
@@ -434,6 +445,13 @@ def ver_evaluacion_admin(request, id, grupo):
 
     return render(request, 'EvPresentaciones/Admin_interface/evaluacion_admin.html',
                   context)
+
+
+def reset_grupo(request):
+    evaluando = request.POST.get('reset', None)
+    par_curso_evaluacion=Cursos_Evaluacion.objects.get(evaluacion=evaluando)
+    par_curso_evaluacion.evaluando="No Group"
+    return Post_evaluaciones_admin(request)
 
 
 # muestra los grupos que pueden ser evaluados, y los que ya fueron evaluados
