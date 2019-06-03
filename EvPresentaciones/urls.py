@@ -37,7 +37,6 @@ urlpatterns = [
     path('Eval_interface/evaluacion/<int:id>',              views.ver_evaluacion_evaluador,             name='evaluacion'),
     path('Eval_interface/evaluacionesEvaluador',            views.Evaluaciones_eval,      name='evaluaciones_eval'),
     path('Eval_interface/postevaluacion',                   views.Post_evaluacion,        name='post_evaluacion'),
-    path('Eval_interface/postevalucionadmin',               views.Post_evaluaciones_admin,name='post_evaluacion_admin'),
     path('FichasRubricas/FichaRubrica_crear',               views.Ficha_Rubrica_crear,    name='ficha_rubrica_crear'),
     path('FichasRubricas/FichaRubricaEvaluador',            views.Ficha_Rubrica_evaluador,name='ficha_rubrica_eval'),
     path('Summary_student/auth_summary',                    views.Auth_summary,           name='auth_summary'),

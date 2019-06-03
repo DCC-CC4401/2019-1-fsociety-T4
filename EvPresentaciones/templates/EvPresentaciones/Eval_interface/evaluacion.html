@@ -5,8 +5,9 @@
         <h1 class="w3-xxxlarge w3-text-red"><b>Evaluación <i class="w3-text-green">en curso</i> </b></h1>
         <hr style="width:50px;border:5px solid red" class="w3-round">
         <div class="w3-container w3-center">
-            <p><b></b> Presentación {{ evaluacion }} <i>{{ curso }}</i></p>
+            <p><b></b> Presentación Evaluación {{ evaluacion }} <i>{{ curso }}</i></p>
             <br>
+
 
             <div class="w3-panel  w3-margin-bottom">
                 <ul class="w3-ul w3-light-grey w3-center w3-card-4">
@@ -40,12 +41,12 @@
         {% endfor %}
 
 
-        <form id="evaluacion_lista" method="POST" action="{% url 'post_evaluacion_admin' %}">
+        <form id="evaluacion_lista" method="POST" action="{% url 'post_evaluacion' %}">
             {% csrf_token %}
 
-            <input type="hidden" id="idevaluacion" name="idevaluacion" value="{{ evaluacion.id }}">
+            <input type="hidden" id="idevaluacion" name="idevaluacion" value="{{ evaluacion }}">
             <input type="hidden" id="lista_atributos" name="lista_atributos" value="">
-            <input type="hidden" id="presentador" name="presentador" value="">
+            <input type="hidden" id="grupo" name="grupo" value="{{ grupo }}">
             <div class="w3-panel w3-right w3-half">
 
                 <input type="button" class="w3-button w3-xlarge w3-red" style="margin-left: 15%"
@@ -53,6 +54,7 @@
                        onclick=guardar();>
 
             </div>
+        </form>
     </div>
 
     <!-- End page content -->
@@ -70,34 +72,6 @@
         var dict_color = {};
         var color = "#6FE1AF";
 
-
-        function guardar_grupo(id) {
-            grupo = document.getElementById(id).id;
-            get_grupo();
-            console.log("hola que hace" + grupo);
-        }
-
-        function get_grupo() {
-            console.log(document.getElementById('grupo_enviado').getAttribute("value"));
-            document.getElementById('grupo_enviado').setAttribute("value", grupo);
-            console.log(document.getElementById('grupo_enviado').getAttribute("value"));
-        }
-
-        function get_presentador(id, nombre, apellido) {
-            presentador = document.getElementById(id).id
-            var nodo = document.createElement("LI");
-            var text = document.createTextNode(nombre + " " + apellido);
-            nodo.appendChild(text);
-            document.getElementById("presenta").appendChild(nodo);
-        }
-
-        function eliminar_presentador(id) {
-            var element = document.getElementById(id).lastChild;
-
-            var tag = document.getElementById("presenta");
-            tag.removeChild(element);
-            presentador = ""
-        }
 
         //para guardar que aspecto fue elegido
         function elegir_aspecto(valor, aspecto) {
@@ -124,12 +98,13 @@
 
         function guardar() {
             if (check()) {
-                for (var key in dict) {
-                    palabra += key + ":" + dict[key] + "|";
+                if (confirm('¿Desea Guardar sus resultados?')) {
+                    for (var key in dict) {
+                        palabra += key + ":" + dict[key] + "|";
+                    }
+                    document.getElementById('lista_atributos').setAttribute("value", palabra);
+                    document.getElementById("evaluacion_lista").submit();
                 }
-                document.getElementById('presentador').setAttribute("value", presentador)
-                document.getElementById('lista_atributos').setAttribute("value", palabra);
-                document.getElementById("evaluacion_lista").submit();
             }
         }
 
@@ -138,26 +113,6 @@
 
             if (Object.keys(dict).length !== tamanho) {
                 alert("Debe ingresar una respuesta en todos los campos");
-                return false
-            }
-            if (presentador === "") {
-                alert("Debe ingresar un presentador");
-                return false
-            }
-            if (document.getElementsByName("minuos").value < 0) {
-                alert("ingrese minutos mayor a 0");
-                return false
-            }
-            if (document.getElementsByName("segundos").value < 0) {
-                alert("ingrese segundo mayor a 0");
-                return false
-            }
-            if (document.getElementsByName("minuos").value < 60) {
-                alert("ingrese minutos menor a 600");
-                return false
-            }
-            if (document.getElementsByName("segundos").value < 60) {
-                alert("ingrese segundo menor a 60");
                 return false
             }
             return true

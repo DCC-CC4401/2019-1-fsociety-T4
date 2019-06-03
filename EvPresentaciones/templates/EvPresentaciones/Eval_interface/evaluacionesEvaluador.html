@@ -1,7 +1,12 @@
 {% extends 'EvPresentaciones/BASE/base_eval.html' %}
 {% block contenido %}
 
+        <div class="w3-container" id="portada" style="margin-top:80px; margin-bottom:10px">
+        <h1 class="w3-xxxlarge w3-text-red"><b>Evaluaciones</b></h1>
+        <hr style="width:50px;border:5px solid red" class="w3-round">
+    </div>
     <!-- Evaluacion -->
+
     <!--Seccion rubricas-->
 
     {% for o in par %}
@@ -30,7 +35,7 @@
         <li>Estado: {{ o.estado }}</li>
         </p>
         <form id="evaluacion_evaluador" method="POST" action="{% url 'evaluacion' o.id %}">
-        {%  csrf_token %}
+            {% csrf_token %}
             {% if o.estado != "Abierta" %}
 
                 <button class="w3-button w3-large w3-red w3-round" type="submit">Ver</button>

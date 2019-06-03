@@ -267,7 +267,57 @@ def Evaluacion_admin(request, ):
 
 
 def Post_evaluacion(request):
-    return render(request, 'EvPresentaciones/Eval_interface/postevaluacion.html')
+    print("post Evaluacion")
+    lineas = []
+    grupo = request.POST.get('grupo', None)
+    print(grupo)
+    lista_atributos = request.POST.get('lista_atributos', None)
+    idevaluacion = request.POST.get('idevaluacion', None)
+
+    print(idevaluacion)
+
+    evaluador = Usuario.objects.get(email=request.user)
+
+    evaluacion = Cursos_Evaluacion.objects.get(evaluacion=idevaluacion)
+
+    nombreArchivo = evaluacion.curso.codigo + '-' + evaluacion.curso.semestre + '.csv'
+    rutaNombre = './EvPresentaciones/ArchivosEvaluaciones/' + nombreArchivo
+    # manejo de string con las elecciones del evaluador
+    lista_csv = []
+    dict = {}
+
+    lista_arreglada = lista_atributos.split("|")
+    lista_arreglada = lista_arreglada[:-1]
+    # crea diccionario para manejar
+    for pareja in lista_arreglada:
+        aux = pareja.split(":")
+        dict[aux[0]] = aux[1]
+    i = 0
+    while i < len(dict.items()):
+        aux = str(i + 1)
+        lista_csv.append(dict[aux])
+        i = i + 1
+
+    nombre_evaluador = evaluador.first_name + " " + evaluador.last_name
+    nombre_grupo = grupo
+    nombre_evaluacion = str(idevaluacion)
+    csvData = [nombre_evaluador, nombre_grupo, nombre_evaluacion, lista_csv]
+    with open(rutaNombre, 'a', newline='') as csvFile:  # wb is wirte bytes
+        writer = csv.writer(csvFile)
+        writer.writerows([csvData])
+    csvFile.close
+
+    curso = evaluacion.curso.codigo + '-' + str(evaluacion.curso.seccion) + " " + evaluacion.curso.semestre + " " + str(
+        evaluacion.curso.año)
+    context = {}
+    print(grupo)
+    print(curso)
+    print(idevaluacion)
+    context['grupo'] = grupo
+    context['curso'] = curso
+    context['evaluacion'] = idevaluacion
+
+    return render(request, 'EvPresentaciones/Eval_interface/postevaluacion.html',context)
 
 
 def Post_evaluaciones_admin(request):
@@ -368,7 +418,8 @@ def cargar_grupo(request, id):
 
     return ver_evaluacion_admin(request, id)
 
-def ver_evaluacion_evaluador(request,id):
+
+def ver_evaluacion_evaluador(request, id):
     lineas = []
     alumnos = []
     aux = []
@@ -377,7 +428,7 @@ def ver_evaluacion_evaluador(request,id):
     evaluacion = par_curso_evaluacion.evaluacion
     curso = par_curso_evaluacion.curso
     rubrica = par_evaluacion_rubrica.rubrica
-    grupo=par_curso_evaluacion.evaluando
+    grupo = par_curso_evaluacion.evaluando
     # procesar archivo ingresado
     with open(rubrica.archivo) as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
@@ -395,15 +446,19 @@ def ver_evaluacion_evaluador(request,id):
         aspecto.append(lik[0])
         criterios[count].pop(0)
         count = count + 1
-
-    context={}
+    data_curso = par_curso_evaluacion.curso.codigo + '-' + str(par_curso_evaluacion.curso.seccion) + " " + par_curso_evaluacion.curso.semestre + " " + str(
+        par_curso_evaluacion.curso.año)
+    context = {}
     context['aspecto'] = aspecto
     context['criterios'] = criterios
     context['grupo'] = grupo
     context['tamaño_atributos'] = len(aspecto)
+    context['evaluacion'] =id
+    context['curso'] = data_curso
+
+    return render(request, 'EvPresentaciones/Eval_interface/evaluacion.html', context)
 
 
-    return render(request,'EvPresentaciones/Eval_interface/evaluacion.html',context)
 # Esta pagina recibe al grupo que estamos evaluando
 def ver_evaluacion_admin(request, id, grupo):
     context = {}
@@ -484,8 +539,8 @@ def ver_evaluacion_admin(request, id, grupo):
 
 def reset_grupo(request):
     evaluando = request.POST.get('reset', None)
-    par_curso_evaluacion=Cursos_Evaluacion.objects.get(evaluacion=evaluando)
-    par_curso_evaluacion.evaluando="No Group"
+    par_curso_evaluacion = Cursos_Evaluacion.objects.get(evaluacion=evaluando)
+    par_curso_evaluacion.evaluando = "No Group"
     return Post_evaluaciones_admin(request)
 
 
@@ -695,7 +750,7 @@ def ver_rubrica_detalle(request, nombre, version):
     lineas = []
     # procesar archivo ingresado
     with open(rubrica.archivo) as csv_file:
-        csv_reader = csv.reader(csv_file, delimiter='$') # Para que el texto pueda tener ','
+        csv_reader = csv.reader(csv_file, delimiter='$')  # Para que el texto pueda tener ','
         for row in csv_reader:
             lineas.append(row)
 
@@ -714,7 +769,7 @@ def Ficha_Rubrica_modificar(request, nombre, version):
     # Extraer contenido
     rows = []
     with open(rubrica.archivo) as csv_file:
-        csv_reader = csv.reader(csv_file, delimiter='$') # Para tener ',' dentro de los campos
+        csv_reader = csv.reader(csv_file, delimiter='$')  # Para tener ',' dentro de los campos
         for row in csv_reader:
             rows.append(row)
 
@@ -807,14 +862,14 @@ def guardarRubrica(request):
     # Tener el formato solicitado para guardar
     csvData = []
     for row in rows:
-        csvData.append(row.split('$')) # para tener ',' en textos
+        csvData.append(row.split('$'))  # para tener ',' en textos
     print(csvData)
     # No se revalida el requisito 51, ya que la implementación en frontend es sólida.
     # Además existen otras prioridades de desarrollo.
 
     # Guardar el archivo como csv, se sobreescribe si tiene el mismo nombre
     with open(rutaNombre, 'w') as csvFile:  # wb is wirte bytes
-        writer = csv.writer(csvFile, delimiter='$') # para tener ',' en textos
+        writer = csv.writer(csvFile, delimiter='$')  # para tener ',' en textos
         writer.writerows(csvData)
     csvFile.close
 
