@@ -223,12 +223,12 @@
                 for (var j = 0; j < cols.length - 1; j++) { // Sin botones
                     row.push(cols[j].innerText);
                 }
-                csv.push(row.join(","));
+                csv.push(row.join("$")); // Para poder tener ',' en los campos
             }
             // REQUISITO 51: la suma de los niveles máximos de todos los aspectos de cualquier rúbrica siempre sea 6
 
             // Extraer máximo puntaje por aspecto
-            var puntajes = csv[0].split(",");
+            var puntajes = csv[0].split("$");
             var maxPuntaje = parseFloat(puntajes[puntajes.length - 1]); // Último valor es el máx puntaje
             // Extraer cantidad de aspectos
             var cantidadDeAspectos = csv.length - 1; // Menos la primera fila con los puntajes
