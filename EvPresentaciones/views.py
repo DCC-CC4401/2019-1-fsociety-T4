@@ -453,6 +453,14 @@ def verGrupos(request, id):
 
    return render(request, 'EvPresentaciones/Admin_interface/ver_grupos.html',{'grupos_e':grupos_e, 'grupos_p':grupos_p, 'evaluacion':evaluacion})
 
+def ver_evaluador_evaluacion(request,evaluador,grupo,id):
+    #obtener aspectos de la rubrica
+    
+    #obtener puntajes al evaluador en la evaluacion y mostrarlos
+
+    #obtener nota del puntaje asociado
+
+    return render(request, 'EvPresentaciones/Admin_interface/evaluacion_evaluador_admin.html')
 
 # funciones resumen evaluacion
 

@@ -14,18 +14,21 @@
                 <li class="w3-dark-grey w3-xlarge w3-padding-32">Evaluadores <i class="fas fa-user-tie"></i></li>
 
                 {% for evaluador in evaluadores %}
-                    <li class="w3-padding-16">  {{ evaluador.first_name }} {{ evaluador.last_name }} </i>
+                    <li class="w3-padding-16">  {{ evaluador.first_name }} {{ evaluador.last_name }} 
+                    {% if evaluador.envio %} <i
+                        class="far fa-check-circle"></i> <i
+                        class="w3-small">ya envió</i>
+                        {% endif %}</i>
                     </li>
                 {% endfor %}
-                <li class="opcion w3-padding-16"> Agregar otro <i style="margin-left: 10px"
-                                                                  class="fas fa-user-plus"></i>
-                </li>
+                <form  action="{% url 'evaluadores_admin' %}"><li class="opcion w3-padding-16"> 
+                    Agregar otro <i style="margin-left: 10px" class="fas fa-user-plus"></i>
+                </li></form>
             </ul>
         </div>
         <div class="w3-panel  w3-margin-bottom">
                 <ul class="w3-ul w3-light-grey w3-center w3-card-4">
                     <li class="w3-dark-grey w3-xlarge w3-padding-32">Grupo <i class="fas fa-user-tie"></i></li>
-    
                         <li class="w3-padding-16"> {{grupo_elegido}} </i>
                         </li>
                 </ul>
@@ -158,6 +161,13 @@
             console.log("padre= " + aspecto + " " + "hijo= " + valor);
             dict[aspecto] = valor;
             console.log(dict);
+            var x=document.getElementById(valor);
+            if(x.className=="opcion w3-padding-16"){
+                x.className="opcion w3-padding-16 selected";
+            }
+            else{
+                x.className="opcion w3-padding-16";
+            }
         }
 
         function guardar() {
