@@ -1,214 +1,170 @@
 {% extends 'EvPresentaciones/BASE/base_eval.html' %}
 {% block contenido %}
-
-    <!-- Header
-   <div class="w3-bar w3-border w3-pale-red">
-  <div class="w3-dropdown-hover w3-pale-red w3-mobile w3-xlarge"style="width:33%">
-    <button class="w3-button ">Evaluaciones</button>
-    <div class="w3-dropdown-content w3-bar-block w3-card-4"style="width:25%">
-      <a href="#" class="w3-bar-item w3-button">Link 1</a>
-      <a href="#" class="w3-bar-item w3-button">Link 2</a>
-      <a href="#" class="w3-bar-item w3-button">Link 3</a>
-    </div>
-  </div>
-       <div class="w3-dropdown-hover w3-pale-red w3-mobile w3-xlarge" style="width:33%">
-       <button class="w3-button ">Cursos</button>
-    <div class="w3-dropdown-content w3-bar-block w3-card-4">
-      <a href="#" class="w3-bar-item w3-button">Link 1</a>
-      <a href="#" class="w3-bar-item w3-button">Link 2</a>
-      <a href="#" class="w3-bar-item w3-button">Link 3</a>
-    </div>
-       </div>
-       <div class="w3-dropdown-hover w3-pale-red w3-mobile w3-xlarge" style="width:33%">
-       <button class="w3-button ">Rúbricas</button>
-    <div class="w3-dropdown-content w3-bar-block w3-card-4">
-      <a href="#" class="w3-bar-item w3-button">Link 1</a>
-      <a href="#" class="w3-bar-item w3-button">Link 2</a>
-      <a href="#" class="w3-bar-item w3-button">Link 3</a>
-    </div>
-       </div>
-</div>-->
-
-
-    <!-- Photo grid (modal) -->
-
     <!-- Evaluacion -->
     <div class="w3-container" id="designers" style="margin-top:50px">
-      <h1 class="w3-xxxlarge w3-text-red"><b>Evaluación <i class="w3-text-green">en curso</i> </b></h1>
-      <hr style="width:50px;border:5px solid red" class="w3-round">
-      <div class="w3-container w3-center">
-        <p><b>Lambda-Ideas</b> Presentación Tarea 2 <i>CC4401-1/Otoño/2019</i></p>
-        <p>Seleccione el nivel de logro alcanzado por el grupo en cada ámbito</p>
-      </div>
+        <h1 class="w3-xxxlarge w3-text-red"><b>Evaluación <i class="w3-text-green">en curso</i> </b></h1>
+        <hr style="width:50px;border:5px solid red" class="w3-round">
+        <div class="w3-container w3-center">
+            <p><b></b> Presentación {{ evaluacion }} <i>{{ curso }}</i></p>
+            <br>
 
-      <div class="w3-panel  w3-margin-bottom">
-        <ul class="w3-ul w3-light-grey w3-center w3-card-4">
-          <li class="w3-red w3-xlarge w3-padding-32">Contenidos <i class="far fa-check-circle"></i></li>
-          <li class="opcion w3-padding-16"> No incluye las interfaces
-            solicitadas
-          </li>
-          <li class="opcion w3-padding-16 selected"> Faltan la mayoria de las
-            interfaces
-          </li>
-          <li class="opcion w3-padding-16"> Solo faltan 1 o 2 interfaces </li>
-          <li class="opcion w3-padding-16"> Incluye todas las interfaces
-            solicitadas
-          </li>
-        </ul>
-      </div>
+            <div class="w3-panel  w3-margin-bottom">
+                <ul class="w3-ul w3-light-grey w3-center w3-card-4">
+                    <li class="w3-dark-grey w3-xlarge w3-padding-32">Grupo <i class="fas fa-user-tie"></i></li>
+
+                    <li class="w3-padding-16"> {{ grupo }} </i>
+                    </li>
+                </ul>
+            </div>
 
 
-      <div class="w3-panel w3-margin-bottom">
-        <ul class="w3-ul w3-light-grey w3-center w3-card-4">
-          <li class="w3-orange w3-xlarge w3-padding-32">Calidad del material
-            <i class="fas fa-exclamation-circle"></i><i class="w3-medium"> falta seleccionar</i></li>
-          <li class="opcion w3-padding-16">Presentación con muchos
-            errores ortográficos, todas
-            las imágenes son de baja
-            resolución
-          </li>
-          <li class="opcion w3-padding-16">Algunos errores
-            ortográficos, casi todas las
-            imágenes son de baja
-            resolución
-          </li>
-          <li class="opcion w3-padding-16">Pocos errores ortográficos,solo algunas imágenes sonde baja resolución
-          </li>
-          <li class="opcion w3-padding-16">Pocos errores ortográficos,
-            todas las imágenes son de
-            buena resolución
-          </li>
-        </ul>
-      </div>
+        </div>
+        <!--Aqui van los bloques de cada criterio de la rubrica-->
 
-      <div class="w3-panel w3-margin-bottom">
-        <ul class="w3-ul w3-light-grey w3-center w3-card-4">
-          <li class="w3-red w3-xlarge w3-padding-32">Relación con requisitos
-            funcionales <i class="far fa-check-circle"></i>
+        {% for asp in aspecto %}
+            <div class="w3-panel  w3-margin-bottom" id="criterios">
+                <ul class="w3-ul w3-light-grey w3-center w3-card-4" id="{{ forloop.counter }}">
+                    <li class="w3-red w3-xlarge w3-padding-32"> {{ asp }} <i class="far fa-check-circle"></i></li>
+                    {% for crit in criterios %}
+                        {% if forloop.parentloop.counter == forloop.counter %}
+                            {% for ble in crit %}
+                                <li class="opcion w3-padding-16" style="background-color: transparent"
+                                    name="{{ forloop.counter }}" id="{{ ble }}"
+                                    onclick="elegir_aspecto(this.id,this.parentNode.id)">{{ ble }} </li>
+                            {% endfor %}
+                        {% endif %}
 
-          </li>
-          <li class="opcion w3-padding-16">Solo describe las
-            interfaces, sin mencionar
-            requisito alguno
-
-          </li>
-          <li class="opcion w3-padding-16">Solo para algunas de las
-            interfaces explica cómo
-            satisfacen los requisitos
-            funcionales
-
-          </li>
-          <li class="opcion w3-padding-16 selected">Para casi todas las
-            interfaces, explica cómo
-            satisfacen los requisitos
-            funcionales
-          </li>
-          <li class="opcion w3-padding-16">Explica claramente como
-            cada interfaz satisface los
-            requisitos funcionales
-
-          </li>
-        </ul>
-      </div>
-
-      <div class="w3-panel w3-margin-bottom">
-        <ul class="w3-ul w3-light-grey w3-center w3-card-4">
-          <li class="w3-red w3-xlarge w3-padding-32">Organización de la
-            información <i class="far fa-check-circle"></i>
-
-          </li>
-          <li class="opcion w3-padding-16">No se entiende la
-            presentación porque no haysecuencia lógica de
-            información
-          </li>
-          <li class="opcion w3-padding-16">Es difícil seguir la
-            presentación, porque el
-            presentador “salta” entre
-            diapositivas
-
-          </li>
-          <li class="opcion w3-padding-16">La información está
-            presentada en una
-            secuencia lógica
-
-          </li>
-          <li class="opcion w3-padding-16 selected">La información es
-            presentada en una forma
-            lógica e interesante
-
-          </li>
-        </ul>
-      </div>
-
-      <div class="w3-panel w3-margin-bottom">
-        <ul class="w3-ul w3-light-grey w3-center w3-card-4">
-          <li class="w3-red w3-xlarge w3-padding-32">Forma <i class="far fa-check-circle"></i>
-
-          </li>
-          <li class="opcion w3-padding-16">No se entiende lo que dice(en términos fonéticos y
-            cinéticos)
-
-          </li>
-          <li class="opcion w3-padding-16">Se entiende lo que dice la
-            de manera parcial (su
-            cuerpo no acompaña sus
-            palabras)
-
-          </li>
-          <li class="opcion w3-padding-16 selected">Se da a entender,
-            presentando de manera
-            eficiente y adecuado
-            lenguaje corporal
-
-          </li>
-          <li class="opcion w3-padding-16">Se da a entender siempre,
-            destacando en su forma
-            (pausas, dicción, contacto
-            visual, gesticulación, otros)
-
-          </li>
-        </ul>
-      </div>
-
-      <div class="w3-panel w3-margin-bottom">
-        <ul class="w3-ul w3-light-grey w3-center w3-card-4">
-          <li class="w3-red w3-xlarge w3-padding-32">Entusiasmo <i class="far fa-check-circle"></i>
-
-          </li>
-          <li class="opcion w3-padding-16">No muestra interés en su
-            entrega
-
-          </li>
-          <li class="opcion w3-padding-16">Se muestra algo negativo
-            acerca de su entrega
-
-          </li>
-          <li class="opcion w3-padding-16 selected">Ocasionalmente habla en
-            forma positiva
-
-          </li>
-          <li class="opcion w3-padding-16">Habla en forma positiva
-            durante casi toda la
-            presentación
-          </li>
-        </ul>
-      </div>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endfor %}
 
 
-      <div class="w3-panel w3-right w3-half">
-        <button class="w3-button w3-xlarge w3-red" style="margin-left: 15%"
-          onclick="location.href='postevaluacion.html'"> <i class="fas fa-envelope-open-text"></i> Entregar
-          evaluación</button>
-      </div>
+        <form id="evaluacion_lista" method="POST" action="{% url 'post_evaluacion_admin' %}">
+            {% csrf_token %}
 
+            <input type="hidden" id="idevaluacion" name="idevaluacion" value="{{ evaluacion.id }}">
+            <input type="hidden" id="lista_atributos" name="lista_atributos" value="">
+            <input type="hidden" id="presentador" name="presentador" value="">
+            <div class="w3-panel w3-right w3-half">
 
+                <input type="button" class="w3-button w3-xlarge w3-red" style="margin-left: 15%"
+                       value="Entregar evaluación"
+                       onclick=guardar();>
+
+            </div>
     </div>
 
-
-
-
-
-
     <!-- End page content -->
-  </div>
-  {% endblock %}
+
+
+    <!-- Evaluacion -->
+    <!--Aqui empiezan los scripts -->
+    <script>
+        var csrftoken = '{{ csrf_token }}';
+        var grupo = "";
+        var presentador = "";
+        var palabra = "";
+        //diccionario para guardar el valor de los atributos
+        var dict = {};
+        var dict_color = {};
+        var color = "#6FE1AF";
+
+
+        function guardar_grupo(id) {
+            grupo = document.getElementById(id).id;
+            get_grupo();
+            console.log("hola que hace" + grupo);
+        }
+
+        function get_grupo() {
+            console.log(document.getElementById('grupo_enviado').getAttribute("value"));
+            document.getElementById('grupo_enviado').setAttribute("value", grupo);
+            console.log(document.getElementById('grupo_enviado').getAttribute("value"));
+        }
+
+        function get_presentador(id, nombre, apellido) {
+            presentador = document.getElementById(id).id
+            var nodo = document.createElement("LI");
+            var text = document.createTextNode(nombre + " " + apellido);
+            nodo.appendChild(text);
+            document.getElementById("presenta").appendChild(nodo);
+        }
+
+        function eliminar_presentador(id) {
+            var element = document.getElementById(id).lastChild;
+
+            var tag = document.getElementById("presenta");
+            tag.removeChild(element);
+            presentador = ""
+        }
+
+        //para guardar que aspecto fue elegido
+        function elegir_aspecto(valor, aspecto) {
+            var name = document.getElementById(valor)
+            dict[aspecto] = name.getAttribute("name");
+            console.log("padre= " + aspecto + " " + "hijo= " + valor);
+
+            if (!dict_color.hasOwnProperty(aspecto)) {
+                name.setAttribute("style", "background-color: red;");
+                name.style.backgroundColor = color;
+                dict_color[aspecto] = name;
+            } else {
+                var aux = dict_color[aspecto];
+                aux.style.backgroundColor = "transparent"
+                dict_color[aspecto] = name
+                name.style.backgroundColor = color;
+
+            }
+
+
+            console.log(dict);
+        }
+
+
+        function guardar() {
+            if (check()) {
+                for (var key in dict) {
+                    palabra += key + ":" + dict[key] + "|";
+                }
+                document.getElementById('presentador').setAttribute("value", presentador)
+                document.getElementById('lista_atributos').setAttribute("value", palabra);
+                document.getElementById("evaluacion_lista").submit();
+            }
+        }
+
+        function check() {
+            var tamanho = {{ tamaño_atributos }};
+
+            if (Object.keys(dict).length !== tamanho) {
+                alert("Debe ingresar una respuesta en todos los campos");
+                return false
+            }
+            if (presentador === "") {
+                alert("Debe ingresar un presentador");
+                return false
+            }
+            if (document.getElementsByName("minuos").value < 0) {
+                alert("ingrese minutos mayor a 0");
+                return false
+            }
+            if (document.getElementsByName("segundos").value < 0) {
+                alert("ingrese segundo mayor a 0");
+                return false
+            }
+            if (document.getElementsByName("minuos").value < 60) {
+                alert("ingrese minutos menor a 600");
+                return false
+            }
+            if (document.getElementsByName("segundos").value < 60) {
+                alert("ingrese segundo menor a 60");
+                return false
+            }
+            return true
+        }
+
+    </script>
+    <!-- End page content -->
+
+
+{% endblock %}

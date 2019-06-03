@@ -368,7 +368,42 @@ def cargar_grupo(request, id):
 
     return ver_evaluacion_admin(request, id)
 
+def ver_evaluacion_evaluador(request,id):
+    lineas = []
+    alumnos = []
+    aux = []
+    par_curso_evaluacion = Cursos_Evaluacion.objects.get(evaluacion=id)
+    par_evaluacion_rubrica = Evaluacion_Rubrica.objects.get(evaluacion=id)
+    evaluacion = par_curso_evaluacion.evaluacion
+    curso = par_curso_evaluacion.curso
+    rubrica = par_evaluacion_rubrica.rubrica
+    grupo=par_curso_evaluacion.evaluando
+    # procesar archivo ingresado
+    with open(rubrica.archivo) as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=',')
+        for row in csv_reader:
+            if row != []:
+                lineas.append(row)
+    # criterios para poder sacar la descripcion de cada aspecto de la rubrica
+    criterios = lineas.copy()
+    criterios.pop(0)
+    # aspecto para guardar los encabezados de cada fila
+    aspecto = []
+    count = 0
+    while count < len(criterios):
+        lik = criterios[count]
+        aspecto.append(lik[0])
+        criterios[count].pop(0)
+        count = count + 1
 
+    context={}
+    context['aspecto'] = aspecto
+    context['criterios'] = criterios
+    context['grupo'] = grupo
+    context['tamaño_atributos'] = len(aspecto)
+
+
+    return render(request,'EvPresentaciones/Eval_interface/evaluacion.html',context)
 # Esta pagina recibe al grupo que estamos evaluando
 def ver_evaluacion_admin(request, id, grupo):
     context = {}
