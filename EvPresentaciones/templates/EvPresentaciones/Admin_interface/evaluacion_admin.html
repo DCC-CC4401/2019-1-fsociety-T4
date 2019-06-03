@@ -211,6 +211,12 @@
 
 
             console.log(dict);
+            var x = document.getElementById(valor);
+            if (x.className == "opcion w3-padding-16") {
+                x.className = "opcion w3-padding-16 selected";
+            } else {
+                x.className = "opcion w3-padding-16";
+            }
         }
 
 
