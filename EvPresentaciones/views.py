@@ -274,13 +274,13 @@ def Post_evaluacion(request):
     lista_atributos = request.POST.get('lista_atributos', None)
     idevaluacion = request.POST.get('idevaluacion', None)
 
-    print(idevaluacion)
+
 
     evaluador = Usuario.objects.get(email=request.user)
 
     evaluacion = Cursos_Evaluacion.objects.get(evaluacion=idevaluacion)
 
-    nombreArchivo = evaluacion.curso.codigo + '-' + evaluacion.curso.semestre + '.csv'
+    nombreArchivo = evaluacion.curso.codigo + '-'+str(evaluacion.curso.seccion) + evaluacion.curso.semestre + str(evaluacion.curso.año)+ '.csv'
     rutaNombre = './EvPresentaciones/ArchivosEvaluaciones/' + nombreArchivo
     # manejo de string con las elecciones del evaluador
     lista_csv = []
@@ -306,9 +306,13 @@ def Post_evaluacion(request):
         writer = csv.writer(csvFile)
         writer.writerows([csvData])
     csvFile.close
-
+    print(evaluacion.curso.seccion)
+    print(evaluacion.curso.seccion)
+    print(evaluacion.curso.semestre)
+    print(evaluacion.curso.año)
     curso = evaluacion.curso.codigo + '-' + str(evaluacion.curso.seccion) + " " + evaluacion.curso.semestre + " " + str(
         evaluacion.curso.año)
+
     context = {}
     print(grupo)
     print(curso)
@@ -349,7 +353,7 @@ def Post_evaluaciones_admin(request):
         aux.save()
 
     # defino el nombre del archivo donde guardar
-    nombreArchivo = evaluacion.curso.codigo + '-' + evaluacion.curso.semestre + '.csv'
+    nombreArchivo = evaluacion.curso.codigo + '-'+str(evaluacion.curso.seccion)+'_'+ evaluacion.curso.semestre +'_'+ str(evaluacion.curso.año)+ '.csv'
     rutaNombre = './EvPresentaciones/ArchivosEvaluaciones/' + nombreArchivo
 
     # procesar archivo ingresado
