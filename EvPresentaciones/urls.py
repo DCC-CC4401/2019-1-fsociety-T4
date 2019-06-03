@@ -14,6 +14,7 @@ urlpatterns = [
     path('Admin_interface/Evaluaciones_admin3/<int:id>',    views.modificar_evaluaciones, name='modificar_evaluaciones'),
     path('Admin_interface/evaluacion_admin/<int:id> <str:grupo>',       views.ver_evaluacion_admin,   name='ficha_evaluacion_admin'),
     path('Admin_interface/evaluacion_admin_1/<int:id>', views.cargar_grupo, name='cargar_grupo'),
+    path('Admin_interface/evaluacion_agregar_evaluador/<int:id> <str:grupo>', views.evaluacion_agregar_evaluador, name='evaluacion_agregar_evaluador'),
     path('Admin_interface/Evaluadores_admin',               views.Evaluadores_admin,      name='evaluadores_admin'),
     path('Admin_interface/Landing_page_admin',              views.Landing_page_admin,     name='landing_page_admin'),
     path('Admin_interface/Rubricas_admin',                  views.Rubricas_admin,         name='rubricas_admin'),

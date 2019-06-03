@@ -512,6 +512,7 @@ def ver_evaluacion_admin(request, id, grupo):
         criterios[count].pop(0)
         count = count + 1
 
+    #obtener la lista de evaluadores asociados a la evaluacion
     evaluadores = list()
     try:
         usuarios_evaluacion = Usuario_Evaluacion.objects.filter(evaluacion=id)
@@ -522,10 +523,22 @@ def ver_evaluacion_admin(request, id, grupo):
     except Usuario_Evaluacion.DoesNotExist:
         pass
 
-    print(alumnos)
+    # lista de evaluadores que no estan en la evaluacion
+    evaluadores_para_agregar = list()
+    try:
+        usuarios = Usuario.objects.all()
+        #solo se pueden agregar usuarios que no estan agregados
+        for evaluador in usuarios:
+            if not (evaluador in evaluadores):
+                evaluadores_para_agregar.append(evaluador)
+
+    except Usuario.DoesNotExist:
+        pass
+
     context['evaluacion'] = evaluacion
     context['curso'] = curso
     context['evaluadores'] = evaluadores
+    context['evaluadores_para_agregar'] = evaluadores_para_agregar
     context['rubrica'] = lineas
     context['aspecto'] = aspecto
     context['criterios'] = criterios
@@ -535,6 +548,22 @@ def ver_evaluacion_admin(request, id, grupo):
 
     return render(request, 'EvPresentaciones/Admin_interface/evaluacion_admin.html',
                   context)
+
+
+def evaluacion_agregar_evaluador(request, id, grupo):
+    print(id)
+    print(grupo)
+    evaluacion = Evaluacion.objects.get(id=id)
+    evaluador = Usuario.objects.get(email=request.POST.get('evaluador_agregado', None))
+    par_evaluador_evaluacion = Usuario_Evaluacion(user=evaluador, evaluacion=evaluacion)
+    par_evaluador_evaluacion.save()
+
+    #evaluacion.save()
+    print(evaluacion)
+    #Usuario =
+    print("agregar")
+    #print(evaluador)
+    return ver_evaluacion_admin(request, id, grupo)
 
 
 def reset_grupo(request):
