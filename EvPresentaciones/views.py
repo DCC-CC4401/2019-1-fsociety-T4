@@ -886,7 +886,7 @@ def Ficha_Rubrica_eliminar_definitivo(request, nombre, version):
         evaluacion_rubrica_Asociadas = Evaluacion_Rubrica.objects.filter(id=id)
 
     for evaluacion_rubrica in evaluacion_rubrica_Asociadas:
-        evaluacion_rubrica.remove()
+        evaluacion_rubrica.delete()
 
     # Aquí eliminar rúbrica en su modelo
     rubrica.delete()
