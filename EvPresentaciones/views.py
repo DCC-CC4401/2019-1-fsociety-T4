@@ -632,9 +632,10 @@ def ver_rubrica_detalle(request, nombre, version):
     lineas = []
     # procesar archivo ingresado
     with open(rubrica.archivo) as csv_file:
-        csv_reader = csv.reader(csv_file, delimiter=',')
+        csv_reader = csv.reader(csv_file, delimiter='$') # Para que el texto pueda tener ','
         for row in csv_reader:
             lineas.append(row)
+    print(lineas)
             
     # Tiempo en formato simplificado
     tiempoMax = str(rubrica.tiempo).split(":")
@@ -652,7 +653,7 @@ def Ficha_Rubrica_modificar(request, nombre, version):
     # Extraer contenido
     rows = []
     with open(rubrica.archivo) as csv_file:
-        csv_reader = csv.reader(csv_file, delimiter=',')
+        csv_reader = csv.reader(csv_file, delimiter='$') # Para tener ',' dentro de los campos
         for row in csv_reader:
             rows.append(row)
 
@@ -743,14 +744,14 @@ def guardarRubrica(request):
     # Tener el formato solicitado para guardar
     csvData = []
     for row in rows:
-        csvData.append(row.split(','))
-
+        csvData.append(row.split('$')) # para tener ',' en textos
+    print(csvData)
     # No se revalida el requisito 51, ya que la implementación en frontend es sólida.
     # Además existen otras prioridades de desarrollo.
 
     # Guardar el archivo como csv, se sobreescribe si tiene el mismo nombre
     with open(rutaNombre, 'w') as csvFile:  # wb is wirte bytes
-        writer = csv.writer(csvFile)
+        writer = csv.writer(csvFile, delimiter='$') # para tener ',' en textos
         writer.writerows(csvData)
     csvFile.close
 

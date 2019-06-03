@@ -1,5 +1,32 @@
 {% extends 'EvPresentaciones/BASE/base.html' %}
 {% block contenido %}
+    <style>
+    table {
+      font-family: arial, sans-serif;
+      border-collapse: collapse;
+      width: 100%;
+      margin: 20px 0.5% 0.5%;
+      font-size: 15px;
+    }
+
+    td {
+      border: 1px solid #665f5f;
+      text-align: left;
+      width: 12%;
+      padding: 1%;
+    }
+
+    th {
+      border: 1px solid #665f5f;
+      text-align: center;
+      width: 12%;
+      padding: 1%;
+    }
+
+    tr:nth-child(even) {
+      background-color: #9CA5AB;
+    }
+    </style>
     <!-- HEADER -->
     <div class="w3-container" id="portada" style="margin-top:80px; margin-bottom:10px">
         <h1 class="w3-xxxlarge w3-text-red"><b>Rúbricas</b></h1>
@@ -12,7 +39,7 @@
         </div>
     </div>
     <div class="w3-container">
-        <table class="orange">
+        <table >
             {% for row in lineas %}
             <tr>
                 {% for col in row %}
