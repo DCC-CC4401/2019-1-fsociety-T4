@@ -916,7 +916,7 @@ def guardarRubrica(request):
     csvData = []
     for row in rows:
         csvData.append(row.split('$'))  # para tener ',' en textos
-    print(csvData)
+    #print(csvData)
     # No se revalida el requisito 51, ya que la implementación en frontend es sólida.
     # Además existen otras prioridades de desarrollo.
 
@@ -945,6 +945,7 @@ def guardarRubrica(request):
         r = Rubrica.objects.get(nombre=nombre, version=version)
         r.tiempo = timedelta(minutes=int(tmaxx[0]), seconds=int(tmaxx[1]))
         r.tiempoMin = timedelta(minutes=int(tminn[0]), seconds=int(tminn[1]))
+        r.save() # Guardar, importante!
     except Rubrica.DoesNotExist:
         Rubrica.create_rubrica(nombre=nombre, tiempoMin=timedelta(minutes=int(tminn[0]), seconds=int(tminn[1])),
                                tiempoMax=timedelta(minutes=int(tmaxx[0]), seconds=int(tmaxx[1])), version=version,
