@@ -358,7 +358,7 @@ def Post_evaluaciones_admin(request):
 
     # procesar archivo ingresado
     with open(rubrica.rubrica.archivo) as csv_file:
-        csv_reader = csv.reader(csv_file, delimiter=',')
+        csv_reader = csv.reader(csv_file, delimiter='$')
         for row in csv_reader:
             if row != []:
                 lineas.append(row)
@@ -435,7 +435,7 @@ def ver_evaluacion_evaluador(request, id):
     grupo = par_curso_evaluacion.evaluando
     # procesar archivo ingresado
     with open(rubrica.archivo) as csv_file:
-        csv_reader = csv.reader(csv_file, delimiter=',')
+        csv_reader = csv.reader(csv_file, delimiter='$')
         for row in csv_reader:
             if row != []:
                 lineas.append(row)
@@ -499,7 +499,7 @@ def ver_evaluacion_admin(request, id, grupo):
 
     # procesar archivo ingresado
     with open(rubrica.archivo) as csv_file:
-        csv_reader = csv.reader(csv_file, delimiter=',')
+        csv_reader = csv.reader(csv_file, delimiter='$')
         for row in csv_reader:
             if row != []:
                 lineas.append(row)
