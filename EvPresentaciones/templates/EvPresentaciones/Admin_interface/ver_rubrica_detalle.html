@@ -1,26 +1,67 @@
 {% extends 'EvPresentaciones/BASE/base.html' %}
 {% block contenido %}
+    <!-- Se pone porque no se pudo hacer funcionar desde clase "orange" en CSS-->
+    <style>
+    table {
+      font-family: arial, sans-serif;
+      border-collapse: collapse;
+      width: 100%;
+      margin: 20px 0.5% 0.5%;
+      font-size: 15px;
+    }
+
+    td {
+      border: 1px solid #665f5f;
+      text-align: left;
+      width: 12%;
+      padding: 1%;
+    }
+
+    th {
+      border: 1px solid #665f5f;
+      text-align: center;
+      width: 12%;
+      padding: 1%;
+    }
+
+    tr:nth-child(even) {
+      background-color: #FFA07A;
+    }
+    </style>
     <!-- HEADER -->
     <div class="w3-container" id="portada" style="margin-top:80px; margin-bottom:10px">
-        <h1 class="w3-xxxlarge w3-text-red"><b>Rúbricas</b></h1>
+        <h1 class="w3-xxxlarge w3-text-red"><b>{{ nombre }}</b></h1>
         <hr style="width:50px;border:5px solid red" class="w3-round">
     </div>
 
     <div class="w3-row w3-container">
         <div class="w3-col" align="left">
-                <label>Intervalo de presentación: {{ tmin }} - {{ tmax }}</label>
+                <label>Versión: {{ version }}  Intervalo de presentación: {{ tmin }} - {{ tmax }}</label>
         </div>
     </div>
+    
     <div class="w3-container">
-        <table class="orange">
-            {% for row in lineas %}
-            <tr>
-                {% for col in row %}
-                <th> {{ col }}</th>
+            <table id="tabla-rubrica">
+                <!-- Header de la rúbrica -->
+                <tr>
+                    <th></th>
+                    {% for col in primeraFila %}
+                        <th>{{ col }}</th>
+                    {% endfor %}
+                </tr>
+                <!-- Contenido de la rúbrica -->
+                {% for row in contenido %}
+                <tr>
+                    {% for col in row %}
+                        {% if col == row.0%}
+                            <th> {{ col }}</th>
+                        {% else %}
+                            <td> {{ col }}</td>
+                        {% endif %}
+                    {% endfor %}
+                </tr>
                 {% endfor %}
-            </tr>
-            {% endfor %}
-        </table>
-    </div>
+            </table>
+        </div>
 
 {% endblock %}

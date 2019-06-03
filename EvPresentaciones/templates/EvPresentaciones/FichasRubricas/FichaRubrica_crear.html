@@ -1,5 +1,33 @@
 {% extends 'EvPresentaciones/BASE/base.html' %}
 {% block contenido %}
+    <!-- Se pone porque no se pudo hacer funcionar desde clase "orange" en CSS-->
+    <style>
+    table {
+      font-family: arial, sans-serif;
+      border-collapse: collapse;
+      width: 100%;
+      margin: 20px 0.5% 0.5%;
+      font-size: 15px;
+    }
+
+    td {
+      border: 1px solid #665f5f;
+      text-align: left;
+      width: 12%;
+      padding: 1%;
+    }
+
+    th {
+      border: 1px solid #665f5f;
+      text-align: center;
+      width: 12%;
+      padding: 1%;
+    }
+
+    tr:nth-child(even) {
+      background-color: #FFA07A;
+    }
+    </style>
     <!-- HEADER -->
     <div class="w3-container" id="portada" style="margin-top:80px; margin-bottom:10px">
         <h1 class="w3-xxxlarge w3-text-red"><b>Ficha de rúbrica</b></h1>
@@ -36,7 +64,7 @@
         </div>
 
         <div class="w3-container">
-            <table id="tabla-rubrica" class="orange">
+            <table id="tabla-rubrica">
                 <tr>
                     <th></th>
                     <th contenteditable='true'>0.0</th>
@@ -180,12 +208,12 @@
                 for (var j = 0; j < cols.length - 1; j++) { // Sin botones
                     row.push(cols[j].innerText);
                 }
-                csv.push(row.join(","));
+                csv.push(row.join("$")); // Para poder tener ',' en los campos
             }
             // REQUISITO 51: la suma de los niveles máximos de todos los aspectos de cualquier rúbrica siempre sea 6
 
             // Extraer máximo puntaje por aspecto
-            var puntajes = csv[0].split(",");
+            var puntajes = csv[0].split("$");
             var maxPuntaje = parseFloat(puntajes[puntajes.length - 1]); // Último valor es el máx puntaje
             // Extraer cantidad de aspectos
             var cantidadDeAspectos = csv.length - 1; // Menos la primera fila con los puntajes

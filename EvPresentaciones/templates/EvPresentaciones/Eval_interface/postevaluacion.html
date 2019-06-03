@@ -1,93 +1,79 @@
 {% extends 'EvPresentaciones/BASE/base_eval.html' %}
 {% block contenido %}
 
-  <!-- !PAGE CONTENT! -->
-  <div class="w3-main" style="margin-left:340px;margin-right:40px">
+    <!-- !PAGE CONTENT! -->
+    <div class="w3-main" style="margin-left:340px;margin-right:40px">
 
-    <!-- Header
-   <div class="w3-bar w3-border w3-pale-red">
-  <div class="w3-dropdown-hover w3-pale-red w3-mobile w3-xlarge"style="width:33%">
-    <button class="w3-button ">Evaluaciones</button>
-    <div class="w3-dropdown-content w3-bar-block w3-card-4"style="width:25%">
-      <a href="#" class="w3-bar-item w3-button">Link 1</a>
-      <a href="#" class="w3-bar-item w3-button">Link 2</a>
-      <a href="#" class="w3-bar-item w3-button">Link 3</a>
+
+        <!-- Photo grid (modal) -->
+
+        <!-- Evaluacion -->
+        <div class="w3-container" id="designers" style="margin-top:50px">
+            <h1 class="w3-xxxlarge w3-text-red"><b>Evaluación <i class="w3-text-blue">entregada</i> </b></h1>
+            <i class="w3-large w3-text-green"><i class="far fa-clock"></i> {{ estado }} </i>
+            <hr style="width:50px;border:5px solid red" class="w3-round">
+            <div class="w3-container w3-center">
+                <p>Grupo evaluado: {{ grupo }}</p>
+                <p> Presentación <i>{{ curso }}</i></p>
+                <p><i class="w3-text-blue">Su operación se ha procesado exitosamente!</i></p>
+            </div>
+            <!--
+                  <div class="w3-container">
+                    <h4><b>Resumen de evaluación</b></h4>
+                    <p>Contenidos</p>
+                    <div class="w3-grey">
+                      <div class="w3-container w3-center w3-padding w3-orange" style="width:25%">25%</div>
+                    </div>
+                    <p>Calidad del material</p>
+                    <div class="w3-grey">
+                      <div class="w3-container w3-center w3-padding w3-green" style="width:75%">75%</div>
+                    </div>
+                    <p>Relación con requisitos funcionales</p>
+                    <div class="w3-grey">
+                      <div class="w3-container w3-center w3-padding w3-green" style="width:75%">75%</div>
+                    </div>
+                    <p>Organización de la información</p>
+                    <div class="w3-grey">
+                      <div class="w3-container w3-center w3-padding w3-blue" style="width:100%">100%</div>
+                    </div>
+                    <p>Forma</p>
+                    <div class="w3-grey">
+                      <div class="w3-container w3-center w3-padding w3-red" style="width:10%">0%</div>
+                    </div>
+                    <p>Entusiasmo</p>
+                    <div class="w3-grey">
+                      <div class="w3-container w3-center w3-padding w3-orange" style="width:25%">25%</div>
+                    </div>
+
+
+                    <div class="w3-row-padding" style="margin-top:100px">
+                      <div class="w3-half w3-margin-bottom ">
+                        <ul class="w3-ul w3-light-grey w3-center w3-card-4">
+                          <li class="w3-red w3-xlarge w3-padding-32">Equipos pendientes<i style="margin-left: 10px"
+                              class="fas fa-user-friends"></i><br> <i class="w3-small">Comience una nueva evaluación ...</i></li>
+                          <li class="opcion w3-padding-16">Equipo Rocket <i style="margin-left: 10px"
+                              class="w3-xlarge fas fa-play-circle"></i></li>
+                          <li class="opcion w3-padding-16">Equipo Ejemplo <i style="margin-left: 10px"
+                              class="w3-xlarge fas fa-play-circle"></i></li>
+                          <li class="opcion presentado w3-padding-16">Equipo 7 <i style="margin-left: 10px"
+                              class="w3-xlarge fas fa-play-circle"></i></li>
+                          <li class="opcion w3-padding-16">Equipo Example <i style="margin-left: 10px"
+                              class="w3-xlarge fas fa-play-circle"></i></li>
+                        </ul>
+                      </div>
+                        -->
+            <div class="w3-half">
+            </div>
+        </div>
+
+
     </div>
-  </div>
-       <div class="w3-dropdown-hover w3-pale-red w3-mobile w3-xlarge" style="width:33%">
-       <button class="w3-button ">Cursos</button>
-    <div class="w3-dropdown-content w3-bar-block w3-card-4">
-      <a href="#" class="w3-bar-item w3-button">Link 1</a>
-      <a href="#" class="w3-bar-item w3-button">Link 2</a>
-      <a href="#" class="w3-bar-item w3-button">Link 3</a>
+
+
+
+
+
+
+    <!-- End page content -->
     </div>
-       </div>
-       <div class="w3-dropdown-hover w3-pale-red w3-mobile w3-xlarge" style="width:33%">
-       <button class="w3-button ">Rúbricas</button>
-    <div class="w3-dropdown-content w3-bar-block w3-card-4">
-      <a href="#" class="w3-bar-item w3-button">Link 1</a>
-      <a href="#" class="w3-bar-item w3-button">Link 2</a>
-      <a href="#" class="w3-bar-item w3-button">Link 3</a>
-    </div>
-       </div>
-</div>-->
-
-
-    <!-- Photo grid (modal) -->
-
-    <!-- Evaluacion -->
-    <div class="w3-container" id="designers" style="margin-top:50px">
-      <h1 class="w3-xxxlarge w3-text-red"><b>Evaluación <i class="w3-text-blue">entregada</i> </b></h1>
-      <i class="w3-large w3-text-green"><i class="far fa-clock"></i> Aún activa </i>
-      <hr style="width:50px;border:5px solid red" class="w3-round">
-      <div class="w3-container w3-center">
-        <p><b>Lambda-Ideas</b> Presentación Tarea 2 <i>CC4401-1/Otoño/2019</i></p>
-        <p><i class="w3-text-blue">Su operación se ha procesado exitosamente!</i></p>
-      </div>
-
-      <div class="w3-container">
-        <h4><b>Resumen de evaluación</b></h4>
-        <p>Contenidos</p>
-        <div class="w3-grey">
-          <div class="w3-container w3-center w3-padding w3-orange" style="width:25%">25%</div>
-        </div>
-        <p>Calidad del material</p>
-        <div class="w3-grey">
-          <div class="w3-container w3-center w3-padding w3-green" style="width:75%">75%</div>
-        </div>
-        <p>Relación con requisitos funcionales</p>
-        <div class="w3-grey">
-          <div class="w3-container w3-center w3-padding w3-green" style="width:75%">75%</div>
-        </div>
-        <p>Organización de la información</p>
-        <div class="w3-grey">
-          <div class="w3-container w3-center w3-padding w3-blue" style="width:100%">100%</div>
-        </div>
-        <p>Forma</p>
-        <div class="w3-grey">
-          <div class="w3-container w3-center w3-padding w3-red" style="width:10%">0%</div>
-        </div>
-        <p>Entusiasmo</p>
-        <div class="w3-grey">
-          <div class="w3-container w3-center w3-padding w3-orange" style="width:25%">25%</div>
-        </div>
-
-        <div class="w3-panel w3-right w3-half" style="margin-top: 50px">
-          <button class="w3-button w3-xlarge w3-red w3-margin-bottom" style="margin-left: 15%"
-            onclick="location.href='evaluacion.html'"> <i class="fas fa-pen"></i> Editar evaluación</button>
-          <button class="w3-button w3-xlarge w3-red" style="margin-left: 15%"> <i class="fas fa-door-open"></i> Volver a
-            evaluaciones</button>
-
-        </div>
-
-
-      </div>
-
-
-
-
-
-
-      <!-- End page content -->
-    </div>
-    {% endblock %}
+{% endblock %}

@@ -31,14 +31,15 @@ urlpatterns = [
     path('FichasRubricas/Rubrica_guardada',                                 views.guardarRubrica,         name='guardar_rubrica'),
     path('Admin_interface/postevalucionadmin',                              views.Post_evaluaciones_admin,name='post_evaluacion_admin'),
     path('Admin_interface/evaluacion_admin/<int:id><str:grupo>/<str:evaluador>', views.ver_evaluador_evaluacion, name='ver_evaluador_evaluacion'),
+    path('Admin_interface/postevaluacionadmin',                             views.reset_grupo,            name='reset'),
+
     
     # Vistas de evaluador
 
     path('Eval_interface/langing_page_eval',                views.Laging_page_eval,       name='landing_page_eval'),
-    path('Eval_interface/evaluacion',                       views.Evaluacion,             name='evaluacion'),
+    path('Eval_interface/evaluacion/<int:id>',              views.ver_evaluacion_evaluador,             name='evaluacion'),
     path('Eval_interface/evaluacionesEvaluador',            views.Evaluaciones_eval,      name='evaluaciones_eval'),
     path('Eval_interface/postevaluacion',                   views.Post_evaluacion,        name='post_evaluacion'),
-    path('Eval_interface/postevalucionadmin',               views.Post_evaluaciones_admin,name='post_evaluacion_admin'),
     path('FichasRubricas/FichaRubrica_crear',               views.Ficha_Rubrica_crear,    name='ficha_rubrica_crear'),
     path('FichasRubricas/FichaRubricaEvaluador',            views.Ficha_Rubrica_evaluador,name='ficha_rubrica_eval'),
     path('Summary_student/auth_summary',                    views.Auth_summary,           name='auth_summary'),

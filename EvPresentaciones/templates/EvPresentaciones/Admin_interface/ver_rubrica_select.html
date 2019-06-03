@@ -1,5 +1,33 @@
 {% extends 'EvPresentaciones/BASE/base.html' %}
 {% block contenido %}
+    <!-- Se pone porque no se pudo hacer funcionar desde clase "orange" en CSS-->
+    <style>
+    table {
+      font-family: arial, sans-serif;
+      border-collapse: collapse;
+      width: 100%;
+      margin: 20px 0.5% 0.5%;
+      font-size: 15px;
+    }
+
+    td {
+      border: 1px solid #665f5f;
+      text-align: left;
+      width: 12%;
+      padding: 1%;
+    }
+
+    th {
+      border: 1px solid #665f5f;
+      text-align: center;
+      width: 12%;
+      padding: 1%;
+    }
+
+    tr:nth-child(even) {
+      background-color: #FFA07A;
+    }
+    </style>
 
     <!-- HEADER -->
     <div class="w3-container" id="portada" style="margin-top:80px; margin-bottom:10px">

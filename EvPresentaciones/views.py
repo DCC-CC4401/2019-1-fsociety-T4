@@ -267,7 +267,61 @@ def Evaluacion_admin(request, ):
 
 
 def Post_evaluacion(request):
-    return render(request, 'EvPresentaciones/Eval_interface/postevaluacion.html')
+    print("post Evaluacion")
+    lineas = []
+    grupo = request.POST.get('grupo', None)
+    print(grupo)
+    lista_atributos = request.POST.get('lista_atributos', None)
+    idevaluacion = request.POST.get('idevaluacion', None)
+
+
+
+    evaluador = Usuario.objects.get(email=request.user)
+
+    evaluacion = Cursos_Evaluacion.objects.get(evaluacion=idevaluacion)
+
+    nombreArchivo = evaluacion.curso.codigo + '-'+str(evaluacion.curso.seccion) + evaluacion.curso.semestre + str(evaluacion.curso.año)+ '.csv'
+    rutaNombre = './EvPresentaciones/ArchivosEvaluaciones/' + nombreArchivo
+    # manejo de string con las elecciones del evaluador
+    lista_csv = []
+    dict = {}
+
+    lista_arreglada = lista_atributos.split("|")
+    lista_arreglada = lista_arreglada[:-1]
+    # crea diccionario para manejar
+    for pareja in lista_arreglada:
+        aux = pareja.split(":")
+        dict[aux[0]] = aux[1]
+    i = 0
+    while i < len(dict.items()):
+        aux = str(i + 1)
+        lista_csv.append(dict[aux])
+        i = i + 1
+
+    nombre_evaluador = evaluador.first_name + " " + evaluador.last_name
+    nombre_grupo = grupo
+    nombre_evaluacion = str(idevaluacion)
+    csvData = [nombre_evaluador, nombre_grupo, nombre_evaluacion, lista_csv]
+    with open(rutaNombre, 'a', newline='') as csvFile:  # wb is wirte bytes
+        writer = csv.writer(csvFile)
+        writer.writerows([csvData])
+    csvFile.close
+    print(evaluacion.curso.seccion)
+    print(evaluacion.curso.seccion)
+    print(evaluacion.curso.semestre)
+    print(evaluacion.curso.año)
+    curso = evaluacion.curso.codigo + '-' + str(evaluacion.curso.seccion) + " " + evaluacion.curso.semestre + " " + str(
+        evaluacion.curso.año)
+
+    context = {}
+    print(grupo)
+    print(curso)
+    print(idevaluacion)
+    context['grupo'] = grupo
+    context['curso'] = curso
+    context['evaluacion'] = idevaluacion
+
+    return render(request, 'EvPresentaciones/Eval_interface/postevaluacion.html',context)
 
 
 def Post_evaluaciones_admin(request):
@@ -284,26 +338,22 @@ def Post_evaluaciones_admin(request):
     evaluador = Usuario.objects.get(email=request.user)
     rubrica = Evaluacion_Rubrica.objects.get(evaluacion=idevaluacion)
     evaluacion = Cursos_Evaluacion.objects.get(evaluacion=idevaluacion)
-    grupo_integrantes= Cursos_Alumnos.objects.get(alumnos=presentador)
-    grupo_integrantes=grupo_integrantes.nombreGrupo
-    par_curso_integrantes=Cursos_Alumnos.objects.filter(nombreGrupo=grupo_integrantes)
-    integrantes=[]
-
-
-
+    grupo_integrantes = Cursos_Alumnos.objects.get(alumnos=presentador)
+    grupo_integrantes = grupo_integrantes.nombreGrupo
+    par_curso_integrantes = Cursos_Alumnos.objects.filter(nombreGrupo=grupo_integrantes)
+    integrantes = []
 
     for i in par_curso_integrantes:
         integrantes.append(i.alumnos)
-        i.evaluado=True
+        i.evaluado = True
         i.save()
     for al in integrantes:
-        aux=Alumnos_Evaluacion(tiempo=timedelta(minutes=int(minutos),seconds=int(segundo)),alumno=al,
-                               evaluacion=evaluacion.evaluacion)
+        aux = Alumnos_Evaluacion(tiempo=timedelta(minutes=int(minutos), seconds=int(segundo)), alumno=al,
+                                 evaluacion=evaluacion.evaluacion)
         aux.save()
 
-
-    #defino el nombre del archivo donde guardar
-    nombreArchivo = evaluacion.curso.codigo + '-' + evaluacion.curso.semestre + '.csv'
+    # defino el nombre del archivo donde guardar
+    nombreArchivo = evaluacion.curso.codigo + '-'+str(evaluacion.curso.seccion)+'_'+ evaluacion.curso.semestre +'_'+ str(evaluacion.curso.año)+ '.csv'
     rutaNombre = './EvPresentaciones/ArchivosEvaluaciones/' + nombreArchivo
 
     # procesar archivo ingresado
@@ -346,11 +396,22 @@ def Post_evaluaciones_admin(request):
         writer = csv.writer(csvFile)
         writer.writerows([csvData])
     csvFile.close
+    # datos para mandar a la vista
+    curso = evaluacion.curso.codigo + '-' + str(evaluacion.curso.seccion) + " " + evaluacion.curso.semestre + " " + str(
+        evaluacion.curso.año)
 
-    #actualizamos el tiempo de los alumnos del grupo
+    if grupo.evaluando == grupo_integrantes:
+        estado = "Aún activa"
+    else:
+        estado = "Desactivada"
+    context = {}
+    context['grupo'] = grupo_integrantes
+    context['curso'] = curso
+    context['estado'] = estado
+    context['evaluacion'] = idevaluacion
 
     return render(request,
-                  'EvPresentaciones/Admin_interface/postevaluacionadmin.html')
+                  'EvPresentaciones/Admin_interface/postevaluacionadmin.html', context)
 
 
 def cargar_grupo(request, id):
@@ -361,8 +422,49 @@ def cargar_grupo(request, id):
 
     return ver_evaluacion_admin(request, id)
 
-#Esta pagina recibe al grupo que estamos evaluando
-def ver_evaluacion_admin(request,id,grupo):
+
+def ver_evaluacion_evaluador(request, id):
+    lineas = []
+    alumnos = []
+    aux = []
+    par_curso_evaluacion = Cursos_Evaluacion.objects.get(evaluacion=id)
+    par_evaluacion_rubrica = Evaluacion_Rubrica.objects.get(evaluacion=id)
+    evaluacion = par_curso_evaluacion.evaluacion
+    curso = par_curso_evaluacion.curso
+    rubrica = par_evaluacion_rubrica.rubrica
+    grupo = par_curso_evaluacion.evaluando
+    # procesar archivo ingresado
+    with open(rubrica.archivo) as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=',')
+        for row in csv_reader:
+            if row != []:
+                lineas.append(row)
+    # criterios para poder sacar la descripcion de cada aspecto de la rubrica
+    criterios = lineas.copy()
+    criterios.pop(0)
+    # aspecto para guardar los encabezados de cada fila
+    aspecto = []
+    count = 0
+    while count < len(criterios):
+        lik = criterios[count]
+        aspecto.append(lik[0])
+        criterios[count].pop(0)
+        count = count + 1
+    data_curso = par_curso_evaluacion.curso.codigo + '-' + str(par_curso_evaluacion.curso.seccion) + " " + par_curso_evaluacion.curso.semestre + " " + str(
+        par_curso_evaluacion.curso.año)
+    context = {}
+    context['aspecto'] = aspecto
+    context['criterios'] = criterios
+    context['grupo'] = grupo
+    context['tamaño_atributos'] = len(aspecto)
+    context['evaluacion'] =id
+    context['curso'] = data_curso
+
+    return render(request, 'EvPresentaciones/Eval_interface/evaluacion.html', context)
+
+
+# Esta pagina recibe al grupo que estamos evaluando
+def ver_evaluacion_admin(request, id, grupo):
     context = {}
     lineas = []
     alumnos = []
@@ -373,10 +475,12 @@ def ver_evaluacion_admin(request,id,grupo):
     evaluacion = par_curso_evaluacion.evaluacion
     curso = par_curso_evaluacion.curso
     rubrica = par_evaluacion_rubrica.rubrica
+    par_curso_evaluacion.evaluando = grupo
+    par_curso_evaluacion.save()
 
-    #falta que cambiemos a que el grupo este siendo evaluado
+    # falta que cambiemos a que el grupo este siendo evaluado
     grupo_elegido = grupo
-    
+
     print("el grupo es: " + grupo_elegido)
     if grupo_elegido != "No Group":
         alumnos = Cursos_Alumnos.objects.filter(nombreGrupo=grupo_elegido)
@@ -397,9 +501,9 @@ def ver_evaluacion_admin(request,id,grupo):
     with open(rubrica.archivo) as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
         for row in csv_reader:
-            if row!=[]:
+            if row != []:
                 lineas.append(row)
-                
+
     # criterios para poder sacar la descripcion de cada aspecto de la rubrica
     criterios = lineas.copy()
     criterios.pop(0)
@@ -411,7 +515,7 @@ def ver_evaluacion_admin(request,id,grupo):
         aspecto.append(lik[0])
         criterios[count].pop(0)
         count = count + 1
-        
+
     evaluadores = list()
     try:
         usuarios_evaluacion = Usuario_Evaluacion.objects.filter(evaluacion=id)
@@ -421,7 +525,7 @@ def ver_evaluacion_admin(request,id,grupo):
 
     except Usuario_Evaluacion.DoesNotExist:
         pass
-    
+
     print(alumnos)
     context['evaluacion'] = evaluacion
     context['curso'] = curso
@@ -431,27 +535,37 @@ def ver_evaluacion_admin(request,id,grupo):
     context['criterios'] = criterios
     context['alumnos'] = aux
     context['grupo_elegido'] = grupo_elegido
+    context['tamaño_atributos'] = len(aspecto)
 
     return render(request, 'EvPresentaciones/Admin_interface/evaluacion_admin.html',
                   context)
 
-#muestra los grupos que pueden ser evaluados, y los que ya fueron evaluados
-def verGrupos(request, id):
-   par_curso_evaluacion=Cursos_Evaluacion.objects.get(evaluacion=id)
-   evaluacion=par_curso_evaluacion.evaluacion
-   curso=par_curso_evaluacion.curso
-   grupos_p=[]
-   grupos_e=[]
-   grupo=Cursos_Alumnos.objects.filter(curso=curso)
-   for g in grupo:
-       if(g.evaluado==False):
-           if g.nombreGrupo not in grupos_p:
-            grupos_p.append(g.nombreGrupo)
-       else:
-           if g.nombreGrupo not in grupos_e:
-            grupos_e.append(g.nombreGrupo)
 
-   return render(request, 'EvPresentaciones/Admin_interface/ver_grupos.html',{'grupos_e':grupos_e, 'grupos_p':grupos_p, 'evaluacion':evaluacion})
+def reset_grupo(request):
+    evaluando = request.POST.get('reset', None)
+    par_curso_evaluacion = Cursos_Evaluacion.objects.get(evaluacion=evaluando)
+    par_curso_evaluacion.evaluando = "No Group"
+    return Post_evaluaciones_admin(request)
+
+
+# muestra los grupos que pueden ser evaluados, y los que ya fueron evaluados
+def verGrupos(request, id):
+    par_curso_evaluacion = Cursos_Evaluacion.objects.get(evaluacion=id)
+    evaluacion = par_curso_evaluacion.evaluacion
+    curso = par_curso_evaluacion.curso
+    grupos_p = []
+    grupos_e = []
+    grupo = Cursos_Alumnos.objects.filter(curso=curso)
+    for g in grupo:
+        if (g.evaluado == False):
+            if g.nombreGrupo not in grupos_p:
+                grupos_p.append(g.nombreGrupo)
+        else:
+            if g.nombreGrupo not in grupos_e:
+                grupos_e.append(g.nombreGrupo)
+
+    return render(request, 'EvPresentaciones/Admin_interface/ver_grupos.html',
+                  {'grupos_e': grupos_e, 'grupos_p': grupos_p, 'evaluacion': evaluacion})
 
 def ver_evaluador_evaluacion(request,evaluador,grupo,id):
     #obtener aspectos de la rubrica
@@ -477,6 +591,7 @@ def Summary(request):
 def ver_rubrica_select(request, id):
     rubrica = Evaluacion_Rubrica.objects.get(evaluacion=id).rubrica
     return ver_rubrica_detalle(request, rubrica.nombre, rubrica.version)
+
 
 # Si se hace request de la landingpage, se verifica el tipo de usuario y se retorna el render correspondiente
 def LandingPage(request):
@@ -644,22 +759,31 @@ def Ficha_Rubrica_evaluador(request):
 def ver_rubrica_detalle(request, nombre, version):
     rubrica = Rubrica.objects.get(nombre=nombre, version=version)
     # Filas
-    lineas = []
+    rows = []
     # procesar archivo ingresado
     with open(rubrica.archivo) as csv_file:
-        csv_reader = csv.reader(csv_file, delimiter=',')
+        csv_reader = csv.reader(csv_file, delimiter='$')  # Para que el texto pueda tener ','
         for row in csv_reader:
-            lineas.append(row)
-            
-    # Tiempo en formato simplificado
+            rows.append(row)
+
+    # Código para quitar lineas en blanco
+    rows2 = []
+    for r in rows:
+        if r != []:  # Sólo si no es vacío
+            rows2.append(r)  # Se agrega
+
+    # Movemos las filas no balncas
+    rows = rows2
+    primeraFila = rows[0][1:]  # Quito el primer y ultimo elemento que son elementos vacios no editables
+    contenido = rows[1:]
     tiempoMax = str(rubrica.tiempo).split(":")
     tMax = tiempoMax[1] + ":" + tiempoMax[2]  # Tiempo en formato correcto: mm:ss
     tiempoMin = str(rubrica.tiempoMin).split(":")
     tMin = tiempoMin[1] + ":" + tiempoMin[2]  # Tiempo en formato correcto: mm:ss
 
     return render(request, 'EvPresentaciones/Admin_interface/ver_rubrica_detalle.html',
-                  {'lineas': lineas, 'tmax': tMax, 'tmin': tMin})
-
+                  {'nombre': rubrica.nombre, 'version': rubrica.version, 'tmax': tMax, 
+                  'tmin': tMin, 'primeraFila': primeraFila, 'contenido': contenido,})
 
 
 def Ficha_Rubrica_modificar(request, nombre, version):
@@ -667,7 +791,7 @@ def Ficha_Rubrica_modificar(request, nombre, version):
     # Extraer contenido
     rows = []
     with open(rubrica.archivo) as csv_file:
-        csv_reader = csv.reader(csv_file, delimiter=',')
+        csv_reader = csv.reader(csv_file, delimiter='$')  # Para tener ',' dentro de los campos
         for row in csv_reader:
             rows.append(row)
 
@@ -694,6 +818,7 @@ def Ficha_Rubrica_modificar(request, nombre, version):
 # Sólo para admin, permite crear rúbricas desde 0
 def Ficha_Rubrica_crear(request):
     return render(request, 'EvPresentaciones/FichasRubricas/FichaRubrica_crear.html')
+
 
 def Ficha_Rubrica_eliminar(request, nombre, version):
     rubrica = Rubrica.objects.get(nombre=nombre, version=version)
@@ -742,6 +867,7 @@ def Ficha_Rubrica_eliminar_definitivo(request, nombre, version):
     return render(request, 'EvPresentaciones/FichasRubricas/FichaRubrica_eliminar_definitivo.html',
                   {'nombre': nombre, 'version': version})
 
+
 # Request genérico que guarda o sobreescribe una rúbrica
 def guardarRubrica(request):
     nombre = request.POST.get('nombre-rubrica', None)
@@ -758,14 +884,14 @@ def guardarRubrica(request):
     # Tener el formato solicitado para guardar
     csvData = []
     for row in rows:
-        csvData.append(row.split(','))
-
+        csvData.append(row.split('$'))  # para tener ',' en textos
+    print(csvData)
     # No se revalida el requisito 51, ya que la implementación en frontend es sólida.
     # Además existen otras prioridades de desarrollo.
 
     # Guardar el archivo como csv, se sobreescribe si tiene el mismo nombre
     with open(rutaNombre, 'w') as csvFile:  # wb is wirte bytes
-        writer = csv.writer(csvFile)
+        writer = csv.writer(csvFile, delimiter='$')  # para tener ',' en textos
         writer.writerows(csvData)
     csvFile.close
 
