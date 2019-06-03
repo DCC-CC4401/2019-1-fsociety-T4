@@ -32,6 +32,7 @@ urlpatterns = [
     path('FichasRubricas/Rubrica_guardada',                                 views.guardarRubrica,         name='guardar_rubrica'),
     path('Admin_interface/postevalucionadmin',                              views.Post_evaluaciones_admin,name='post_evaluacion_admin'),
     path('Admin_interface/evaluacion_admin/<int:id><str:grupo>/<str:evaluador>', views.ver_evaluador_evaluacion, name='ver_evaluador_evaluacion'),
+    path('Admin_interface/adminContacto.html',                              views.ContactoAdmin,          name='contactoAdmin'),
     path('Admin_interface/postevaluacionadmin',                             views.reset_grupo,            name='reset'),
 
     
@@ -46,5 +47,6 @@ urlpatterns = [
     path('Summary_student/auth_summary',                    views.Auth_summary,           name='auth_summary'),
     path('Summary_student/summary',                         views.Summary,                name='summary'),
     path('LandingPage',                                     views.LandingPage,            name='LandingPage'),
+    path('contactoEval',                                    views.ContactoEval,           name='contactoEval'),
     path('HomeAdmin',                                       views.HomeAdmin,              name='HomeAdmin')
 ]

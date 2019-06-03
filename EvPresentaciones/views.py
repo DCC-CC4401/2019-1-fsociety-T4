@@ -950,3 +950,10 @@ def guardarRubrica(request):
     # except IntegrityError:
     #    messages.error(request, 'Error: Ya existe la rúbrica ' + nombre+'-'+version, extra_tags='w3-panel w3-red')
     return render(request, 'EvPresentaciones/FichasRubricas/Rubrica_guardada.html')
+
+
+def ContactoEval(request):
+    return render(request, 'EvPresentaciones/Eval_interface/evalContacto.html')
+
+def ContactoAdmin(request):
+    return render(request, 'EvPresentaciones/Admin_interface/adminContacto.html')
