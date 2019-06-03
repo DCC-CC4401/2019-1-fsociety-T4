@@ -1,5 +1,12 @@
 # 2019-1-fsociety-T4
 
+## Como Correr el proyecto
+
+La dirección para poder llegar al login es 
+
+    http://127.0.0.1:8000/EvPresentaciones/
+
+
 ## IMPORTANTE
 
     Ahora los usuarios de EvPresentaciones y del sitio Admin están unificados.
@@ -37,4 +44,4 @@
 
 ## Crear superusuario
 
-    python3 manage.py createsuperuser 
+    python manage.py createsuperuser 
