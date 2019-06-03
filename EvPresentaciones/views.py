@@ -751,21 +751,31 @@ def Ficha_Rubrica_evaluador(request):
 def ver_rubrica_detalle(request, nombre, version):
     rubrica = Rubrica.objects.get(nombre=nombre, version=version)
     # Filas
-    lineas = []
+    rows = []
     # procesar archivo ingresado
     with open(rubrica.archivo) as csv_file:
         csv_reader = csv.reader(csv_file, delimiter='$')  # Para que el texto pueda tener ','
         for row in csv_reader:
-            lineas.append(row)
+            rows.append(row)
 
-    # Tiempo en formato simplificado
+    # Código para quitar lineas en blanco
+    rows2 = []
+    for r in rows:
+        if r != []:  # Sólo si no es vacío
+            rows2.append(r)  # Se agrega
+
+    # Movemos las filas no balncas
+    rows = rows2
+    primeraFila = rows[0][1:]  # Quito el primer y ultimo elemento que son elementos vacios no editables
+    contenido = rows[1:]
     tiempoMax = str(rubrica.tiempo).split(":")
     tMax = tiempoMax[1] + ":" + tiempoMax[2]  # Tiempo en formato correcto: mm:ss
     tiempoMin = str(rubrica.tiempoMin).split(":")
     tMin = tiempoMin[1] + ":" + tiempoMin[2]  # Tiempo en formato correcto: mm:ss
 
     return render(request, 'EvPresentaciones/Admin_interface/ver_rubrica_detalle.html',
-                  {'lineas': lineas, 'tmax': tMax, 'tmin': tMin})
+                  {'nombre': rubrica.nombre, 'version': rubrica.version, 'tmax': tMax, 
+                  'tmin': tMin, 'primeraFila': primeraFila, 'contenido': contenido,})
 
 
 def Ficha_Rubrica_modificar(request, nombre, version):
