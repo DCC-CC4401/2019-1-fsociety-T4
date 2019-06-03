@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <head>
     <html lang="es">
-    <title>Plataforma de evaluación-Cursos</title>
+    <title>Plataforma de evaluación de Cursos</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="{% static 'EvPresentaciones/style.css' %}">
@@ -24,7 +24,7 @@
 
                     <div class="w3-section">
 
-                        <label for="id_username">Usuario</label>
+                        <label for="id_username">Correo electrónico</label>
                         <input id="id_username" name="username" type="text" class="w3-input w3-border w3-margin-bottom">
 
 
@@ -38,8 +38,8 @@
 
                     {% if form.errors %}
                         <p class=" label label-danger">
-                            Your username and password didn't match.
-                            Please try again.
+                            La contraseña ingresada no coincide con el usuario.
+                            Por favor, intente nuevamente.
                         </p>
                     {% endif %}
 
