@@ -217,6 +217,7 @@ def agregar_evaluaciones(request):
                                evaluacion=evaluacion)
     cur_ev.save()
 
+    """
     # hay que añadirle a cada alumno del curso la evaluacion
     try:
         alumnos = Cursos_Alumnos.objects.filter(curso_id=curso)
@@ -228,6 +229,7 @@ def agregar_evaluaciones(request):
         alum_ev = Alumnos_Evaluacion(alumno=alum.alumnos,
                                      evaluacion=evaluacion)
         alum_ev.save()
+    """
 
     return Evaluaciones_admin(request)
 
