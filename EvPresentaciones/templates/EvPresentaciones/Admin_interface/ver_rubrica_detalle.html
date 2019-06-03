@@ -1,5 +1,6 @@
 {% extends 'EvPresentaciones/BASE/base.html' %}
 {% block contenido %}
+    <!-- Se pone porque no se pudo hacer funcionar desde clase "orange" en CSS-->
     <style>
     table {
       font-family: arial, sans-serif;
@@ -24,7 +25,7 @@
     }
 
     tr:nth-child(even) {
-      background-color: #9CA5AB;
+      background-color: #FFA07A;
     }
     </style>
     <!-- HEADER -->
@@ -39,7 +40,7 @@
         </div>
     </div>
     <div class="w3-container">
-        <table >
+        <table>
             {% for row in lineas %}
             <tr>
                 {% for col in row %}

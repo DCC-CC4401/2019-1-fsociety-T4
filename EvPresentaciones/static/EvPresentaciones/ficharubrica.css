@@ -51,15 +51,22 @@ table.orange {
     font-family: arial, sans-serif;
     border-collapse: collapse;
     width: 100%;
-    cursor: pointer;
-    margin: 10px 0.5% 0.5%;
+    margin: 20px 0.5% 0.5%;
+    font-size: 15px;
 }
 
-table.orange td,th {
+table.orange td {
     border: 1px solid #665f5f;
     text-align: left;
-    width: 20%;
-    padding: 2.3%;
+    width: 12%;
+    padding: 1%;
+}
+
+table.orange th {
+    border: 1px solid #665f5f;
+    text-align: center;
+    width: 12%;
+    padding: 1%;
 }
 table.orange tr:nth-child(even) {
     background-color: #FFA07A;
