@@ -69,7 +69,7 @@
 
         {% for asp in aspecto %}
             <div class="w3-panel  w3-margin-bottom" id="criterios">
-                <ul class="w3-ul w3-light-grey w3-center w3-card-4" id="{{ forloop.counter }}" >
+                <ul class="w3-ul w3-light-grey w3-center w3-card-4" id="{{ forloop.counter }}">
                     <li class="w3-red w3-xlarge w3-padding-32"> {{ asp }} <i class="far fa-check-circle"></i></li>
                     {% for crit in criterios %}
                         {% if forloop.parentloop.counter == forloop.counter %}
@@ -120,7 +120,6 @@
         //diccionario para guardar el valor de los atributos
         var dict = {};
 
-
         function guardar_grupo(id) {
             grupo = document.getElementById(id).id;
             get_grupo();
@@ -145,7 +144,7 @@
             var element = document.getElementById(id).lastChild;
             var tag = document.getElementById("presenta");
             tag.removeChild(element);
-            presentador=""
+            presentador = ""
         }
 
         //para guardar que aspecto fue elegido
@@ -159,41 +158,41 @@
 
 
         function guardar() {
-            if(check()){
-            for (var key in dict) {
-                palabra += key + ":" + dict[key] + "|";
-            }
-            document.getElementById('presentador').setAttribute("value", presentador)
-            document.getElementById('lista_atributos').setAttribute("value", palabra);
-            document.getElementById("evaluacion_lista").submit();
+            if (check()) {
+                for (var key in dict) {
+                    palabra += key + ":" + dict[key] + "|";
+                }
+                document.getElementById('presentador').setAttribute("value", presentador)
+                document.getElementById('lista_atributos').setAttribute("value", palabra);
+                document.getElementById("evaluacion_lista").submit();
             }
         }
 
         function check() {
-            var tamaño = {{ tamaño_atributos }};
+            var tamanho = {{ tamaño_atributos }};
 
-            if (Object.keys(dict).length !== tamaño) {
+            if (Object.keys(dict).length !== tamanho) {
                 alert("Debe ingresar una respuesta en todos los campos");
                 return false
             }
-            if (presentador == "") {
+            if (presentador === "") {
                 alert("Debe ingresar un presentador");
                 return false
             }
             if (document.getElementsByName("minuos").value < 0) {
-                alert("ingrese minutos mayor a 0")
+                alert("ingrese minutos mayor a 0");
                 return false
             }
             if (document.getElementsByName("segundos").value < 0) {
-                alert("ingrese segundo mayor a 0")
+                alert("ingrese segundo mayor a 0");
                 return false
             }
             if (document.getElementsByName("minuos").value < 60) {
-                alert("ingrese minutos menor a 600")
+                alert("ingrese minutos menor a 600");
                 return false
             }
             if (document.getElementsByName("segundos").value < 60) {
-                alert("ingrese segundo menor a 60")
+                alert("ingrese segundo menor a 60");
                 return false
             }
             return true
