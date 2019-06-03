@@ -17,46 +17,11 @@
                         <li class="w3-padding-16">  {{ evaluador.first_name }} {{ evaluador.last_name }} </i>
                         </li>
                     {% endfor %}
-                    <!-- Boton agregar -->
-                    <li>
-                        <button class="opcion w3-padding-16"
-                                style="padding: 0; border: none; background: none;"
-                                onclick="document.getElementById('agregar_evaluador').style.display='block'">
-                                Agregar otro <i style="margin-left: 10px"  class="fas fa-user-plus"></i>
-                        </button>
+                    <li class="opcion w3-padding-16"> Agregar otro <i style="margin-left: 10px"
+                                                                      class="fas fa-user-plus"></i>
                     </li>
                 </ul>
             </div>
-            <!-- Formulario agregar evaluador -->
-            <div id="agregar_evaluador" class="w3-modal">
-                <div class="w3-modal-content w3-card-4 w3-animate-zoom" style="max-width:600px">
-                    <div class="w3-center"><br>
-                        <span onclick="document.getElementById('agregar_evaluador').style.display='none'"
-                            class="w3-button w3-xlarge w3-transparent w3-display-topright" title="Close Modal">×</span>
-                        <form id="form" method="POST" class="w3-container"
-                            action="{% url 'evaluacion_agregar_evaluador' evaluacion.id grupo_elegido%}">
-                            {% csrf_token %}
-
-                            <div class="w3-section">
-                                <label><b>Seleccione </b></label>
-
-                                <select class="w3-input w3-border" name="evaluador_agregado" required>
-                                    {% for usuario in evaluadores_para_agregar %}
-                                        <option value={{ usuario.email }}> {{ usuario.first_name }} {{ usuario.last_name }}
-                                        - {{ usuario.email }}
-                                        </option>
-                                     {% endfor %}
-                                </select>
-
-                                <button class="w3-button w3-block w3-red w3-section w3-padding"
-                                    type="submit">Agregar</button>
-                            </div>
-
-                        </form>
-                    </div>
-                </div>
-            </div>
-
             <div class="w3-panel  w3-margin-bottom">
                 <ul class="w3-ul w3-light-grey w3-center w3-card-4">
                     <li class="w3-dark-grey w3-xlarge w3-padding-32">Grupo <i class="fas fa-user-tie"></i></li>
@@ -255,7 +220,7 @@
             }
             return true
         }
-gig
+
     </script>
     <!-- End page content -->
 

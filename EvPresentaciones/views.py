@@ -274,13 +274,13 @@ def Post_evaluacion(request):
     lista_atributos = request.POST.get('lista_atributos', None)
     idevaluacion = request.POST.get('idevaluacion', None)
 
-    print(idevaluacion)
+
 
     evaluador = Usuario.objects.get(email=request.user)
 
     evaluacion = Cursos_Evaluacion.objects.get(evaluacion=idevaluacion)
 
-    nombreArchivo = evaluacion.curso.codigo + '-' + evaluacion.curso.semestre + '.csv'
+    nombreArchivo = evaluacion.curso.codigo + '-'+str(evaluacion.curso.seccion) + evaluacion.curso.semestre + str(evaluacion.curso.año)+ '.csv'
     rutaNombre = './EvPresentaciones/ArchivosEvaluaciones/' + nombreArchivo
     # manejo de string con las elecciones del evaluador
     lista_csv = []
@@ -306,9 +306,13 @@ def Post_evaluacion(request):
         writer = csv.writer(csvFile)
         writer.writerows([csvData])
     csvFile.close
-
+    print(evaluacion.curso.seccion)
+    print(evaluacion.curso.seccion)
+    print(evaluacion.curso.semestre)
+    print(evaluacion.curso.año)
     curso = evaluacion.curso.codigo + '-' + str(evaluacion.curso.seccion) + " " + evaluacion.curso.semestre + " " + str(
         evaluacion.curso.año)
+
     context = {}
     print(grupo)
     print(curso)
@@ -349,12 +353,12 @@ def Post_evaluaciones_admin(request):
         aux.save()
 
     # defino el nombre del archivo donde guardar
-    nombreArchivo = evaluacion.curso.codigo + '-' + evaluacion.curso.semestre + '.csv'
+    nombreArchivo = evaluacion.curso.codigo + '-'+str(evaluacion.curso.seccion)+'_'+ evaluacion.curso.semestre +'_'+ str(evaluacion.curso.año)+ '.csv'
     rutaNombre = './EvPresentaciones/ArchivosEvaluaciones/' + nombreArchivo
 
     # procesar archivo ingresado
     with open(rubrica.rubrica.archivo) as csv_file:
-        csv_reader = csv.reader(csv_file, delimiter=',')
+        csv_reader = csv.reader(csv_file, delimiter='$')
         for row in csv_reader:
             if row != []:
                 lineas.append(row)
@@ -431,7 +435,7 @@ def ver_evaluacion_evaluador(request, id):
     grupo = par_curso_evaluacion.evaluando
     # procesar archivo ingresado
     with open(rubrica.archivo) as csv_file:
-        csv_reader = csv.reader(csv_file, delimiter=',')
+        csv_reader = csv.reader(csv_file, delimiter='$')
         for row in csv_reader:
             if row != []:
                 lineas.append(row)
@@ -495,7 +499,7 @@ def ver_evaluacion_admin(request, id, grupo):
 
     # procesar archivo ingresado
     with open(rubrica.archivo) as csv_file:
-        csv_reader = csv.reader(csv_file, delimiter=',')
+        csv_reader = csv.reader(csv_file, delimiter='$')
         for row in csv_reader:
             if row != []:
                 lineas.append(row)
@@ -592,6 +596,14 @@ def verGrupos(request, id):
     return render(request, 'EvPresentaciones/Admin_interface/ver_grupos.html',
                   {'grupos_e': grupos_e, 'grupos_p': grupos_p, 'evaluacion': evaluacion})
 
+def ver_evaluador_evaluacion(request,evaluador,grupo,id):
+    #obtener aspectos de la rubrica
+    
+    #obtener puntajes al evaluador en la evaluacion y mostrarlos
+
+    #obtener nota del puntaje asociado
+
+    return render(request, 'EvPresentaciones/Admin_interface/evaluacion_evaluador_admin.html')
 
 # funciones resumen evaluacion
 
@@ -776,21 +788,31 @@ def Ficha_Rubrica_evaluador(request):
 def ver_rubrica_detalle(request, nombre, version):
     rubrica = Rubrica.objects.get(nombre=nombre, version=version)
     # Filas
-    lineas = []
+    rows = []
     # procesar archivo ingresado
     with open(rubrica.archivo) as csv_file:
         csv_reader = csv.reader(csv_file, delimiter='$')  # Para que el texto pueda tener ','
         for row in csv_reader:
-            lineas.append(row)
+            rows.append(row)
 
-    # Tiempo en formato simplificado
+    # Código para quitar lineas en blanco
+    rows2 = []
+    for r in rows:
+        if r != []:  # Sólo si no es vacío
+            rows2.append(r)  # Se agrega
+
+    # Movemos las filas no balncas
+    rows = rows2
+    primeraFila = rows[0][1:]  # Quito el primer y ultimo elemento que son elementos vacios no editables
+    contenido = rows[1:]
     tiempoMax = str(rubrica.tiempo).split(":")
     tMax = tiempoMax[1] + ":" + tiempoMax[2]  # Tiempo en formato correcto: mm:ss
     tiempoMin = str(rubrica.tiempoMin).split(":")
     tMin = tiempoMin[1] + ":" + tiempoMin[2]  # Tiempo en formato correcto: mm:ss
 
     return render(request, 'EvPresentaciones/Admin_interface/ver_rubrica_detalle.html',
-                  {'lineas': lineas, 'tmax': tMax, 'tmin': tMin})
+                  {'nombre': rubrica.nombre, 'version': rubrica.version, 'tmax': tMax, 
+                  'tmin': tMin, 'primeraFila': primeraFila, 'contenido': contenido,})
 
 
 def Ficha_Rubrica_modificar(request, nombre, version):
