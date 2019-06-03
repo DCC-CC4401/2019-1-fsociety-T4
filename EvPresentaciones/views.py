@@ -958,5 +958,6 @@ def guardarRubrica(request):
 def ContactoEval(request):
     return render(request, 'EvPresentaciones/Eval_interface/evalContacto.html')
 
+
 def ContactoAdmin(request):
     return render(request, 'EvPresentaciones/Admin_interface/adminContacto.html')
