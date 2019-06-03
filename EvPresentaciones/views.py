@@ -916,7 +916,7 @@ def guardarRubrica(request):
     csvData = []
     for row in rows:
         csvData.append(row.split('$'))  # para tener ',' en textos
-    #print(csvData)
+    print(csvData)
     # No se revalida el requisito 51, ya que la implementación en frontend es sólida.
     # Además existen otras prioridades de desarrollo.
 

@@ -106,15 +106,16 @@
         </p>
 
         <!-- botones de ver y modificar evaluacion-->
-        
+
 
         <form class="w3-button w3-large w3-red w3-round" action="{% url 'ver_grupos' o.evaluacion.id %}">
             <!-- ver evaluacion -->
             <button class="w3-button w3-large w3-red w3-round" type="submit">Ver</button>
         </form>
-            <button onclick="document.getElementById('modificar_{{ o.evaluacion.id }}').style.display='block'"
-                class="w3-button w3-large w3-red w3-margin-left w3-round">Modificar</button>
-        
+        <button onclick="document.getElementById('modificar_{{ o.evaluacion.id }}').style.display='block'"
+                class="w3-button w3-large w3-red w3-margin-left w3-round">Modificar
+        </button>
+
 
 
 
@@ -143,7 +144,9 @@
 
 
 
+
                                        {{ o.evaluacion.fechaInicio.year }}{% elif  o.evaluacion.fechaInicio.year < 100 %}00
+
 
 
 
@@ -156,7 +159,9 @@
 
 
 
+
                                        {{ o.evaluacion.fechaTermino.year }}{% elif  o.evaluacion.fechaTermino.year < 100 %}00
+
 
 
 
@@ -185,7 +190,7 @@
                                     {% if o.curso.id == c.id %}
                                         <option value='{{ c.id }}' selected="selected">{{ c.nombre }}</option>
                                     {% else %}
-                                        <option value={{ c.id }} >{{ c.nombre }}</option>
+                                        <option value={{ c.id }}>{{ c.nombre }}</option>
                                     {% endif %}
                                 {% endfor %}
                             </select>
@@ -195,9 +200,11 @@
                                 {% for r in ev_rub %}
                                     {% if r.evaluacion.id == o.evaluacion.id %}
                                         <option value='{{ r.rubrica.id }}'
-                                                selected="selected">{{ r.rubrica.nombre }} v{{ r.rubrica.version }}</option>
+                                                selected="selected">{{ r.rubrica.nombre }}
+                                            v{{ r.rubrica.version }}</option>
                                     {% else %}
-                                        <option value='{{ r.rubrica.id }}'>{{ r.rubrica.nombre }} v{{ r.rubrica.version }}</option>
+                                        <option value='{{ r.rubrica.id }}'>{{ r.rubrica.nombre }}
+                                            v{{ r.rubrica.version }}</option>
                                     {% endif %}
                                 {% endfor %}
 
