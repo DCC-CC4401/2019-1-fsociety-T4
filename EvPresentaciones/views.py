@@ -358,7 +358,7 @@ def Post_evaluaciones_admin(request):
 
     # procesar archivo ingresado
     with open(rubrica.rubrica.archivo) as csv_file:
-        csv_reader = csv.reader(csv_file, delimiter=',')
+        csv_reader = csv.reader(csv_file, delimiter='$')
         for row in csv_reader:
             if row != []:
                 lineas.append(row)
@@ -435,7 +435,7 @@ def ver_evaluacion_evaluador(request, id):
     grupo = par_curso_evaluacion.evaluando
     # procesar archivo ingresado
     with open(rubrica.archivo) as csv_file:
-        csv_reader = csv.reader(csv_file, delimiter=',')
+        csv_reader = csv.reader(csv_file, delimiter='$')
         for row in csv_reader:
             if row != []:
                 lineas.append(row)
@@ -499,7 +499,7 @@ def ver_evaluacion_admin(request, id, grupo):
 
     # procesar archivo ingresado
     with open(rubrica.archivo) as csv_file:
-        csv_reader = csv.reader(csv_file, delimiter=',')
+        csv_reader = csv.reader(csv_file, delimiter='$')
         for row in csv_reader:
             if row != []:
                 lineas.append(row)
@@ -567,6 +567,14 @@ def verGrupos(request, id):
     return render(request, 'EvPresentaciones/Admin_interface/ver_grupos.html',
                   {'grupos_e': grupos_e, 'grupos_p': grupos_p, 'evaluacion': evaluacion})
 
+def ver_evaluador_evaluacion(request,evaluador,grupo,id):
+    #obtener aspectos de la rubrica
+    
+    #obtener puntajes al evaluador en la evaluacion y mostrarlos
+
+    #obtener nota del puntaje asociado
+
+    return render(request, 'EvPresentaciones/Admin_interface/evaluacion_evaluador_admin.html')
 
 # funciones resumen evaluacion
 
