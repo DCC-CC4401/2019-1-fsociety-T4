@@ -177,12 +177,14 @@
 
         function guardar() {
             if (check()) {
-                for (var key in dict) {
-                    palabra += key + ":" + dict[key] + "|";
+                if (confirm('¿Desea Guardar sus resultados?')) {
+                    for (var key in dict) {
+                        palabra += key + ":" + dict[key] + "|";
+                    }
+                    document.getElementById('presentador').setAttribute("value", presentador)
+                    document.getElementById('lista_atributos').setAttribute("value", palabra);
+                    document.getElementById("evaluacion_lista").submit();
                 }
-                document.getElementById('presentador').setAttribute("value", presentador)
-                document.getElementById('lista_atributos').setAttribute("value", palabra);
-                document.getElementById("evaluacion_lista").submit();
             }
         }
 
